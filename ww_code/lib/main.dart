@@ -1,125 +1,290 @@
 import 'package:flutter/material.dart';
+import 'package:logging/logging.dart';
 
 void main() {
+  _setupLogging();
   runApp(const MyApp());
 }
 
+void _setupLogging() {
+  // Configure the logging framework
+  Logger.root.level = Level.ALL; // Set the root logger level to ALL
+  Logger.root.onRecord.listen((LogRecord record) {
+    print('${record.level.name}: ${record.time}: ${record.message}');
+  });
+}
+
+bool _isValidEmail(String email) {
+  return RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(email);
+}
+
+bool _isValidUsername(String username) {
+  return username.length >= 4 && username.length <= 15;
+}
+
+bool _isValidPassword(String password) {
+  return password.length >= 12 && password.length <= 20 && RegExp(r'[!@#$%^&*(),.?":{}|<>]').hasMatch(password);
+}
+//main widget
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'WanderWise App',
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // TRY THIS: Try running your application with "flutter run". You'll see
-        // the application has a purple toolbar. Then, without quitting the app,
-        // try changing the seedColor in the colorScheme below to Colors.green
-        // and then invoke "hot reload" (save your changes or press the "hot
-        // reload" button in a Flutter-supported IDE, or press "r" if you used
-        // the command line to start the app).
-        //
-        // Notice that the counter didn't reset back to zero; the application
-        // state is not lost during the reload. To reset the state, use hot
-        // restart instead.
-        //
-        // This works for code too, not just values: Most code changes can be
-        // tested with just a hot reload.
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.teal),
         useMaterial3: true,
       ),
-      home: const MyHomePage(title: 'WanderWise Home Page'),
+      home: const MyHomePage(title: 'WanderWise'),
     );
   }
 }
-
+//login screen
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
   final String title;
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
-
+//username and password text fields for login(), forgotpassword(), creataccount() & the UI rendering (build)
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final Logger _logger = Logger('MyHomePage');
 
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
+  void _login() {
+    String username = _usernameController.text;
+    String password = _passwordController.text;
+    _logger.info('Attempting login with username: $username and password: $password');
+  }
+
+  void _navigateToForgotPassword(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const ForgotPasswordPage()),
+    );
+  }
+
+  void _navigateToCreateAccount(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const CreateAccountPage()),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
     return Scaffold(
       appBar: AppBar(
-        // TRY THIS: Try changing the color here to a specific color (to
-        // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
-        // change color while the other colors stay the same.
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
         title: Text(widget.title),
       ),
       body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          //
-          // TRY THIS: Invoke "debug painting" (choose the "Toggle Debug Paint"
-          // action in the IDE, or press "p" in the console), to see the
-          // wireframe for each widget.
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-          ],
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              const Text(
+                'Enter your username & password:',
+                style: TextStyle(fontSize: 18),
+              ),
+              const SizedBox(height: 16),
+              TextField(
+                controller: _usernameController,
+                decoration: const InputDecoration(
+                  labelText: 'Username',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              const SizedBox(height: 16),
+              TextField(
+                controller: _passwordController,
+                decoration: const InputDecoration(
+                  labelText: 'Password',
+                  border: OutlineInputBorder(),
+                ),
+                obscureText: true,
+              ),
+              const SizedBox(height: 16),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  TextButton(
+                    onPressed: () => _navigateToForgotPassword(context),
+                    child: const Text('Forgot Password?'),
+                  ),
+                  TextButton(
+                    onPressed: () => _navigateToCreateAccount(context),
+                    child: const Text('Create Account'),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+        tooltip: 'Login',
+        onPressed: _login,
+        child: const Icon(Icons.login),
+      ),
+    );
+  }
+}
+
+class ForgotPasswordPage extends StatelessWidget {
+  const ForgotPasswordPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final TextEditingController emailController = TextEditingController();
+
+    void resetPassword() {
+      String email = emailController.text;
+      if(!_isValidEmail(email)){
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Please enter a valid email.'),
+            ),
+          );
+          return;
+      }
+      print('Password reset email sent to $email');
+    }
+
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        title: const Text('Forgot Password'),
+      ),
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              const Text(
+                'Enter your email to reset your password:',
+                style: TextStyle(fontSize: 18),
+              ),
+              const SizedBox(height: 16),
+              TextField(
+                controller: emailController,
+                decoration: const InputDecoration(
+                  labelText: 'Email',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              const SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: resetPassword,
+                child: const Text('Reset Password'),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class CreateAccountPage extends StatelessWidget {
+  const CreateAccountPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final TextEditingController usernameController = TextEditingController();
+    final TextEditingController passwordController = TextEditingController();
+    final TextEditingController emailController = TextEditingController();
+
+    void createAccount() {
+      String username = usernameController.text;
+      String password = passwordController.text;
+      String email = emailController.text;
+      
+      if(!_isValidEmail(email)) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Please enter a valid email.'),
+          ),
+        );
+        return;
+      }
+
+      if(!_isValidUsername(username)) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Username must be between 4-15 characters.'),
+          ),
+        );
+        return;
+      }
+
+      if(!_isValidPassword(username)) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Password must be between 12-20 characters and must contain at least one special character.'),
+          ),
+        );
+        return;
+      }
+
+      print('Creating account for username: $username, email: $email, password: $password');
+    }
+
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        title: const Text('Create New Account'),
+      ),
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              const Text(
+                'Enter your details to create a new account:',
+                style: TextStyle(fontSize: 18),
+              ),
+              const SizedBox(height: 16),
+              TextField(
+                controller: usernameController,
+                decoration: const InputDecoration(
+                  labelText: 'Username',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              const SizedBox(height: 16),
+              TextField(
+                controller: emailController,
+                decoration: const InputDecoration(
+                  labelText: 'Email',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              const SizedBox(height: 16),
+              TextField(
+                controller: passwordController,
+                decoration: const InputDecoration(
+                  labelText: 'Password',
+                  border: OutlineInputBorder(),
+                ),
+                obscureText: true,
+              ),
+              const SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: createAccount,
+                child: const Text('Create Account'),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
