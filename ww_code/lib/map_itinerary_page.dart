@@ -1,7 +1,28 @@
 import 'package:flutter/material.dart';
 
-class MapItineraryPage extends StatelessWidget {
+class MapItineraryPage extends StatefulWidget {
   const MapItineraryPage({super.key});
+
+  @override
+  MapItineraryPageState createState() => MapItineraryPageState();
+}
+
+class MapItineraryPageState extends State<MapItineraryPage> {
+  int _selectedIndex = 0;
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+    switch (index) {
+      case 0:
+        // navigate to google maps
+        break;
+      case 1:
+        // navigate to itinerary
+        break;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -11,45 +32,26 @@ class MapItineraryPage extends StatelessWidget {
         title: const Text('Map/Itinerary'),
       ),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SizedBox(
-              width: 250,
-              child: ElevatedButton(
-                onPressed: () {
-                  // Handle map button pressed
-                },
-                style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 20),
-                  foregroundColor: Colors.white,
-                  backgroundColor: Colors.teal, // Set background color here
-                  textStyle: const TextStyle(fontSize: 20),
-                ),
-                child: const Text('Map'),
-              ),
-            ),
-            const SizedBox(height: 20),
-            SizedBox(
-              width: 250,
-              child: ElevatedButton(
-                onPressed: () {
-                  // Handle itinerary button pressed
-                },
-                style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 20),
-                  foregroundColor: Colors.white,
-                  backgroundColor: Colors.teal, // Set background color here
-                  textStyle: const TextStyle(fontSize: 20),
-                ),
-                child: const Text('My Itinerary'),
-              ),
-            ),
-          ],
+        child: Text(
+          _selectedIndex == 0 ? '<google maps API>' : '<to be replaced with itinerary template>',
+          style: const TextStyle(fontSize: 24),
         ),
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.map),
+            label: 'Map',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.list),
+            label: 'My Itinerary',
+          ),
+        ],
+        currentIndex: _selectedIndex,
+        selectedItemColor: Colors.teal,
+        onTap: _onItemTapped,
       ),
     );
   }
 }
-
-

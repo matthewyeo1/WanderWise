@@ -10,11 +10,11 @@ class MenuPage extends StatefulWidget {
   const MenuPage({super.key});
 
   @override
-  _MenuPageState createState() => _MenuPageState();
+  MenuPageState createState() => MenuPageState();
 }
 
 //cycle images
-class _MenuPageState extends State<MenuPage> {
+class MenuPageState extends State<MenuPage> {
   final List<String> _images = [
     'images/borealis.png',
     'images/santorini.png',
@@ -157,12 +157,12 @@ class _MenuPageState extends State<MenuPage> {
                   const SizedBox(height: 16),
                   Row(
                     children: [
-                      _buildExpandedButton(context, 'Map/Itinerary'),                      // menu buttons
+                      _buildExpandedButton(context, 'Map/Itinerary'),                      //menu buttons
                       const SizedBox(width: 16),
                       _buildExpandedButton(context, 'Manage Flights/Bookings'),
                     ],
                   ),
-                  const SizedBox(height: 36), 
+                  const SizedBox(height: 30), 
                   Row(
                     children: [
                       _buildExpandedButton(context, 'Settings'),

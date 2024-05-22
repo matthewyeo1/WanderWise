@@ -1,7 +1,28 @@
 import 'package:flutter/material.dart';
 
-class ManageFlightsBookingsPage extends StatelessWidget {
+class ManageFlightsBookingsPage extends StatefulWidget {
   const ManageFlightsBookingsPage({super.key});
+
+  @override
+  ManageFlightsBookingsPageState createState() => ManageFlightsBookingsPageState();
+}
+
+class ManageFlightsBookingsPageState extends State<ManageFlightsBookingsPage> {
+  int _selectedIndex = 0;
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+    switch (index) {
+      case 0:
+        // navigate to flight info
+        break;
+      case 1:
+        // navigate to hotel bookings
+        break;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -11,44 +32,26 @@ class ManageFlightsBookingsPage extends StatelessWidget {
         title: const Text('Manage Flights/Bookings'),
       ),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SizedBox(
-              width: 250,
-              child: ElevatedButton(
-                onPressed: () {
-                  // Handle map button pressed
-                },
-                style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 20),
-                  foregroundColor: Colors.white,
-                  backgroundColor: Colors.teal, // Set background color here
-                  textStyle: const TextStyle(fontSize: 20),
-                ),
-                child: const Text('Flights'),
-              ),
-            ),
-            const SizedBox(height: 20),
-            SizedBox(
-              width: 250,
-              child: ElevatedButton(
-                onPressed: () {
-                  // Handle itinerary button pressed
-                },
-                style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 20),
-                  foregroundColor: Colors.white,
-                  backgroundColor: Colors.teal, // Set background color here
-                  textStyle: const TextStyle(fontSize: 20),
-                ),
-                child: const Text('Hotel Bookings'),
-              ),
-            ),
-          ],
+        child: Text(
+          _selectedIndex == 0? '<insert flight info>' : '<insert hotel bookings>',
+          style: const TextStyle(fontSize: 24),
         ),
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.airplanemode_active),
+            label: 'Flights',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.hotel),
+            label: 'Accommodation',
+          ),
+        ],
+        currentIndex: _selectedIndex,
+        selectedItemColor: Colors.teal,
+        onTap: _onItemTapped,
       ),
     );
   }
 }
-

@@ -8,10 +8,10 @@ class HelpPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: const Text('Map/Itinerary'),
+        title: const Text('Help'),
       ),
       body: const Center(
-        child: Text('Map and Itinerary Page'),
+        child: Text('<add stuff>'),
       ),
     );
   }
