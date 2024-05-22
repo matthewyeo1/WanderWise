@@ -301,7 +301,7 @@ class CreateAccountPage extends StatelessWidget {
         return;
       }
 
-      if(!_isValidPassword(username)) {
+      if(!_isValidPassword(password)) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Password must be between 12-20 characters and must contain at least one special character.'),
