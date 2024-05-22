@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
+import 'map_itinerary_page.dart';
+import 'manage_flights_bookings_page.dart';
+import 'settings_page.dart';
+import 'help_page.dart';
+
 
 class MenuPage extends StatefulWidget {
   const MenuPage({super.key});
@@ -40,7 +45,66 @@ class _MenuPageState extends State<MenuPage> {
     _timer.cancel();
     super.dispose();
   }
+
+  void _navigateToMapItinerary(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => MapItineraryPage()),
+    );
+  }
+
+  void _navigateToManageFlightsBookings(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => ManageFlightsBookingsPage()),
+    );
+  }
+
+  void _navigateToSettings(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => SettingsPage()),
+    );
+  }
   
+  void _navigateToHelp(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => HelpPage()),
+    );
+  }
+  //the 4 menu buttons will share this design spec:
+  Widget _buildExpandedButton(BuildContext context, String text) {
+    return Expanded(
+      child: SizedBox(
+        height: 100, 
+        child: ElevatedButton(
+          onPressed: () {
+            if (text == 'Map/Itinerary') {
+              _navigateToMapItinerary(context);
+            } else if (text == 'Manage Flights/Bookings') {
+              _navigateToManageFlightsBookings(context);
+            } else if (text == 'Settings') {
+              _navigateToSettings(context);
+            } else if (text == 'Help') {
+              _navigateToHelp(context);
+            }
+          },
+          style: ElevatedButton.styleFrom(
+            padding: const EdgeInsets.all(16),
+            backgroundColor: Colors.white, 
+            foregroundColor: Colors.black, 
+          ),
+          child: Text(
+            text,
+            textAlign: TextAlign.center, 
+            style: const TextStyle(fontSize: 18),
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -93,7 +157,7 @@ class _MenuPageState extends State<MenuPage> {
                   const SizedBox(height: 16),
                   Row(
                     children: [
-                      _buildExpandedButton(context, 'Map/Itinerary'),
+                      _buildExpandedButton(context, 'Map/Itinerary'),                      // menu buttons
                       const SizedBox(width: 16),
                       _buildExpandedButton(context, 'Manage Flights/Bookings'),
                     ],
@@ -110,29 +174,6 @@ class _MenuPageState extends State<MenuPage> {
               ),
             ),
           ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildExpandedButton(BuildContext context, String text) {
-    return Expanded(
-      child: SizedBox(
-        height: 100, 
-        child: ElevatedButton(
-          onPressed: () {
-            // navigation logic will be added here later
-          },
-          style: ElevatedButton.styleFrom(
-            padding: const EdgeInsets.all(16),
-            backgroundColor: Colors.white, 
-            foregroundColor: Colors.black, 
-          ),
-          child: Text(
-            text,
-            textAlign: TextAlign.center, 
-            style: const TextStyle(fontSize: 18),
-          ),
         ),
       ),
     );

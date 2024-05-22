@@ -11,7 +11,7 @@ void _setupLogging() {
   // Configure the logging framework
   Logger.root.level = Level.ALL; // Set the root logger level to ALL
   Logger.root.onRecord.listen((LogRecord record) {
-    print('${record.level.name}: ${record.time}: ${record.message}');
+  print('${record.level.name}: ${record.time}: ${record.message}');
   });
 }
 
