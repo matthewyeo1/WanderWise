@@ -1,8 +1,46 @@
 import 'package:flutter/material.dart';
+import 'dart:async';
 
-class MenuPage extends StatelessWidget {
+class MenuPage extends StatefulWidget {
   const MenuPage({super.key});
 
+  @override
+  _MenuPageState createState() => _MenuPageState();
+}
+
+//cycle images
+class _MenuPageState extends State<MenuPage> {
+  final List<String> _images = [
+    'images/borealis.png',
+    'images/santorini.png',
+    'images/alps.png',
+    'images/mtfuji.png',
+    'images/guanmingdeng.png',
+    'images/capadocia.png',
+  ];
+  int _currentIndex = 0;
+  late Timer _timer;
+
+  @override
+  void initState() {
+    super.initState();
+    _startImageCycle();
+  }
+
+  void _startImageCycle() {
+    _timer = Timer.periodic(const Duration(seconds: 5), (timer) {
+      setState(() {
+        _currentIndex = (_currentIndex + 1) % _images.length;
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer.cancel();
+    super.dispose();
+  }
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -14,12 +52,45 @@ class MenuPage extends StatelessWidget {
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.end, // Align to the bottom
+          mainAxisAlignment: MainAxisAlignment.end, 
           children: <Widget>[
             Expanded(
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.end, // Align to the bottom
                 children: [
+                  Expanded(
+                    child: AnimatedSwitcher(                      //fade-in fade-out effect              
+                      duration: const Duration(seconds: 1),
+                      child: Stack(
+                        key: ValueKey<String>(_images[_currentIndex]),
+                        children: [
+                          Image.asset(
+                            _images[_currentIndex],
+                            fit: BoxFit.cover,
+                            width: double.infinity,
+                            height: double.infinity,
+                          ),
+                          const Align(
+                            alignment: Alignment.center,
+                            child: Text('Where will you go next?',
+                            style: TextStyle(
+                              fontSize: 24,
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              shadows: [
+                                Shadow(
+                                  offset: Offset(1.0, 1.0),
+                                  blurRadius: 2.0,
+                                  color: Colors.black,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                   ),
+                  ),
+                  const SizedBox(height: 16),
                   Row(
                     children: [
                       _buildExpandedButton(context, 'Map/Itinerary'),
