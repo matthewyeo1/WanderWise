@@ -49,31 +49,31 @@ class _MenuPageState extends State<MenuPage> {
   void _navigateToMapItinerary(BuildContext context) {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => MapItineraryPage()),
+      MaterialPageRoute(builder: (context) => const MapItineraryPage()),
     );
   }
 
   void _navigateToManageFlightsBookings(BuildContext context) {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => ManageFlightsBookingsPage()),
+      MaterialPageRoute(builder: (context) => const ManageFlightsBookingsPage()),
     );
   }
 
   void _navigateToSettings(BuildContext context) {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => SettingsPage()),
+      MaterialPageRoute(builder: (context) => const SettingsPage()),
     );
   }
   
   void _navigateToHelp(BuildContext context) {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => HelpPage()),
+      MaterialPageRoute(builder: (context) => const HelpPage()),
     );
   }
-  //the 4 menu buttons will share this design spec:
+ 
   Widget _buildExpandedButton(BuildContext context, String text) {
     return Expanded(
       child: SizedBox(
@@ -92,8 +92,8 @@ class _MenuPageState extends State<MenuPage> {
           },
           style: ElevatedButton.styleFrom(
             padding: const EdgeInsets.all(16),
-            backgroundColor: Colors.white, 
-            foregroundColor: Colors.black, 
+            backgroundColor: Colors.teal, 
+            foregroundColor: Colors.white, 
           ),
           child: Text(
             text,
@@ -112,7 +112,7 @@ class _MenuPageState extends State<MenuPage> {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: const Text('Menu'),
       ),
-      backgroundColor: Colors.teal, 
+      backgroundColor: Colors.white, 
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
