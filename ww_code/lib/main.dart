@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
 import 'menu_page.dart';
+import 'package:firebase_core/firebase_core.dart';
 
-void main() {
+void main() async {
   _setupLogging();
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(const MyApp());
 }
 
