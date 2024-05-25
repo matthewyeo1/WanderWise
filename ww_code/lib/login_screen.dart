@@ -5,7 +5,7 @@ import 'menu_page.dart';
 import 'forgot_password.dart';
 import 'create_account.dart';
 import 'utilities/utils.dart';
-
+import 'aesthetics/colour_gradient.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
@@ -43,7 +43,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _toggleLoginButtonVisibility() {
     setState(() {
-      _isLoginButtonVisible = !(_emailFocusNode.hasFocus || _passwordFocusNode.hasFocus);
+      _isLoginButtonVisible =
+          !(_emailFocusNode.hasFocus || _passwordFocusNode.hasFocus);
     });
   }
 
@@ -81,7 +82,7 @@ class _MyHomePageState extends State<MyHomePage> {
       );
     }
   }
-  
+
   void _navigateToForgotPassword(BuildContext context) {
     Navigator.push(
       context,
@@ -99,61 +100,86 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(widget.title),
-      ),
-      backgroundColor: Colors.white,
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            // Add the logo here
-            Image.asset('images/logo.png'),
-            const SizedBox(height: 16), // Space between logo and text
-            const Text(
-              'Sign-in with your email & password:',
-              style: TextStyle(fontSize: 18),
-            ),
-            const SizedBox(height: 16),
-            Flexible(
-              child: TextField(
-                controller: _emailController,
-                focusNode: _emailFocusNode,
-                decoration: const InputDecoration(
-                  labelText: 'Email',
-                  border: OutlineInputBorder(),
+      backgroundColor: Colors.transparent,
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: getAppGradient(),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              // Add the logo here
+
+              const SizedBox(height: 16), 
+              const Text(
+                'Sign-in with your email & password:',
+                style: TextStyle(fontSize: 18, color: Colors.white),
+              ),
+              const SizedBox(height: 16),
+              Flexible(
+                child: TextField(
+                  controller: _emailController,
+                  focusNode: _emailFocusNode,
+                  decoration: const InputDecoration(
+                    labelText: 'Email',
+                    border: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.white),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.white),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.white),
+                    ),
+                    labelStyle: TextStyle(color: Colors.white),
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(height: 16),
-            Flexible(
-              child: TextField(
-                controller: _passwordController,
-                focusNode: _passwordFocusNode,
-                decoration: const InputDecoration(
-                  labelText: 'Password',
-                  border: OutlineInputBorder(),
+              const SizedBox(height: 16),
+              Flexible(
+                child: TextField(
+                  controller: _passwordController,
+                  focusNode: _passwordFocusNode,
+                  decoration: const InputDecoration(
+                    labelText: 'Password',
+                    border: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.white),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.white),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.white),
+                    ),
+                    labelStyle: TextStyle(color: Colors.white),
+                  ),
+                  obscureText: true,
                 ),
-                obscureText: true,
               ),
-            ),
-            const SizedBox(height: 16),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                TextButton(
-                  onPressed: () => _navigateToForgotPassword(context),
-                  child: const Text('Forgot Password?'),
-                ),
-                TextButton(
-                  onPressed: () => _navigateToCreateAccount(context),
-                  child: const Text('Create Account'),
-                ),
-              ],
-            ),
-          ],
+              const SizedBox(height: 16),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  TextButton(
+                    onPressed: () => _navigateToForgotPassword(context),
+                    child: const Text(
+                      'Forgot Password?',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: () => _navigateToCreateAccount(context),
+                    child: const Text(
+                      'Create Account',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
       floatingActionButton: Visibility(
@@ -164,10 +190,22 @@ class _MyHomePageState extends State<MyHomePage> {
             FloatingActionButton(
               tooltip: 'Login',
               onPressed: _login,
-              child: const Icon(Icons.login),
+              backgroundColor: Colors.transparent,
+              foregroundColor: Colors.white, // Outline color
+              elevation: 0, // Remove shadow
+              child: const Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.login),
+                  SizedBox(height: 4),
+                  Text(
+                    'Login',
+                    style: TextStyle(
+                        fontSize: 12), // Customize text size if needed
+                  ),
+                ],
+              ),
             ),
-            const SizedBox(height: 8),
-            const Text('Login'),
           ],
         ),
       ),

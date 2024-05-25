@@ -3,6 +3,7 @@ import 'package:logging/logging.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'login_screen.dart';
 
+
 void main() async {
   _setupLogging();
   WidgetsFlutterBinding.ensureInitialized();
@@ -21,18 +22,32 @@ void _setupLogging() {
 //main widget
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
-
+  
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'WanderWise App',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.teal),
-        useMaterial3: true,
+        primarySwatch: Colors.blue,
+        scaffoldBackgroundColor: Colors.transparent,
+        canvasColor: Colors.transparent,
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Colors.transparent,
+          foregroundColor: Colors.white,
+        ),
+        textTheme: const TextTheme(
+          bodyLarge: TextStyle(color: Colors.white),
+          headlineLarge: TextStyle(color: Colors.white),
+        ), 
       ),
       home: const MyHomePage(title: 'Login'),
       debugShowCheckedModeBanner: false,
     );
   }
 }
+
+
+
+
+
 
