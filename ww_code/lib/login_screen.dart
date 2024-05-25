@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'menu_page.dart';
 import 'forgot_password.dart';
 import 'create_account.dart';
 import 'utilities/utils.dart';
@@ -59,13 +58,10 @@ class _MyHomePageState extends State<MyHomePage> {
           email: email,
           password: password,
         );
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const MenuPage()),
-        ).then((_) {
+        Navigator.pushReplacementNamed(context, '/menu').then((_) {
           _emailController.clear();
           _passwordController.clear();
-        });
+        });       
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -120,6 +116,7 @@ class _MyHomePageState extends State<MyHomePage> {
               const SizedBox(height: 16),
               Flexible(
                 child: TextField(
+                  cursorColor: Colors.white,
                   controller: _emailController,
                   focusNode: _emailFocusNode,
                   decoration: const InputDecoration(
@@ -140,6 +137,7 @@ class _MyHomePageState extends State<MyHomePage> {
               const SizedBox(height: 16),
               Flexible(
                 child: TextField(
+                  cursorColor: Colors.white,
                   controller: _passwordController,
                   focusNode: _passwordFocusNode,
                   decoration: const InputDecoration(

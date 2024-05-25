@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ww_code/aesthetics/colour_gradient.dart';
 
 class HelpPage extends StatelessWidget {
   const HelpPage({super.key});
@@ -7,12 +8,16 @@ class HelpPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: const Text('Help'),
+        backgroundColor: const Color(0xFF13438B),
+        title: const Text("Help"),
+        
       ),
-      body: const Center(
-        child: Text('<add stuff>'),
-      ),
+      backgroundColor: Colors.transparent,
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: getAppGradient(),
+        ),
+      )
     );
   }
 }

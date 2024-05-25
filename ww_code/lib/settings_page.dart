@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ww_code/aesthetics/colour_gradient.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -15,46 +16,51 @@ class SettingsPageState extends State<SettingsPage> {
       selectedIndex = index;
     });
   }
-  
-   Widget _getSelectedWidget(int index) {
+
+  Widget _getSelectedWidget(int index) {
     switch (index) {
       case 0:
         return const Text(
           "Profile",
-          style: TextStyle(fontSize: 20),
+          style: TextStyle(fontSize: 20, color: Colors.white),
         );
       case 1:
         return const Text(
-          "Change Password",
-          style: TextStyle(fontSize: 20),
+          "Security",
+          style: TextStyle(fontSize: 20, color: Colors.white),
         );
       case 2:
         return const Text(
           "Change Display",
-          style: TextStyle(fontSize: 20),
+          style: TextStyle(fontSize: 20, color: Colors.white),
         );
       case 3:
         return const Text(
           "Offline Sync",
-          style: TextStyle(fontSize: 20),
+          style: TextStyle(fontSize: 20, color: Colors.white),
         );
       default:
         return const Text(
           "Profile",
-          style: TextStyle(fontSize: 20),
+          style: TextStyle(fontSize: 20, color: Colors.white),
         );
     }
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        backgroundColor: const Color(0xFF13438B),
         title: const Text('Profile'),
       ),
-      body: Center(
-        child: _getSelectedWidget(selectedIndex),
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: getAppGradient(),
+        ),
+        child: Center(
+          child: _getSelectedWidget(selectedIndex),
+        ),
       ),
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
@@ -65,7 +71,7 @@ class SettingsPageState extends State<SettingsPage> {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.password),
-            label: 'Change Password',
+            label: 'Security',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.display_settings),
@@ -77,13 +83,13 @@ class SettingsPageState extends State<SettingsPage> {
           ),
         ],
         currentIndex: selectedIndex,
-        selectedItemColor: Colors.teal,
+        selectedItemColor: Colors.white,
+        backgroundColor: const Color(0xFF10CFF9),
+        elevation: 0.0,
         onTap: _onItemTapped,
-        selectedLabelStyle: const TextStyle(fontSize: 10),
-        unselectedLabelStyle: const TextStyle(fontSize: 10),
+        selectedLabelStyle: const TextStyle(fontSize: 12), 
+        unselectedLabelStyle: const TextStyle(fontSize: 10), 
       ),
     );
   }
 }
-       
-          

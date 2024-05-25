@@ -90,6 +90,7 @@ class CreateAccountPage extends StatelessWidget {
                 ),
                 const SizedBox(height: 16),
                 TextField(
+                  cursorColor: Colors.white,
                   controller: usernameController,
                   style: const TextStyle(color: Colors.white),
                   decoration: const InputDecoration(
@@ -108,6 +109,7 @@ class CreateAccountPage extends StatelessWidget {
                 ),
                 const SizedBox(height: 16),
                 TextField(
+                  cursorColor: Colors.white,
                   controller: emailController,
                   style: const TextStyle(color: Colors.white), // Text color
                   decoration: const InputDecoration(
@@ -126,6 +128,7 @@ class CreateAccountPage extends StatelessWidget {
                 ),
                 const SizedBox(height: 16),
                 TextField(
+                  cursorColor: Colors.white,
                   controller: passwordController,
                   style: const TextStyle(color: Colors.white), // Text color
                   decoration: const InputDecoration(

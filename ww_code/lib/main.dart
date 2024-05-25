@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'login_screen.dart';
-
+import 'menu_page.dart';
+import 'create_account.dart';
+import 'forgot_password.dart';
 
 void main() async {
   _setupLogging();
@@ -40,7 +42,13 @@ class MyApp extends StatelessWidget {
           headlineLarge: TextStyle(color: Colors.white),
         ), 
       ),
-      home: const MyHomePage(title: 'Login'),
+      initialRoute: '/',
+      routes: {
+        '/': (context) => const MyHomePage(title: 'Login'),
+        '/menu': (context) => const MenuPage(),
+        '/create_account': (content) => const CreateAccountPage(),
+        '/forgot_password': (context) => const ForgotPasswordPage(),
+      }, 
       debugShowCheckedModeBanner: false,
     );
   }

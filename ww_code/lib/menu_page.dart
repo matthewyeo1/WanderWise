@@ -4,12 +4,12 @@ import 'map_itinerary_page.dart';
 import 'manage_flights_bookings_page.dart';
 import 'settings_page.dart';
 import 'help_page.dart';
+import 'aesthetics/colour_gradient.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 
 class MenuPage extends StatefulWidget {
-
   final String? username;
-  const MenuPage({Key? key, this.username}) : super(key : key);
+  const MenuPage({Key? key, this.username}) : super(key: key);
 
   @override
   _MenuPageState createState() => _MenuPageState();
@@ -18,11 +18,8 @@ class MenuPage extends StatefulWidget {
 class _MenuPageState extends State<MenuPage> {
   final List<String> _images = [
     'images/borealis.png',
-    'images/santorini.png',
-    'images/alps.png',
-    'images/mtfuji.png',
     'images/guanmingdeng.png',
-    'images/capadocia.png',
+    'images/japan2.png',
   ];
   int _currentIndex = 0;
   late Timer _timer;
@@ -57,7 +54,8 @@ class _MenuPageState extends State<MenuPage> {
   void _navigateToManageFlightsBookings(BuildContext context) {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => const ManageFlightsBookingsPage()),
+      MaterialPageRoute(
+          builder: (context) => const ManageFlightsBookingsPage()),
     );
   }
 
@@ -67,18 +65,18 @@ class _MenuPageState extends State<MenuPage> {
       MaterialPageRoute(builder: (context) => const SettingsPage()),
     );
   }
-  
+
   void _navigateToHelp(BuildContext context) {
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => const HelpPage()),
     );
   }
- 
+
   Widget _buildExpandedButton(BuildContext context, String text) {
     return Expanded(
       child: SizedBox(
-        height: 100, 
+        height: 100,
         child: ElevatedButton(
           onPressed: () {
             if (text == 'Map/Itinerary') {
@@ -93,12 +91,13 @@ class _MenuPageState extends State<MenuPage> {
           },
           style: ElevatedButton.styleFrom(
             padding: const EdgeInsets.all(16),
-            backgroundColor: Colors.teal, 
-            foregroundColor: Colors.white, 
+            backgroundColor: Colors.lightBlue,
+            foregroundColor: Colors.white,
+            side: const BorderSide(color: Colors.white),
           ),
           child: Text(
             text,
-            textAlign: TextAlign.center, 
+            textAlign: TextAlign.center,
             style: const TextStyle(fontSize: 18),
           ),
         ),
@@ -109,7 +108,7 @@ class _MenuPageState extends State<MenuPage> {
   Future<void> _logout() async {
     try {
       await firebase_auth.FirebaseAuth.instance.signOut();
-      Navigator.pushReplacementNamed(context, '/login'); // Replace current screen with login
+      Navigator.pushReplacementNamed(context, '/');
     } catch (e) {
       print("Logout error: $e");
       ScaffoldMessenger.of(context).showSnackBar(
@@ -149,82 +148,90 @@ class _MenuPageState extends State<MenuPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        backgroundColor: const Color(0xFF13438B),
         title: const Text('Menu'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.logout),
-            onPressed: () async {
-              bool? confirmed = await _showLogoutConfirmationDialog();
-              if(confirmed != null && confirmed) {
-                await _logout();
-              }
-            },
-          ),
-        ],
+        leading: IconButton(
+          icon: const Icon(Icons.logout),
+          onPressed: () async {
+            bool? confirmed = await _showLogoutConfirmationDialog();
+            if (confirmed != null && confirmed) {
+              await _logout();
+            }
+          },
+        ),
       ),
-      backgroundColor: Colors.white, 
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.end, 
-          children: <Widget>[
-            Expanded(
-              child: Column(
-                children: [
-                  Expanded(
-                    child: AnimatedSwitcher(                      //fade-in fade-out effect              
-                      duration: const Duration(seconds: 1),
-                      child: Stack(
-                        key: ValueKey<String>(_images[_currentIndex]),
-                        children: [
-                          Image.asset(
-                            _images[_currentIndex],
-                            fit: BoxFit.cover,
-                            width: double.infinity,
-                            height: double.infinity,
-                          ),
-                          const Align(
-                            alignment: Alignment.center,
-                            child: Text('Where will you go next?',
-                            style: TextStyle(
-                              fontSize: 24,
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              shadows: [
-                                Shadow(
-                                  offset: Offset(1.0, 1.0),
-                                  blurRadius: 2.0,
-                                  color: Colors.black,
+      backgroundColor: Colors.transparent,
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: getAppGradient(),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: <Widget>[
+              Expanded(
+                child: Column(
+                  children: [
+                    Expanded(
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(20),
+                        child: AnimatedSwitcher(
+                          duration: const Duration(seconds: 1),
+                          child: Stack(
+                            key: ValueKey<String>(_images[_currentIndex]),
+                            children: [
+                              Image.asset(
+                                _images[_currentIndex],
+                                fit: BoxFit.cover,
+                                width: double.infinity,
+                                height: double.infinity,
+                              ),
+                              const Align(
+                                alignment: Alignment.center,
+                                child: Text(
+                                  'Where will you go next?',
+                                  style: TextStyle(
+                                    fontSize: 24,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                    shadows: [
+                                      Shadow(
+                                        offset: Offset(1.0, 1.0),
+                                        blurRadius: 2.0,
+                                        color: Colors.black,
+                                      ),
+                                    ],
+                                  ),
                                 ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
                         ),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    Row(
+                      children: [
+                        _buildExpandedButton(context, 'Map/Itinerary'),
+                        const SizedBox(width: 16),
+                        _buildExpandedButton(
+                            context, 'Manage Flights/Bookings'),
                       ],
                     ),
-                   ),
-                  ),
-                  const SizedBox(height: 16),
-                  Row(
-                    children: [
-                      _buildExpandedButton(context, 'Map/Itinerary'),                      //menu buttons
-                      const SizedBox(width: 16),
-                      _buildExpandedButton(context, 'Manage Flights/Bookings'),
-                    ],
-                  ),
-                  const SizedBox(height: 30), 
-                  Row(
-                    children: [
-                      _buildExpandedButton(context, 'Settings'),
-                      const SizedBox(width: 16), 
-                      _buildExpandedButton(context, 'Help'),
-                    ],
-                  ),
-                ],
+                    const SizedBox(height: 30),
+                    Row(
+                      children: [
+                        _buildExpandedButton(context, 'Settings'),
+                        const SizedBox(width: 16),
+                        _buildExpandedButton(context, 'Help'),
+                      ],
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
