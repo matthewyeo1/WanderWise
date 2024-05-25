@@ -4,17 +4,18 @@ import 'map_itinerary_page.dart';
 import 'manage_flights_bookings_page.dart';
 import 'settings_page.dart';
 import 'help_page.dart';
-
+import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 
 class MenuPage extends StatefulWidget {
-  const MenuPage({super.key});
+
+  final String? username;
+  const MenuPage({Key? key, this.username}) : super(key : key);
 
   @override
-  MenuPageState createState() => MenuPageState();
+  _MenuPageState createState() => _MenuPageState();
 }
 
-//cycle images
-class MenuPageState extends State<MenuPage> {
+class _MenuPageState extends State<MenuPage> {
   final List<String> _images = [
     'images/borealis.png',
     'images/santorini.png',
@@ -105,12 +106,62 @@ class MenuPageState extends State<MenuPage> {
     );
   }
 
+  Future<void> _logout() async {
+    try {
+      await firebase_auth.FirebaseAuth.instance.signOut();
+      Navigator.pushReplacementNamed(context, '/login'); // Replace current screen with login
+    } catch (e) {
+      print("Logout error: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Logout error'),
+        ),
+      );
+    }
+  }
+
+  Future<bool?> _showLogoutConfirmationDialog() async {
+    return showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Logout'),
+        content: const Text('Are you sure you want to log out?'),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop(false);
+            },
+            child: const Text('No'),
+          ),
+          TextButton(
+            onPressed: () async {
+              Navigator.of(context).pop(true);
+              await _logout();
+            },
+            child: const Text('Yes'),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: const Text('Menu'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout),
+            onPressed: () async {
+              bool? confirmed = await _showLogoutConfirmationDialog();
+              if(confirmed != null && confirmed) {
+                await _logout();
+              }
+            },
+          ),
+        ],
       ),
       backgroundColor: Colors.white, 
       body: Padding(
