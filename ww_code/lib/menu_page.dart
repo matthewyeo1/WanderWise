@@ -7,6 +7,7 @@ import 'help_page.dart';
 import 'aesthetics/colour_gradient.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 
+// Main menu widget
 class MenuPage extends StatefulWidget {
   final String? username;
   const MenuPage({Key? key, this.username}) : super(key: key);
@@ -16,10 +17,10 @@ class MenuPage extends StatefulWidget {
 }
 
 class _MenuPageState extends State<MenuPage> {
-  final List<String> _images = [
+  final List<String> _images = [          // Montage of images for menu page graphics
     'images/borealis.png',
     'images/guanmingdeng.png',
-    'images/japan2.png',
+    'images/torii_gates.png',
   ];
   int _currentIndex = 0;
   late Timer _timer;
@@ -30,7 +31,7 @@ class _MenuPageState extends State<MenuPage> {
     _startImageCycle();
   }
 
-  void _startImageCycle() {
+  void _startImageCycle() {              // Animated switcher clock
     _timer = Timer.periodic(const Duration(seconds: 5), (timer) {
       setState(() {
         _currentIndex = (_currentIndex + 1) % _images.length;
@@ -39,7 +40,7 @@ class _MenuPageState extends State<MenuPage> {
   }
 
   @override
-  void dispose() {
+  void dispose() {               // Free resources used
     _timer.cancel();
     super.dispose();
   }
@@ -73,7 +74,7 @@ class _MenuPageState extends State<MenuPage> {
     );
   }
 
-  Widget _buildExpandedButton(BuildContext context, String text) {
+  Widget _buildExpandedButton(BuildContext context, String text) {     // Frontend for buttons & montage; above is the corresponding backend 
     return Expanded(
       child: SizedBox(
         height: 100,
@@ -91,9 +92,9 @@ class _MenuPageState extends State<MenuPage> {
           },
           style: ElevatedButton.styleFrom(
             padding: const EdgeInsets.all(16),
-            backgroundColor: Colors.lightBlue,
-            foregroundColor: Colors.white,
-            side: const BorderSide(color: Colors.white),
+            backgroundColor: Colors.white,
+            foregroundColor: const Color(0xFF00A6DF),
+            side: const BorderSide(color: Colors.lightBlue),
           ),
           child: Text(
             text,
@@ -105,9 +106,9 @@ class _MenuPageState extends State<MenuPage> {
     );
   }
 
-  Future<void> _logout() async {
+  Future<void> _logout() async {        // Logout feature
     try {
-      await firebase_auth.FirebaseAuth.instance.signOut();
+      await firebase_auth.FirebaseAuth.instance.signOut();         // Return to login page upon successful logout (user pressed 'Yes' on dialog box and there are no errors)
       Navigator.pushReplacementNamed(context, '/');
     } catch (e) {
       print("Logout error: $e");
@@ -119,7 +120,7 @@ class _MenuPageState extends State<MenuPage> {
     }
   }
 
-  Future<bool?> _showLogoutConfirmationDialog() async {
+  Future<bool?> _showLogoutConfirmationDialog() async {           // Logout confirmation dialog widget
     return showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
@@ -148,12 +149,13 @@ class _MenuPageState extends State<MenuPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: const Color(0xFF13438B),
+        backgroundColor: Colors.white,
+        foregroundColor: const Color(0xFF00A6DF),
         title: const Text('Menu'),
         leading: IconButton(
           icon: const Icon(Icons.logout),
           onPressed: () async {
-            bool? confirmed = await _showLogoutConfirmationDialog();
+            bool? confirmed = await _showLogoutConfirmationDialog();       // Navigate to login page 
             if (confirmed != null && confirmed) {
               await _logout();
             }
@@ -162,7 +164,8 @@ class _MenuPageState extends State<MenuPage> {
       ),
       backgroundColor: Colors.transparent,
       body: Container(
-        decoration: BoxDecoration(
+        decoration:  BoxDecoration(
+          //color: Colors.white,
           gradient: getAppGradient(),
         ),
         child: Padding(
@@ -176,7 +179,7 @@ class _MenuPageState extends State<MenuPage> {
                     Expanded(
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(20),
-                        child: AnimatedSwitcher(
+                        child: AnimatedSwitcher(                                 // Animated montage
                           duration: const Duration(seconds: 1),
                           child: Stack(
                             key: ValueKey<String>(_images[_currentIndex]),
@@ -219,7 +222,7 @@ class _MenuPageState extends State<MenuPage> {
                             context, 'Manage Flights/Bookings'),
                       ],
                     ),
-                    const SizedBox(height: 30),
+                    const SizedBox(height: 24),
                     Row(
                       children: [
                         _buildExpandedButton(context, 'Settings'),

@@ -51,7 +51,8 @@ class SettingsPageState extends State<SettingsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: const Color(0xFF13438B),
+        backgroundColor: Colors.white,
+        foregroundColor: const Color(0xFF00A6DF),
         title: const Text('Profile'),
       ),
       body: Container(
@@ -83,8 +84,8 @@ class SettingsPageState extends State<SettingsPage> {
           ),
         ],
         currentIndex: selectedIndex,
-        selectedItemColor: Colors.white,
-        backgroundColor: const Color(0xFF10CFF9),
+        selectedItemColor: const Color(0xFF00A6DF),
+        backgroundColor: Colors.white,
         elevation: 0.0,
         onTap: _onItemTapped,
         selectedLabelStyle: const TextStyle(fontSize: 12), 

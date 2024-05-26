@@ -8,7 +8,8 @@ class HelpPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: const Color(0xFF13438B),
+        backgroundColor: Colors.white,
+        foregroundColor: const Color(0xFF00A6DF),
         title: const Text("Help"),
         
       ),

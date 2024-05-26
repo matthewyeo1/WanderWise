@@ -12,16 +12,15 @@ void main() async {
   await Firebase.initializeApp();
   runApp(const MyApp());
 }
-
+// Logging set up to monitor activity on the terminals
 void _setupLogging() {
-  // Configure the logging framework
   Logger.root.level = Level.ALL; // Set the root logger level to ALL
   Logger.root.onRecord.listen((LogRecord record) {
   print('${record.level.name}: ${record.time}: ${record.message}');
   });
 }
 
-//main widget
+// Main widget for app
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
   

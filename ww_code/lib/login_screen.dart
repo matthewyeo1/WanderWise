@@ -6,6 +6,7 @@ import 'create_account.dart';
 import 'utilities/utils.dart';
 import 'aesthetics/colour_gradient.dart';
 
+// Login page
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
   final String title;
@@ -23,14 +24,14 @@ class _MyHomePageState extends State<MyHomePage> {
   bool _isLoginButtonVisible = true;
 
   @override
-  void initState() {
+  void initState() {   // Textfields for email & password inputs
     super.initState();
     _emailFocusNode.addListener(_toggleLoginButtonVisibility);
     _passwordFocusNode.addListener(_toggleLoginButtonVisibility);
   }
 
   @override
-  void dispose() {
+  void dispose() {    // To free up resources used 
     _emailFocusNode.removeListener(_toggleLoginButtonVisibility);
     _passwordFocusNode.removeListener(_toggleLoginButtonVisibility);
     _emailController.dispose();
@@ -40,36 +41,36 @@ class _MyHomePageState extends State<MyHomePage> {
     super.dispose();
   }
 
-  void _toggleLoginButtonVisibility() {
+  void _toggleLoginButtonVisibility() {     // Login button disappears when keyboard is accessed when entering email & password 
     setState(() {
       _isLoginButtonVisible =
           !(_emailFocusNode.hasFocus || _passwordFocusNode.hasFocus);
     });
   }
 
-  Future<void> _login() async {
+  Future<void> _login() async {        // Firebase authentication triggers when email & password is entered
     String email = _emailController.text;
     String password = _passwordController.text;
     _logger.info('Attempting login with email: $email and password: $password');
 
-    try {
-      if (isValidEmail(email) && isValidPassword(password)) {
+    try {                                                              
+      if (isValidEmail(email) && isValidPassword(password)) {               // Navigate to menu page if there is a match...
         await FirebaseAuth.instance.signInWithEmailAndPassword(
           email: email,
           password: password,
         );
-        Navigator.pushReplacementNamed(context, '/menu').then((_) {
+        Navigator.pushReplacementNamed(context, '/menu').then((_) {         // ...and clear the textfields for email and password
           _emailController.clear();
           _passwordController.clear();
         });       
-      } else {
+      } else {                                                              // If mismatch and/or email & password do not satisfy required conditions 
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Invalid email or password.'),
           ),
         );
       }
-    } catch (e) {
+    } catch (e) {                                                           // Error
       _logger.warning('Failed to sign in: $e');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -189,8 +190,8 @@ class _MyHomePageState extends State<MyHomePage> {
               tooltip: 'Login',
               onPressed: _login,
               backgroundColor: Colors.transparent,
-              foregroundColor: Colors.white, // Outline color
-              elevation: 0, // Remove shadow
+              foregroundColor: Colors.white, 
+              elevation: 0, 
               child: const Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -199,7 +200,8 @@ class _MyHomePageState extends State<MyHomePage> {
                   Text(
                     'Login',
                     style: TextStyle(
-                        fontSize: 12), // Customize text size if needed
+                        fontSize: 12
+                    ), 
                   ),
                 ],
               ),

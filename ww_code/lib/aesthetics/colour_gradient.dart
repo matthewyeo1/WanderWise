@@ -1,18 +1,19 @@
 import 'package:flutter/material.dart';
 
+// Colour gradient for app background
 LinearGradient getAppGradient() {
   return const LinearGradient(
     begin: Alignment.topCenter,
     end: Alignment.bottomCenter,
     colors: [
-      Color(0xFF13438B), // Start color
+      Color(0xFF13438B), 
       Color(0xFF07569E),
       Color(0xFF0069B0),
       Color(0xFF007DC1),
       Color(0xFF0091D1),
       Color(0xFF00A6DF),
       Color(0xFF00BAED),
-      Color(0xFF10CFF9), // End color
+      Color(0xFF10CFF9), 
     ],
     stops: [
       0.0,
