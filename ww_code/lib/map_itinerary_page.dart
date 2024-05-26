@@ -44,11 +44,42 @@ class MapItineraryPageState extends State<MapItineraryPage> {
     _saveItineraryItems();
   }
 
-  void _removeItineraryItem(int index) {
-    setState(() {
-      _itineraryItems.removeAt(index);
-    });
-    _saveItineraryItems();
+  Future<bool> _showDeleteConfirmationDialog() {
+    return showDialog<bool>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Delete Itinerary'),
+          content: const Text('Delete this itinerary?'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context, false);
+              },
+              style: TextButton.styleFrom(foregroundColor:  Colors.blue),
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context, true);
+              },
+              style: TextButton.styleFrom(foregroundColor:  Colors.blue),
+              child: const Text('Delete'),
+            ),
+          ],
+        );
+      },
+    ).then((value) => value ?? false);
+  }
+  
+  Future<void> _removeItineraryItem(int index) async {
+    bool confirmDelete = await _showDeleteConfirmationDialog();
+    if (confirmDelete) {
+      setState(() {
+        _itineraryItems.removeAt(index);
+      });
+      _saveItineraryItems();
+    }
   }
 
   void _editItineraryItem(int index) {

@@ -21,6 +21,9 @@ class _MenuPageState extends State<MenuPage> {
     'images/borealis.png',
     'images/guanmingdeng.png',
     'images/torii_gates.png',
+    'images/great_wall..jpg',
+    'images/rome.jpg',
+    'images/taj_mahal.jpg',
   ];
   int _currentIndex = 0;
   late Timer _timer;
@@ -131,6 +134,7 @@ class _MenuPageState extends State<MenuPage> {
             onPressed: () {
               Navigator.of(context).pop(false);
             },
+            style: TextButton.styleFrom(foregroundColor:  Colors.blue),
             child: const Text('No'),
           ),
           TextButton(
@@ -138,6 +142,7 @@ class _MenuPageState extends State<MenuPage> {
               Navigator.of(context).pop(true);
               await _logout();
             },
+            style: TextButton.styleFrom(foregroundColor:  Colors.blue),
             child: const Text('Yes'),
           ),
         ],
