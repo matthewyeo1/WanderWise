@@ -5,6 +5,7 @@ import 'login_screen.dart';
 import 'menu_page.dart';
 import 'create_account.dart';
 import 'forgot_password.dart';
+import 'aesthetics/splashscreen.dart';
 
 void main() async {
   _setupLogging();
@@ -41,9 +42,9 @@ class MyApp extends StatelessWidget {
           headlineLarge: TextStyle(color: Colors.white),
         ), 
       ),
-      initialRoute: '/',
+      home:const SplashScreen(),
       routes: {
-        '/': (context) => const MyHomePage(title: 'Login'),
+        '/login': (context) => const MyHomePage(title: 'Login'),
         '/menu': (context) => const MenuPage(),
         '/create_account': (content) => const CreateAccountPage(),
         '/forgot_password': (context) => const ForgotPasswordPage(),

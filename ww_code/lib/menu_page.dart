@@ -6,6 +6,7 @@ import 'settings_page.dart';
 import 'help_page.dart';
 import 'aesthetics/colour_gradient.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
+import 'package:google_sign_in/google_sign_in.dart'; 
 
 // Main menu widget
 class MenuPage extends StatefulWidget {
@@ -27,6 +28,7 @@ class _MenuPageState extends State<MenuPage> {
   ];
   int _currentIndex = 0;
   late Timer _timer;
+  final GoogleSignIn _googleSignIn = GoogleSignIn(); // Create instance of GoogleSignIn
 
   @override
   void initState() {
@@ -112,6 +114,7 @@ class _MenuPageState extends State<MenuPage> {
   Future<void> _logout() async {        // Logout feature
     try {
       await firebase_auth.FirebaseAuth.instance.signOut();         // Return to login page upon successful logout (user pressed 'Yes' on dialog box and there are no errors)
+      await _googleSignIn.signOut(); // Sign out from Google
       Navigator.pushReplacementNamed(context, '/');
     } catch (e) {
       print("Logout error: $e");
@@ -134,7 +137,7 @@ class _MenuPageState extends State<MenuPage> {
             onPressed: () {
               Navigator.of(context).pop(false);
             },
-            style: TextButton.styleFrom(foregroundColor:  Colors.blue),
+            style: TextButton.styleFrom(foregroundColor: Colors.blue),
             child: const Text('No'),
           ),
           TextButton(
@@ -142,7 +145,7 @@ class _MenuPageState extends State<MenuPage> {
               Navigator.of(context).pop(true);
               await _logout();
             },
-            style: TextButton.styleFrom(foregroundColor:  Colors.blue),
+            style: TextButton.styleFrom(foregroundColor: Colors.blue),
             child: const Text('Yes'),
           ),
         ],
@@ -156,7 +159,7 @@ class _MenuPageState extends State<MenuPage> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         foregroundColor: const Color(0xFF00A6DF),
-        title: const Text('Menu'),
+        title: const Text('Home'),
         leading: IconButton(
           icon: const Icon(Icons.logout),
           onPressed: () async {
@@ -169,7 +172,7 @@ class _MenuPageState extends State<MenuPage> {
       ),
       backgroundColor: Colors.transparent,
       body: Container(
-        decoration:  BoxDecoration(
+        decoration: BoxDecoration(
           //color: Colors.white,
           gradient: getAppGradient(),
         ),
@@ -224,7 +227,7 @@ class _MenuPageState extends State<MenuPage> {
                         _buildExpandedButton(context, 'Map/Itinerary'),
                         const SizedBox(width: 16),
                         _buildExpandedButton(
-                            context, 'Manage Flights/Bookings'),
+                            context, 'Flights/Bookings'),
                       ],
                     ),
                     const SizedBox(height: 24),
@@ -245,3 +248,4 @@ class _MenuPageState extends State<MenuPage> {
     );
   }
 }
+

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'utilities/utils.dart';
-import 'aesthetics/colour_gradient.dart';
 
 class CreateAccountPage extends StatelessWidget {
   const CreateAccountPage({super.key});
@@ -69,14 +68,16 @@ class CreateAccountPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: const Color(0xFF13438B),
+        backgroundColor: Colors.white,
+        foregroundColor: const Color(0xFF00A6DF),
+        
         title: const Text('Create New Account'),
         elevation: 0,
       ),
       backgroundColor: Colors.transparent,
       body: Container(
-        decoration: BoxDecoration(
-          gradient: getAppGradient(),
+        decoration: const BoxDecoration(
+          color: Colors.white,
         ),
         child: Center(
           child: Padding(
@@ -86,63 +87,51 @@ class CreateAccountPage extends StatelessWidget {
               children: <Widget>[
                 const Text(
                   'Enter your details to create a new account:',
-                  style: TextStyle(fontSize: 18, color: Colors.white),
+                  style: TextStyle(fontSize: 18, color: Colors.black),
                 ),
                 const SizedBox(height: 16),
                 TextField(
-                  cursorColor: Colors.white,
+                  cursorColor: Colors.black,
                   controller: usernameController,
-                  style: const TextStyle(color: Colors.white),
+                  style: const TextStyle(color: Colors.black),
                   decoration: const InputDecoration(
-                    labelText: 'Username',
-                    labelStyle: TextStyle(color: Colors.white), // Label color
-                    enabledBorder: OutlineInputBorder(
-                      borderSide:
-                          BorderSide(color: Colors.white), // Border color
+                    filled: true,
+                    fillColor: Color.fromARGB(255, 208, 208, 208),
+                    hintText: 'Username',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(20)),
+                      borderSide: BorderSide.none,
                     ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide:
-                          BorderSide(color: Colors.white), // Border color
-                    ),
-                    border: OutlineInputBorder(),
                   ),
                 ),
                 const SizedBox(height: 16),
-                TextField(
-                  cursorColor: Colors.white,
+                 TextField(
+                  cursorColor: Colors.black,
                   controller: emailController,
-                  style: const TextStyle(color: Colors.white), // Text color
+                  style: const TextStyle(color: Colors.black),
                   decoration: const InputDecoration(
-                    labelText: 'Email',
-                    labelStyle: TextStyle(color: Colors.white), // Label color
-                    enabledBorder: OutlineInputBorder(
-                      borderSide:
-                          BorderSide(color: Colors.white), // Border color
+                    filled: true,
+                    fillColor: Color.fromARGB(255, 208, 208, 208),
+                    hintText: 'Email',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(20)),
+                      borderSide: BorderSide.none,
                     ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide:
-                          BorderSide(color: Colors.white), // Border color
-                    ),
-                    border: OutlineInputBorder(),
                   ),
                 ),
                 const SizedBox(height: 16),
-                TextField(
-                  cursorColor: Colors.white,
+                 TextField(
+                  cursorColor: Colors.black,
                   controller: passwordController,
-                  style: const TextStyle(color: Colors.white), // Text color
+                  style: const TextStyle(color: Colors.black),
                   decoration: const InputDecoration(
-                    labelText: 'Password',
-                    labelStyle: TextStyle(color: Colors.white), // Label color
-                    enabledBorder: OutlineInputBorder(
-                      borderSide:
-                          BorderSide(color: Colors.white), // Border color
+                    filled: true,
+                    fillColor: Color.fromARGB(255, 208, 208, 208),
+                    hintText: 'Password',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(20)),
+                      borderSide: BorderSide.none,
                     ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide:
-                          BorderSide(color: Colors.white), // Border color
-                    ),
-                    border: OutlineInputBorder(),
                   ),
                   obscureText: true,
                 ),
@@ -150,14 +139,17 @@ class CreateAccountPage extends StatelessWidget {
                 ElevatedButton(
                   onPressed: createAccount,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF00BAED),
-                    side: const BorderSide(color: Colors.white),
+                    backgroundColor: Colors.lightBlue,
+                    foregroundColor: Colors.white,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(20),
                     ),
+                    minimumSize: const Size(double.infinity, 50),
                   ),
-                  child: const Text('Create Account',
-                      style: TextStyle(color: Colors.white)),
+                  child: const Text(
+                    'Create Account',
+                    style: TextStyle(fontSize: 16),
+                  ),
                 ),
               ],
             ),

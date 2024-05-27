@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'aesthetics/colour_gradient.dart';
+
 
 bool _isValidEmail(String email) {
   return RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(email);
@@ -48,14 +48,15 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: const Color(0xFF13438B),
+        backgroundColor: Colors.white,
+        foregroundColor: const Color(0xFF00A6DF),
         title: const Text('Forgot Password'),
-        elevation: 0, // Remove the shadow
+        elevation: 0,
       ),
       backgroundColor: Colors.transparent,
       body: Container(
-        decoration: BoxDecoration(
-          gradient: getAppGradient(),
+        decoration: const BoxDecoration(
+          color: Colors.white,
         ),
         child: Center(
           child: Padding(
@@ -65,39 +66,37 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
               children: <Widget>[
                 const Text(
                   'Enter your email to reset your password:',
-                  style: TextStyle(fontSize: 18, color: Colors.white),
+                  style: TextStyle(fontSize: 18, color: Colors.black),
                 ),
                 const SizedBox(height: 16),
-                TextField(
-                  cursorColor: Colors.white,
-                  controller: emailController,
-                  style: const TextStyle(color: Colors.white), // Text color
-                  decoration: const InputDecoration(
-                    labelText: 'Email',
-                    labelStyle: TextStyle(color: Colors.white), // Label color
-                    enabledBorder: OutlineInputBorder(
-                      borderSide:
-                          BorderSide(color: Colors.white), // Border color
+                const TextField(
+                  cursorColor: Colors.black,
+                  style: TextStyle(color: Colors.black),
+                  decoration: InputDecoration(
+                    filled: true,
+                    fillColor: Color.fromARGB(255, 208, 208, 208),
+                    hintText: 'Email',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(20)),
+                      borderSide: BorderSide.none,
                     ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide:
-                          BorderSide(color: Colors.white), // Border color
-                    ),
-                    border: OutlineInputBorder(),
                   ),
                 ),
                 const SizedBox(height: 16),
                 ElevatedButton(
                   onPressed: resetPassword,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF00A6DF),
-                    side: const BorderSide(color: Colors.white),
+                    backgroundColor: Colors.lightBlue,
+                    foregroundColor: Colors.white,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(20),
                     ),
+                    minimumSize: const Size(double.infinity, 50),
                   ),
-                  child: const Text('Reset Password',
-                      style: TextStyle(color: Colors.white)),
+                  child: const Text(
+                    'Send Password Reset Password Email',
+                    style: TextStyle(fontSize: 16),
+                  ),
                 ),
               ],
             ),
