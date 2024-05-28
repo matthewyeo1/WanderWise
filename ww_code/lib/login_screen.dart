@@ -6,8 +6,6 @@ import 'forgot_password.dart';
 import 'create_account.dart';
 import 'utilities/utils.dart';
 
-
-// Login page
 class MyHomePage extends StatefulWidget {
   const MyHomePage({Key? key, required this.title}) : super(key: key);
   final String title;
@@ -24,8 +22,7 @@ class _MyHomePageState extends State<MyHomePage> {
   final FocusNode _passwordFocusNode = FocusNode();
 
   // Google Sign-In
-  final GoogleSignIn _googleSignIn =
-      GoogleSignIn(); // Create instance of GoogleSignIn
+  final GoogleSignIn _googleSignIn = GoogleSignIn(); // Create instance of GoogleSignIn
 
   @override
   void dispose() {
@@ -87,8 +84,7 @@ class _MyHomePageState extends State<MyHomePage> {
     try {
       final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
       if (googleUser != null) {
-        final GoogleSignInAuthentication googleAuth =
-            await googleUser.authentication;
+        final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
         final credential = GoogleAuthProvider.credential(
           accessToken: googleAuth.accessToken,
           idToken: googleAuth.idToken,
@@ -110,31 +106,36 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.transparent,
-      body: Container(
-        decoration: const BoxDecoration(
-          color: Colors.white,
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              const SizedBox(height: 16),
-              const Text(
-                'Sign in with your email & password:',
-                style: TextStyle(fontSize: 18, color: Colors.black),
-              ),
-              const SizedBox(height: 16),
-              Flexible(
-                child: TextField(
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Container(
+            decoration: const BoxDecoration(
+              color: Colors.white,
+            ),
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                const SizedBox(height: 16),
+                Image.asset(
+                  'images/login.png', 
+                  height: MediaQuery.of(context).size.height * 0.3, 
+                ),
+                const SizedBox(height: 32),
+                const Text(
+                  'Sign in with your email & password:',
+                  style: TextStyle(fontSize: 18, color: Colors.black),
+                ),
+                const SizedBox(height: 16),
+                TextField(
                   cursorColor: Colors.black,
                   controller: _emailController,
                   focusNode: _emailFocusNode,
-                  style: const TextStyle(color: Colors.black),
+                  style: const TextStyle(color: Colors.black45),
                   decoration: const InputDecoration(
                     filled: true,
                     fillColor: Color.fromARGB(255, 208, 208, 208),
-                    prefixIcon: Icon(Icons.person, color: Colors.black),
+                    prefixIcon: Icon(Icons.person, color: Colors.black45),
                     hintText: 'Email',
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(20)),
@@ -142,18 +143,16 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                   ),
                 ),
-              ),
-              const SizedBox(height: 16),
-              Flexible(
-                child: TextField(
+                const SizedBox(height: 16),
+                TextField(
                   cursorColor: Colors.black,
                   controller: _passwordController,
                   focusNode: _passwordFocusNode,
-                  style: const TextStyle(color: Colors.black),
+                  style: const TextStyle(color: Colors.black45),
                   decoration: const InputDecoration(
                     filled: true,
                     fillColor: Color.fromARGB(255, 208, 208, 208),
-                    prefixIcon: Icon(Icons.lock, color: Colors.black),
+                    prefixIcon: Icon(Icons.lock, color: Colors.black45),
                     hintText: 'Password',
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(20)),
@@ -162,101 +161,101 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                   obscureText: true,
                 ),
-              ),
-              const SizedBox(height: 0),
-              Align(
-                alignment: Alignment.centerLeft,
-                child: TextButton(
-                  onPressed: () => _navigateToForgotPassword(context),
-                  child: const Text(
-                    'Forgot Password?',
-                    style: TextStyle(
-                      color: Colors.lightBlue,
-                      fontWeight: FontWeight.bold
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: _login,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.lightBlue,
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  minimumSize: const Size(double.infinity, 50),
-                ),
-                child: const Text(
-                  'Log In',
-                  style: TextStyle(fontSize: 16),
-                ),
-              ),
-              const SizedBox(height: 16),
-              Row(
-                children: [
-                  Expanded(
-                    child: Divider(
-                      color: Colors.grey[700],
-                      thickness: 1,
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  const Text(
-                    'or',
-                    style: TextStyle(color: Colors.black),
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Divider(
-                      color: Colors.grey[700],
-                      thickness: 1,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
-              ElevatedButton.icon(
-                onPressed: _handleGoogleSignIn,
-                icon: Image.asset(
-                  'images/google_logo.png',
-                  height: 18, // Adjust the size as needed
-                  width: 18,
-                ),
-                label: const Text(
-                  'Continue with Google',
-                  style: TextStyle(fontSize: 16, color: Colors.black),
-                ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.white,
-                  elevation: 3,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20), // Rounded corners
-                  ),
-                ),
-              ),
-              const SizedBox(height: 16),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text(
-                    "Don't have an account?",
-                    style: TextStyle(color: Colors.black),
-                  ),
-                  TextButton(
-                    onPressed: () => _navigateToCreateAccount(context),
+                const SizedBox(height: 0),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: TextButton(
+                    onPressed: () => _navigateToForgotPassword(context),
                     child: const Text(
-                      'Sign up',
+                      'Forgot Password?',
                       style: TextStyle(
-                        color: Colors.black,
+                        color: Colors.lightBlue,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),
-                ],
-              ),
-            ],
+                ),
+                const SizedBox(height: 16),
+                ElevatedButton(
+                  onPressed: _login,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.lightBlue,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    minimumSize: const Size(double.infinity, 50),
+                  ),
+                  child: const Text(
+                    'Log In',
+                    style: TextStyle(fontSize: 16),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Divider(
+                        color: Colors.grey[700],
+                        thickness: 1,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    const Text(
+                      'or',
+                      style: TextStyle(color: Colors.black),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Divider(
+                        color: Colors.grey[700],
+                        thickness: 1,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                ElevatedButton.icon(
+                  onPressed: _handleGoogleSignIn,
+                  icon: Image.asset(
+                    'images/google_logo.png',
+                    height: 18,
+                    width: 18,
+                  ),
+                  label: const Text(
+                    'Continue with Google',
+                    style: TextStyle(fontSize: 16, color: Colors.black),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.white,
+                    elevation: 3,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20), 
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text(
+                      "Don't have an account?",
+                      style: TextStyle(color: Colors.black),
+                    ),
+                    TextButton(
+                      onPressed: () => _navigateToCreateAccount(context),
+                      child: const Text(
+                        'Sign up',
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),

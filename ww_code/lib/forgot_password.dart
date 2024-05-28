@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-
 bool _isValidEmail(String email) {
   return RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(email);
 }
@@ -15,7 +14,6 @@ class ForgotPasswordPage extends StatefulWidget {
 
 class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
   final TextEditingController emailController = TextEditingController();
-  String message = '';
 
   Future<void> resetPassword() async {
     String email = emailController.text;
@@ -49,30 +47,34 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
-        foregroundColor: const Color(0xFF00A6DF),
+        foregroundColor: Colors.lightBlue,
         title: const Text('Forgot Password'),
         elevation: 0,
       ),
-      backgroundColor: Colors.transparent,
-      body: Container(
-        decoration: const BoxDecoration(
-          color: Colors.white,
-        ),
-        child: Center(
-          child: Padding(
+      backgroundColor: Colors.white, 
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Container(
+            color: Colors.white, 
             padding: const EdgeInsets.all(16.0),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
+                Image.asset(
+                  'images/forgot_password.jpg', 
+                  height: MediaQuery.of(context).size.height * 0.4,
+                ),
+                const SizedBox(height: 16),
                 const Text(
                   'Enter your email to reset your password:',
                   style: TextStyle(fontSize: 18, color: Colors.black),
                 ),
                 const SizedBox(height: 16),
-                const TextField(
+                TextField(
+                  controller: emailController,
                   cursorColor: Colors.black,
-                  style: TextStyle(color: Colors.black),
-                  decoration: InputDecoration(
+                  style: const TextStyle(color: Colors.black),
+                  decoration: const InputDecoration(
                     filled: true,
                     fillColor: Color.fromARGB(255, 208, 208, 208),
                     hintText: 'Email',
@@ -82,7 +84,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                     ),
                   ),
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 40),
                 ElevatedButton(
                   onPressed: resetPassword,
                   style: ElevatedButton.styleFrom(
@@ -94,7 +96,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                     minimumSize: const Size(double.infinity, 50),
                   ),
                   child: const Text(
-                    'Send Password Reset Password Email',
+                    'Send Password Reset Email',
                     style: TextStyle(fontSize: 16),
                   ),
                 ),

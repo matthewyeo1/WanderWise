@@ -87,7 +87,7 @@ class _MenuPageState extends State<MenuPage> {
           onPressed: () {
             if (text == 'Map/Itinerary') {
               _navigateToMapItinerary(context);
-            } else if (text == 'Manage Flights/Bookings') {
+            } else if (text == 'Flights/Bookings') {
               _navigateToManageFlightsBookings(context);
             } else if (text == 'Settings') {
               _navigateToSettings(context);

@@ -62,7 +62,7 @@ class _SplashScreenState extends State<SplashScreen>
                         text: 'Wander',
                         style: TextStyle(
                           fontSize: 24,
-                          color: Colors.black,
+                          color: Colors.black45,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -83,7 +83,7 @@ class _SplashScreenState extends State<SplashScreen>
                   'Travel made Simple',
                   style: TextStyle(
                     fontSize: 16,
-                    color: Colors.black54,
+                    color: Colors.black,
                   ),
                 ),
               ],

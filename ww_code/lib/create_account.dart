@@ -69,22 +69,24 @@ class CreateAccountPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
-        foregroundColor: const Color(0xFF00A6DF),
-        
-        title: const Text('Create New Account'),
+        foregroundColor: Colors.lightBlue,
+        title: const Text('Sign Up'),
         elevation: 0,
       ),
-      backgroundColor: Colors.transparent,
-      body: Container(
-        decoration: const BoxDecoration(
-          color: Colors.white,
-        ),
-        child: Center(
-          child: Padding(
+      backgroundColor: Colors.white, // Set the background color to white
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Container(
+            color: Colors.white, // Ensure the container background color matches
             padding: const EdgeInsets.all(16.0),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
+                Image.asset(
+                  'images/signup.png',
+                  height: MediaQuery.of(context).size.height * 0.3,
+                ),
+                const SizedBox(height: 16),
                 const Text(
                   'Enter your details to create a new account:',
                   style: TextStyle(fontSize: 18, color: Colors.black),
@@ -105,7 +107,7 @@ class CreateAccountPage extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 16),
-                 TextField(
+                TextField(
                   cursorColor: Colors.black,
                   controller: emailController,
                   style: const TextStyle(color: Colors.black),
@@ -120,7 +122,7 @@ class CreateAccountPage extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 16),
-                 TextField(
+                TextField(
                   cursorColor: Colors.black,
                   controller: passwordController,
                   style: const TextStyle(color: Colors.black),
@@ -135,7 +137,7 @@ class CreateAccountPage extends StatelessWidget {
                   ),
                   obscureText: true,
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 40),
                 ElevatedButton(
                   onPressed: createAccount,
                   style: ElevatedButton.styleFrom(
@@ -147,10 +149,11 @@ class CreateAccountPage extends StatelessWidget {
                     minimumSize: const Size(double.infinity, 50),
                   ),
                   child: const Text(
-                    'Create Account',
-                    style: TextStyle(fontSize: 16),
+                    'Sign Up',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                 ),
+                const SizedBox(height: 20), // This space will match the background
               ],
             ),
           ),
@@ -159,3 +162,4 @@ class CreateAccountPage extends StatelessWidget {
     );
   }
 }
+
