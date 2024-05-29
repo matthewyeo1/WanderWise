@@ -42,7 +42,7 @@ class MyApp extends StatelessWidget {
           headlineLarge: TextStyle(color: Colors.white),
         ), 
       ),
-      home:const SplashScreen(),
+      home:const SplashScreen(),     // Splashscreen with animation
       routes: {
         '/login': (context) => const MyHomePage(title: 'Login'),
         '/menu': (context) => const MenuPage(),

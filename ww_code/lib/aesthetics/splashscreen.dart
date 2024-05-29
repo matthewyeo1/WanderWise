@@ -47,14 +47,12 @@ class _SplashScreenState extends State<SplashScreen>
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // Add your logo or image here
                 Image.asset(
                   'images/ww_logo.png',
                   width: 200,
                   height: 200,
                 ),
                 const SizedBox(height: 20),
-                // Combine "Wander" and "Wise" text
                 RichText(
                   text: const TextSpan(
                     children: [
@@ -78,7 +76,6 @@ class _SplashScreenState extends State<SplashScreen>
                   ),
                 ),
                 const SizedBox(height: 10),
-                // Add your slogan here
                 const Text(
                   'Travel made Simple',
                   style: TextStyle(

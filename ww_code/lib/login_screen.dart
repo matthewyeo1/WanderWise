@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:google_sign_in/google_sign_in.dart'; // Import Google Sign-In package
+import 'package:google_sign_in/google_sign_in.dart'; 
 import 'forgot_password.dart';
 import 'create_account.dart';
 import 'utilities/utils.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+
+
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({Key? key, required this.title}) : super(key: key);
@@ -20,9 +23,8 @@ class _MyHomePageState extends State<MyHomePage> {
   final Logger _logger = Logger('MyHomePage');
   final FocusNode _emailFocusNode = FocusNode();
   final FocusNode _passwordFocusNode = FocusNode();
-
-  // Google Sign-In
-  final GoogleSignIn _googleSignIn = GoogleSignIn(); // Create instance of GoogleSignIn
+  final GoogleSignIn _googleSignIn = GoogleSignIn(); 
+  
 
   @override
   void dispose() {
@@ -44,8 +46,8 @@ class _MyHomePageState extends State<MyHomePage> {
           email: email,
           password: password,
         );
-        Navigator.pushReplacementNamed(context, '/menu').then((_) {
-          _emailController.clear();
+        Navigator.pushReplacementNamed(context, '/menu').then((_) {    // Once navigated to menu page, clear text fields for email and password
+          _emailController.clear();             
           _passwordController.clear();
         });
       } else {
@@ -79,7 +81,6 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  // Google Sign-In methods
   Future<void> _handleGoogleSignIn() async {
     try {
       final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
@@ -89,7 +90,14 @@ class _MyHomePageState extends State<MyHomePage> {
           accessToken: googleAuth.accessToken,
           idToken: googleAuth.idToken,
         );
-        await FirebaseAuth.instance.signInWithCredential(credential);
+        final userCredential = await FirebaseAuth.instance.signInWithCredential(credential);
+
+        if (userCredential.user != null) {
+          await FirebaseFirestore.instance.collection('Users').doc(userCredential.user!.uid).set({
+            'Email' : userCredential.user!.email,
+            'Username' : userCredential.user!.displayName,
+          });
+        }
         Navigator.pushReplacementNamed(context, '/menu');
       }
     } catch (e) {
@@ -131,7 +139,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   cursorColor: Colors.black,
                   controller: _emailController,
                   focusNode: _emailFocusNode,
-                  style: const TextStyle(color: Colors.black45),
+                  style: const TextStyle(color: Colors.black),
                   decoration: const InputDecoration(
                     filled: true,
                     fillColor: Color.fromARGB(255, 208, 208, 208),
@@ -148,7 +156,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   cursorColor: Colors.black,
                   controller: _passwordController,
                   focusNode: _passwordFocusNode,
-                  style: const TextStyle(color: Colors.black45),
+                  style: const TextStyle(color: Colors.black),
                   decoration: const InputDecoration(
                     filled: true,
                     fillColor: Color.fromARGB(255, 208, 208, 208),

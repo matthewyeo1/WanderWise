@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'utilities/utils.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'dart:convert';
+import 'package:crypto/crypto.dart';
+
 
 class CreateAccountPage extends StatelessWidget {
   const CreateAccountPage({super.key});
@@ -51,6 +55,21 @@ class CreateAccountPage extends StatelessWidget {
           password: password,
         );
         await userCredential.user?.updateDisplayName(username);
+
+        // Password hashing for security
+        var bytes = utf8.encode(password);
+        var hashedPassword = sha256.convert(bytes).toString();
+
+        // Store user credentials in firestore
+        await FirebaseFirestore.instance
+            .collection('Users')
+            .doc(userCredential.user?.uid)
+            .set({
+              'username' : username,
+              'email' : email,
+              'password' : hashedPassword,
+            });
+
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Account created successfully!'),
@@ -88,7 +107,7 @@ class CreateAccountPage extends StatelessWidget {
                 ),
                 const SizedBox(height: 16),
                 const Text(
-                  'Enter your details to create a new account:',
+                  'Enter your details to sign up:',
                   style: TextStyle(fontSize: 18, color: Colors.black),
                 ),
                 const SizedBox(height: 16),

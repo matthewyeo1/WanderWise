@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
-bool _isValidEmail(String email) {
-  return RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(email);
-}
+import 'utilities/utils.dart';
 
 class ForgotPasswordPage extends StatefulWidget {
   const ForgotPasswordPage({super.key});
@@ -17,7 +14,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
 
   Future<void> resetPassword() async {
     String email = emailController.text;
-    if (!_isValidEmail(email)) {
+    if (!isValidEmail(email)) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text("Please enter a valid email."),
@@ -32,6 +29,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
           content: Text("Password reset email sent to $email."),
         ),
       );
+      emailController.clear();
       print('Password reset email sent to $email.');
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
