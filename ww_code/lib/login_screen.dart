@@ -99,6 +99,12 @@ class _MyHomePageState extends State<MyHomePage> {
           });
         }
         Navigator.pushReplacementNamed(context, '/menu');
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Invalid email or password.'),
+          ),
+        );
       }
     } catch (e) {
       _logger.warning('Failed to sign in with Google: $e');

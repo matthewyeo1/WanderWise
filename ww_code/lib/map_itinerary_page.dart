@@ -12,10 +12,10 @@ class MapItineraryPage extends StatefulWidget {
 }
 
 class MapItineraryPageState extends State<MapItineraryPage> {
-  final CollectionReference _itineraryCollection = FirebaseFirestore.instance.collection('Users');
+  final CollectionReference _itineraryCollection = FirebaseFirestore.instance.collection('Users');       // Update fields under each user
   int _selectedIndex = 0;
   List<Map<String, dynamic>> _itineraryItems = [];
-  late String userId; // Initialize with empty string
+  late String userId; 
 
   @override
   void initState() {
@@ -23,12 +23,14 @@ class MapItineraryPageState extends State<MapItineraryPage> {
     _initializeUserId();
   }
 
+  // To ensure that data is up-to-date across all pages
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     _loadItineraryItems();
   }
 
+  // To check if the user is indeed signed in correctly before displaying their data onto the screen
   Future<void> _initializeUserId() async {
     User? user = FirebaseAuth.instance.currentUser;
     if (user != null) {
@@ -38,30 +40,28 @@ class MapItineraryPageState extends State<MapItineraryPage> {
       await _loadItineraryItems();
     } else {
       Navigator.pushReplacementNamed(context, '/login');
-      
     }
   }
 
- Future<void> _loadItineraryItems() async {
-  try {
-    final QuerySnapshot snapshot = await FirebaseFirestore.instance
-        .collection('Users')
-        .doc(userId)
-        .collection('Itineraries')
-        .get();
+  Future<void> _loadItineraryItems() async {
+    try {
+      final QuerySnapshot snapshot = await FirebaseFirestore.instance
+          .collection('Users')
+          .doc(userId)
+          .collection('Itineraries')
+          .get();
 
-    setState(() {
-      _itineraryItems = snapshot.docs.map((doc) {
-        Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
-        data['id'] = doc.id;
-        return data;
-      }).toList();
-    });
-  } catch (e) {
-    print('Error loading itinerary items: $e');
+      setState(() {
+        _itineraryItems = snapshot.docs.map((doc) {
+          Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+          data['itinerary.id'] = doc.id;
+          return data;
+        }).toList();
+      });
+    } catch (e) {
+      print('Error loading itinerary items: $e');
+    }
   }
-}
-
 
   void _onItemTapped(int index) {
     setState(() {
@@ -69,6 +69,7 @@ class MapItineraryPageState extends State<MapItineraryPage> {
     });
   }
 
+  // Add new itinerary
   Future<void> _addItineraryItem() async {
     await Navigator.push<Map<String, dynamic>>(
       context,
@@ -91,16 +92,17 @@ class MapItineraryPageState extends State<MapItineraryPage> {
           .doc(userId)
           .collection('Itineraries')
           .add(itinerary);
-      itinerary['id'] = docRef.id;
+      itinerary['itinerary.id'] = docRef.id;
     } catch (e) {
       print('Error saving itinerary to Firestore: $e');
     }
   }
 
+  // Remove itinerary
   Future<void> _removeItineraryItem(int index) async {
     bool confirmDelete = await _showDeleteConfirmationDialog();
     if (confirmDelete) {
-      String docId = _itineraryItems[index]['id'];
+      String docId = _itineraryItems[index]['itinerary.id'];
       try {
         await _itineraryCollection
             .doc(userId)
@@ -161,10 +163,12 @@ class MapItineraryPageState extends State<MapItineraryPage> {
         ),
       ),
     );
-  }
+  } 
 
-  Future<void> _updateItineraryInFirestore(Map<String, dynamic> itinerary) async {
-    String docId = itinerary['id'];
+  // Edit data on the app and reflect the changes on firestore
+  Future<void> _updateItineraryInFirestore(
+      Map<String, dynamic> itinerary) async {
+    String docId = itinerary['itinerary.id'];
     try {
       await _itineraryCollection
           .doc(userId)
@@ -186,12 +190,8 @@ class MapItineraryPageState extends State<MapItineraryPage> {
           margin: const EdgeInsets.symmetric(vertical: 8),
           child: ListTile(
             title: Text(
-              _itineraryItems[index]['title'],
+              _itineraryItems[index]['itinerary.title'],
               style: const TextStyle(color: Colors.black),
-            ),
-            subtitle: Text(
-              _itineraryItems[index]['description'],
-              style: const TextStyle(color: Colors.black54),
             ),
             trailing: Row(
               mainAxisSize: MainAxisSize.min,
@@ -201,7 +201,7 @@ class MapItineraryPageState extends State<MapItineraryPage> {
                   onPressed: () => _editItineraryItem(index),
                 ),
                 IconButton(
-                  icon: const Icon(Icons.delete, color: Colors.red),
+                  icon: const Icon(Icons.delete, color: Colors.black45),
                   onPressed: () => _removeItineraryItem(index),
                 ),
               ],
@@ -217,8 +217,14 @@ class MapItineraryPageState extends State<MapItineraryPage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
-        title: const Text('Map/Itinerary'),
-        foregroundColor: const Color(0xFF00A6DF),
+        title: Text(
+          _selectedIndex == 0 ? 'Map' : 'Itinerary',
+          style: const TextStyle(color: Color(0xFF00A6DF)),
+        ),
+        iconTheme: const IconThemeData(
+          color: Color(
+              0xFF00A6DF),
+        ),
         actions: _selectedIndex == 1
             ? [
                 IconButton(
@@ -262,4 +268,6 @@ class MapItineraryPageState extends State<MapItineraryPage> {
     );
   }
 }
+
+
 

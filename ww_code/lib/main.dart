@@ -34,6 +34,11 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'WanderWise App',
       theme: ThemeData(
+        inputDecorationTheme: const InputDecorationTheme(
+          focusedBorder: UnderlineInputBorder(
+            borderSide: BorderSide(color: Colors.lightBlue), 
+          )
+        ),
         primarySwatch: Colors.blue,
         scaffoldBackgroundColor: Colors.transparent,
         canvasColor: Colors.transparent,

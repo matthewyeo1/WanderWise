@@ -17,6 +17,8 @@ class SettingsPageState extends State<SettingsPage> {
     });
   }
 
+  final List<String> options = ['Profile', 'Security', 'Change Display', 'Offline Sync'];
+
   Widget _getSelectedWidget(int index) {
     switch (index) {
       case 0:
@@ -53,7 +55,7 @@ class SettingsPageState extends State<SettingsPage> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         foregroundColor: const Color(0xFF00A6DF),
-        title: const Text('Profile'),
+        title: Text(options[selectedIndex]),
       ),
       body: Container(
         decoration: BoxDecoration(

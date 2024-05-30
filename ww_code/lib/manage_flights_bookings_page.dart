@@ -5,7 +5,8 @@ class ManageFlightsBookingsPage extends StatefulWidget {
   const ManageFlightsBookingsPage({super.key});
 
   @override
-  ManageFlightsBookingsPageState createState() => ManageFlightsBookingsPageState();
+  ManageFlightsBookingsPageState createState() =>
+      ManageFlightsBookingsPageState();
 }
 
 class ManageFlightsBookingsPageState extends State<ManageFlightsBookingsPage> {
@@ -33,14 +34,15 @@ class ManageFlightsBookingsPageState extends State<ManageFlightsBookingsPage> {
       onTap: () => _onItemTapped(index),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 300),
-        padding: EdgeInsets.all(_selectedIndex == index ? 12 : 8), 
+        padding: EdgeInsets.all(_selectedIndex == index ? 12 : 8),
         decoration: BoxDecoration(
-          color: _selectedIndex == index ? _selectedItemColor : Colors.transparent,
+          color:
+              _selectedIndex == index ? _selectedItemColor : Colors.transparent,
           borderRadius: BorderRadius.circular(8),
         ),
         child: Icon(
           icon,
-          color: _unselectedItemColor, 
+          color: _unselectedItemColor,
           size: 24,
         ),
       ),
@@ -52,8 +54,13 @@ class ManageFlightsBookingsPageState extends State<ManageFlightsBookingsPage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
-        foregroundColor: const Color(0xFF00A6DF),
-        title: const Text('Manage Flights/Bookings'),
+        title: Text(
+          _selectedIndex == 0 ? 'Flights' : 'Accommodation',
+          style: const TextStyle(color: Color(0xFF00A6DF)),
+        ),
+        iconTheme: const IconThemeData(
+          color: Color(0xFF00A6DF),
+        ),
       ),
       body: Container(
         decoration: BoxDecoration(
@@ -61,7 +68,9 @@ class ManageFlightsBookingsPageState extends State<ManageFlightsBookingsPage> {
         ),
         child: Center(
           child: Text(
-            _selectedIndex == 0 ? '<insert flight info>' : '<insert hotel bookings>',
+            _selectedIndex == 0
+                ? '<insert flight info>'
+                : '<insert hotel bookings>',
             style: const TextStyle(fontSize: 24, color: Colors.white),
           ),
         ),
@@ -69,17 +78,17 @@ class ManageFlightsBookingsPageState extends State<ManageFlightsBookingsPage> {
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: Icon(Icons.airplanemode_active), 
+            icon: Icon(Icons.airplanemode_active),
             label: 'Flights',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.hotel), 
+            icon: Icon(Icons.hotel),
             label: 'Accommodation',
           ),
         ],
         currentIndex: _selectedIndex,
         selectedItemColor: const Color(0xFF00A6DF),
-        backgroundColor: Colors.white, 
+        backgroundColor: Colors.white,
         elevation: 0.0,
         onTap: _onItemTapped,
       ),
