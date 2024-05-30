@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -11,6 +12,9 @@ void main() async {
   _setupLogging();
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  FirebaseFirestore.instance.settings = const Settings(
+    persistenceEnabled: true,
+  );
   runApp(const MyApp());
 }
 // Logging set up to monitor activity on the terminals

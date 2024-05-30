@@ -1,35 +1,67 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'aesthetics/colour_gradient.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'edit_itinerary_page.dart';
 
 class MapItineraryPage extends StatefulWidget {
-  const MapItineraryPage({super.key});
+  const MapItineraryPage({Key? key}) : super(key: key);
 
   @override
   MapItineraryPageState createState() => MapItineraryPageState();
 }
 
 class MapItineraryPageState extends State<MapItineraryPage> {
+  final CollectionReference _itineraryCollection = FirebaseFirestore.instance.collection('Users');
   int _selectedIndex = 0;
-  List<String> _itineraryItems = [];
+  List<Map<String, dynamic>> _itineraryItems = [];
+  late String userId; // Initialize with empty string
 
   @override
   void initState() {
     super.initState();
+    _initializeUserId();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
     _loadItineraryItems();
   }
 
-  Future<void> _loadItineraryItems() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
-      _itineraryItems = prefs.getStringList('itineraryItems') ?? [];
-    });
+  Future<void> _initializeUserId() async {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      setState(() {
+        userId = user.uid;
+      });
+      await _loadItineraryItems();
+    } else {
+      Navigator.pushReplacementNamed(context, '/login');
+      
+    }
   }
 
-  Future<void> _saveItineraryItems() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setStringList('itineraryItems', _itineraryItems);
+ Future<void> _loadItineraryItems() async {
+  try {
+    final QuerySnapshot snapshot = await FirebaseFirestore.instance
+        .collection('Users')
+        .doc(userId)
+        .collection('Itineraries')
+        .get();
+
+    setState(() {
+      _itineraryItems = snapshot.docs.map((doc) {
+        Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+        data['id'] = doc.id;
+        return data;
+      }).toList();
+    });
+  } catch (e) {
+    print('Error loading itinerary items: $e');
   }
+}
+
 
   void _onItemTapped(int index) {
     setState(() {
@@ -37,11 +69,53 @@ class MapItineraryPageState extends State<MapItineraryPage> {
     });
   }
 
-  void _addItineraryItem() {
-    setState(() {
-      _itineraryItems.add('');
-    });
-    _saveItineraryItems();
+  Future<void> _addItineraryItem() async {
+    await Navigator.push<Map<String, dynamic>>(
+      context,
+      MaterialPageRoute(
+        builder: (context) => EditItineraryPage(
+          onSave: (newItem) async {
+            await _saveItineraryToFirestore(newItem);
+            setState(() {
+              _itineraryItems.add(newItem);
+            });
+          },
+        ),
+      ),
+    );
+  }
+
+  Future<void> _saveItineraryToFirestore(Map<String, dynamic> itinerary) async {
+    try {
+      DocumentReference docRef = await _itineraryCollection
+          .doc(userId)
+          .collection('Itineraries')
+          .add(itinerary);
+      itinerary['id'] = docRef.id;
+    } catch (e) {
+      print('Error saving itinerary to Firestore: $e');
+    }
+  }
+
+  Future<void> _removeItineraryItem(int index) async {
+    bool confirmDelete = await _showDeleteConfirmationDialog();
+    if (confirmDelete) {
+      String docId = _itineraryItems[index]['id'];
+      try {
+        await _itineraryCollection
+            .doc(userId)
+            .collection('Itineraries')
+            .doc(docId)
+            .delete();
+
+        setState(() {
+          _itineraryItems.removeAt(index);
+        });
+        print('DELETED');
+      } catch (e) {
+        print('Error deleting itinerary item: $e');
+      }
+    }
   }
 
   Future<bool> _showDeleteConfirmationDialog() {
@@ -56,14 +130,14 @@ class MapItineraryPageState extends State<MapItineraryPage> {
               onPressed: () {
                 Navigator.pop(context, false);
               },
-              style: TextButton.styleFrom(foregroundColor:  Colors.blue),
+              style: TextButton.styleFrom(foregroundColor: Colors.blue),
               child: const Text('Cancel'),
             ),
             TextButton(
               onPressed: () {
                 Navigator.pop(context, true);
               },
-              style: TextButton.styleFrom(foregroundColor:  Colors.blue),
+              style: TextButton.styleFrom(foregroundColor: Colors.blue),
               child: const Text('Delete'),
             ),
           ],
@@ -71,32 +145,35 @@ class MapItineraryPageState extends State<MapItineraryPage> {
       },
     ).then((value) => value ?? false);
   }
-  
-  Future<void> _removeItineraryItem(int index) async {
-    bool confirmDelete = await _showDeleteConfirmationDialog();
-    if (confirmDelete) {
-      setState(() {
-        _itineraryItems.removeAt(index);
-      });
-      _saveItineraryItems();
-    }
-  }
 
-  void _editItineraryItem(int index) {
-    Navigator.push(
+  Future<void> _editItineraryItem(int index) async {
+    await Navigator.push<Map<String, dynamic>>(
       context,
       MaterialPageRoute(
         builder: (context) => EditItineraryPage(
-          initialText: _itineraryItems[index],
-          onSave: (newText) {
+          initialItem: _itineraryItems[index],
+          onSave: (updatedItem) async {
+            await _updateItineraryInFirestore(updatedItem);
             setState(() {
-              _itineraryItems[index] = newText;
+              _itineraryItems[index] = updatedItem;
             });
-            _saveItineraryItems();
           },
         ),
       ),
     );
+  }
+
+  Future<void> _updateItineraryInFirestore(Map<String, dynamic> itinerary) async {
+    String docId = itinerary['id'];
+    try {
+      await _itineraryCollection
+          .doc(userId)
+          .collection('Itineraries')
+          .doc(docId)
+          .update(itinerary);
+    } catch (e) {
+      print('Error updating itinerary in Firestore: $e');
+    }
   }
 
   Widget _buildItineraryList() {
@@ -109,8 +186,12 @@ class MapItineraryPageState extends State<MapItineraryPage> {
           margin: const EdgeInsets.symmetric(vertical: 8),
           child: ListTile(
             title: Text(
-              _itineraryItems[index],
+              _itineraryItems[index]['title'],
               style: const TextStyle(color: Colors.black),
+            ),
+            subtitle: Text(
+              _itineraryItems[index]['description'],
+              style: const TextStyle(color: Colors.black54),
             ),
             trailing: Row(
               mainAxisSize: MainAxisSize.min,
@@ -177,59 +258,6 @@ class MapItineraryPageState extends State<MapItineraryPage> {
         backgroundColor: Colors.white,
         elevation: 0.0,
         onTap: _onItemTapped,
-      ),
-    );
-  }
-}
-
-class EditItineraryPage extends StatelessWidget {
-  final String initialText;
-  final ValueChanged<String> onSave;
-
-  const EditItineraryPage({
-    Key? key,
-    required this.initialText,
-    required this.onSave,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    final TextEditingController controller = TextEditingController(text: initialText);
-
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: const Color(0xFF13438B),
-        title: const Text('Edit Itinerary'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.save),
-            onPressed: () {
-              onSave(controller.text);
-              Navigator.pop(context);
-            },
-          ),
-        ],
-      ),
-      body: Container(
-        color: Colors.white,
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            Expanded(
-              child: TextField(
-                controller: controller,
-                maxLines: null,
-                keyboardType: TextInputType.multiline,
-                style: const TextStyle(color: Colors.black),
-                decoration: const InputDecoration(
-                  hintText: 'Enter detailed itinerary',
-                  hintStyle: TextStyle(color: Colors.grey),
-                  border: InputBorder.none,
-                ),
-              ),
-            ),
-          ],
-        ),
       ),
     );
   }

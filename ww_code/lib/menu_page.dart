@@ -5,7 +5,8 @@ import 'manage_flights_bookings_page.dart';
 import 'settings_page.dart';
 import 'help_page.dart';
 import 'aesthetics/colour_gradient.dart';
-import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
+import 'package:firebase_auth/firebase_auth.dart';
+//import 'auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart'; 
 
 // Main menu widget
@@ -50,12 +51,20 @@ class _MenuPageState extends State<MenuPage> {
     super.dispose();
   }
 
-  void _navigateToMapItinerary(BuildContext context) {
+  Future<void> _navigateToMapItinerary(BuildContext context) async {
+  User? user = FirebaseAuth.instance.currentUser;
+  if (user != null) {
+     print('User ID: ${user.uid}');
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => const MapItineraryPage()),
     );
+    print("STILL LOGGED IN");
+  } else {
+    // Redirect to login page if user is not authenticated
+    Navigator.pushReplacementNamed(context, '/login');
   }
+}
 
   void _navigateToManageFlightsBookings(BuildContext context) {
     Navigator.push(
@@ -113,7 +122,7 @@ class _MenuPageState extends State<MenuPage> {
 
   Future<void> _logout() async {        // Logout feature
     try {
-      await firebase_auth.FirebaseAuth.instance.signOut();         // Return to login page upon successful logout (user pressed 'Yes' on dialog box and there are no errors)
+      await FirebaseAuth.instance.signOut();         // Return to login page upon successful logout (user pressed 'Yes' on dialog box and there are no errors)
       await _googleSignIn.signOut(); // Sign out from Google
       Navigator.pushReplacementNamed(context, '/');
     } catch (e) {

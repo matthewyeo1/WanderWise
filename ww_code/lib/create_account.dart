@@ -2,23 +2,39 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'utilities/utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'dart:convert';
-import 'package:crypto/crypto.dart';
 
-
-class CreateAccountPage extends StatelessWidget {
+class CreateAccountPage extends StatefulWidget {
   const CreateAccountPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final TextEditingController usernameController = TextEditingController();
-    final TextEditingController passwordController = TextEditingController();
-    final TextEditingController emailController = TextEditingController();
+  State<CreateAccountPage> createState() => _CreateAccountPageState();
+}
+
+class _CreateAccountPageState extends State<CreateAccountPage> {
+  
+    final TextEditingController _usernameController = TextEditingController();
+    final TextEditingController _passwordController = TextEditingController();
+    final TextEditingController _emailController = TextEditingController();
+    final FocusNode _usernameFocusNode = FocusNode();
+    final FocusNode _passwordFocusNode = FocusNode();
+    final FocusNode _emailFocusNode = FocusNode();
+
+
+    @override
+    void dispose() {
+       _usernameController.dispose();
+       _emailController.dispose();
+       _passwordController.dispose();
+       _usernameFocusNode.dispose();
+       _usernameFocusNode.dispose();
+       _usernameFocusNode.dispose();
+       super.dispose();
+    }
 
     Future<void> createAccount() async {
-      String username = usernameController.text;
-      String password = passwordController.text;
-      String email = emailController.text;
+      String username = _usernameController.text;
+      String password = _passwordController.text;
+      String email = _emailController.text;
 
       if (!isValidEmail(email)) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -56,10 +72,6 @@ class CreateAccountPage extends StatelessWidget {
         );
         await userCredential.user?.updateDisplayName(username);
 
-        // Password hashing for security
-        var bytes = utf8.encode(password);
-        var hashedPassword = sha256.convert(bytes).toString();
-
         // Store user credentials in firestore
         await FirebaseFirestore.instance
             .collection('Users')
@@ -67,7 +79,6 @@ class CreateAccountPage extends StatelessWidget {
             .set({
               'username' : username,
               'email' : email,
-              'password' : hashedPassword,
             });
 
         ScaffoldMessenger.of(context).showSnackBar(
@@ -85,6 +96,8 @@ class CreateAccountPage extends StatelessWidget {
       }
     }
 
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -112,8 +125,9 @@ class CreateAccountPage extends StatelessWidget {
                 ),
                 const SizedBox(height: 16),
                 TextField(
+                  focusNode: _usernameFocusNode,
                   cursorColor: Colors.black,
-                  controller: usernameController,
+                  controller: _usernameController,
                   style: const TextStyle(color: Colors.black),
                   decoration: const InputDecoration(
                     filled: true,
@@ -127,8 +141,9 @@ class CreateAccountPage extends StatelessWidget {
                 ),
                 const SizedBox(height: 16),
                 TextField(
+                  focusNode: _emailFocusNode,
                   cursorColor: Colors.black,
-                  controller: emailController,
+                  controller: _emailController,
                   style: const TextStyle(color: Colors.black),
                   decoration: const InputDecoration(
                     filled: true,
@@ -142,8 +157,9 @@ class CreateAccountPage extends StatelessWidget {
                 ),
                 const SizedBox(height: 16),
                 TextField(
+                  focusNode: _passwordFocusNode,
                   cursorColor: Colors.black,
-                  controller: passwordController,
+                  controller: _passwordController,
                   style: const TextStyle(color: Colors.black),
                   decoration: const InputDecoration(
                     filled: true,
