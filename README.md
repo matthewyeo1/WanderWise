@@ -26,6 +26,4 @@ The app provides users with an empty itinerary for users to customise. Additiona
 
 **Tech stack**: Dart (Flutter framework) with Firebase as database
 
-Link to app files: https://github.com/matthewyeo1/WanderWise.git
-
 Milestone 1 readme: [Milestone 1](https://docs.google.com/document/d/1LRuA1FyeeX3d_JOzHiaAOsS60t6KVYsPz-0rUzcvP6E/edit?usp=sharing)
