@@ -5,7 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'edit_itinerary_page.dart';
 
 class MapItineraryPage extends StatefulWidget {
-  const MapItineraryPage({Key? key}) : super(key: key);
+  const MapItineraryPage({super.key});
 
   @override
   MapItineraryPageState createState() => MapItineraryPageState();

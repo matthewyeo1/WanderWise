@@ -1,16 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:google_sign_in/google_sign_in.dart'; 
+import 'package:google_sign_in/google_sign_in.dart';
 import 'forgot_password.dart';
 import 'create_account.dart';
 import 'utilities/utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-
-
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key, required this.title}) : super(key: key);
+  const MyHomePage({super.key, required this.title});
   final String title;
 
   @override
@@ -23,8 +21,7 @@ class _MyHomePageState extends State<MyHomePage> {
   final Logger _logger = Logger('MyHomePage');
   final FocusNode _emailFocusNode = FocusNode();
   final FocusNode _passwordFocusNode = FocusNode();
-  final GoogleSignIn _googleSignIn = GoogleSignIn(); 
-  
+  final GoogleSignIn _googleSignIn = GoogleSignIn();
 
   @override
   void dispose() {
@@ -46,8 +43,9 @@ class _MyHomePageState extends State<MyHomePage> {
           email: email,
           password: password,
         );
-        Navigator.pushReplacementNamed(context, '/menu').then((_) {    // Once navigated to menu page, clear text fields for email and password
-          _emailController.clear();             
+        Navigator.pushReplacementNamed(context, '/menu').then((_) {
+          // Once navigated to menu page, clear text fields for email and password
+          _emailController.clear();
           _passwordController.clear();
         });
       } else {
@@ -85,17 +83,22 @@ class _MyHomePageState extends State<MyHomePage> {
     try {
       final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
       if (googleUser != null) {
-        final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+        final GoogleSignInAuthentication googleAuth =
+            await googleUser.authentication;
         final credential = GoogleAuthProvider.credential(
           accessToken: googleAuth.accessToken,
           idToken: googleAuth.idToken,
         );
-        final userCredential = await FirebaseAuth.instance.signInWithCredential(credential);
+        final userCredential =
+            await FirebaseAuth.instance.signInWithCredential(credential);
 
         if (userCredential.user != null) {
-          await FirebaseFirestore.instance.collection('Users').doc(userCredential.user!.uid).set({
-            'Email' : userCredential.user!.email,
-            'Username' : userCredential.user!.displayName,
+          await FirebaseFirestore.instance
+              .collection('Users')
+              .doc(userCredential.user!.uid)
+              .set({
+            'Email': userCredential.user!.email,
+            'Username': userCredential.user!.displayName,
           });
         }
         Navigator.pushReplacementNamed(context, '/menu');
@@ -132,8 +135,8 @@ class _MyHomePageState extends State<MyHomePage> {
               children: <Widget>[
                 const SizedBox(height: 16),
                 Image.asset(
-                  'images/login.png', 
-                  height: MediaQuery.of(context).size.height * 0.3, 
+                  'images/login.png',
+                  height: MediaQuery.of(context).size.height * 0.3,
                 ),
                 const SizedBox(height: 32),
                 const Text(
@@ -155,6 +158,14 @@ class _MyHomePageState extends State<MyHomePage> {
                       borderRadius: BorderRadius.all(Radius.circular(20)),
                       borderSide: BorderSide.none,
                     ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(20)),
+                      borderSide: BorderSide.none,
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(20)),
+                      borderSide: BorderSide.none,
+                    ),
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -169,6 +180,14 @@ class _MyHomePageState extends State<MyHomePage> {
                     prefixIcon: Icon(Icons.lock, color: Colors.black45),
                     hintText: 'Password',
                     border: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(20)),
+                      borderSide: BorderSide.none,
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(20)),
+                      borderSide: BorderSide.none,
+                    ),
+                    focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(20)),
                       borderSide: BorderSide.none,
                     ),
@@ -244,7 +263,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     backgroundColor: Colors.white,
                     elevation: 3,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20), 
+                      borderRadius: BorderRadius.circular(20),
                     ),
                   ),
                 ),

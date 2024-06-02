@@ -6,13 +6,12 @@ import 'settings_page.dart';
 import 'help_page.dart';
 import 'aesthetics/colour_gradient.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-//import 'auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart'; 
 
 // Main menu widget
 class MenuPage extends StatefulWidget {
   final String? username;
-  const MenuPage({Key? key, this.username}) : super(key: key);
+  const MenuPage({super.key, this.username});
 
   @override
   _MenuPageState createState() => _MenuPageState();

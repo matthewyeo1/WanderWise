@@ -5,10 +5,10 @@ class EditItineraryPage extends StatefulWidget {
   final ValueChanged<Map<String, dynamic>> onSave;
 
   const EditItineraryPage({
-    Key? key,
+    super.key,
     this.initialItem,
     required this.onSave,
-  }) : super(key: key);
+  });
 
   @override
   _EditItineraryPageState createState() => _EditItineraryPageState();
@@ -23,14 +23,14 @@ class _EditItineraryPageState extends State<EditItineraryPage> {
   @override
   void initState() {
     super.initState();
-    titleController =
-        TextEditingController(text: widget.initialItem?['itinerary.title'] ?? '');
-    startDateController =
-        TextEditingController(text: widget.initialItem?['itinerary.startDate'] ?? '');
-    endDateController =
-        TextEditingController(text: widget.initialItem?['itinerary.endDate'] ?? '');
-    descriptionController =
-        TextEditingController(text: widget.initialItem?['itinerary.description'] ?? '');
+    titleController = TextEditingController(
+        text: widget.initialItem?['itinerary.title'] ?? '');
+    startDateController = TextEditingController(
+        text: widget.initialItem?['itinerary.startDate'] ?? '');
+    endDateController = TextEditingController(
+        text: widget.initialItem?['itinerary.endDate'] ?? '');
+    descriptionController = TextEditingController(
+        text: widget.initialItem?['itinerary.description'] ?? '');
   }
 
   @override
@@ -54,13 +54,13 @@ class _EditItineraryPageState extends State<EditItineraryPage> {
         return Theme(
           data: ThemeData.light().copyWith(
             colorScheme: const ColorScheme.light(
-              primary: Colors.blue, 
+              primary: Colors.blue,
               onPrimary: Colors.white,
-              onSurface: Colors.blue, 
+              onSurface: Colors.blue,
             ),
             textButtonTheme: TextButtonThemeData(
               style: TextButton.styleFrom(
-                backgroundColor: Colors.white, 
+                backgroundColor: Colors.white,
                 foregroundColor: Colors.blue,
               ),
             ),
@@ -87,7 +87,8 @@ class _EditItineraryPageState extends State<EditItineraryPage> {
           TextButton(
             onPressed: () {
               widget.onSave({
-                'itinerary.id': widget.initialItem?['itinerary.id'] ?? DateTime.now().toString(),
+                'itinerary.id': widget.initialItem?['itinerary.id'] ??
+                    DateTime.now().toString(),
                 'itinerary.title': titleController.text,
                 'itinerary.description': descriptionController.text,
                 'itinerary.startDate': startDateController.text,
@@ -110,7 +111,7 @@ class _EditItineraryPageState extends State<EditItineraryPage> {
         child: Column(
           children: [
             TextField(
-                  cursorColor: Colors.lightBlue,
+              cursorColor: Colors.lightBlue,
               controller: titleController,
               style: const TextStyle(color: Colors.black),
               decoration: const InputDecoration(
@@ -119,8 +120,7 @@ class _EditItineraryPageState extends State<EditItineraryPage> {
               ),
             ),
             TextField(
-                  cursorColor: Colors.lightBlue,
-
+              cursorColor: Colors.lightBlue,
               controller: startDateController,
               style: const TextStyle(color: Colors.black),
               decoration: const InputDecoration(
@@ -131,8 +131,7 @@ class _EditItineraryPageState extends State<EditItineraryPage> {
               onTap: () => _selectDate(context, startDateController),
             ),
             TextField(
-                  cursorColor: Colors.lightBlue,
-
+              cursorColor: Colors.lightBlue,
               controller: endDateController,
               style: const TextStyle(color: Colors.black),
               decoration: const InputDecoration(
@@ -143,8 +142,7 @@ class _EditItineraryPageState extends State<EditItineraryPage> {
               onTap: () => _selectDate(context, endDateController),
             ),
             TextField(
-                  cursorColor: Colors.lightBlue,
-
+              cursorColor: Colors.lightBlue,
               controller: descriptionController,
               style: const TextStyle(color: Colors.black),
               maxLines: null,
