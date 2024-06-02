@@ -15,7 +15,8 @@ To develop a mobile app (WanderWise) that makes travel planning convenient for b
 3. As someone who backpacks for travel, I want to find affordable accommodation to stay as well as exciting and worthwhile attractions to visit near the places I am staying at or travelling to.  
 4. As a student preparing to plan an overseas trip, I want to be able to plan for the trip in the most time-efficient way so that I can focus on my studies in the meantime.   
 5. As a prudent spender, I want to be able to find attractions and accommodations within my budget when I travel abroad.   
-6. As someone who loves travelling, I want to be able to have all my travel details all in one app.
+6. As someone who loves travelling, I want to be able to have all my travel details all in one app.[Uploading Instructions on how to use WanderWise.txt…]()
+
 
 ### Scope of project
 WanderWise is a travel planning app that helps to ease the logistical burdens of pre-travel planning for users by ensuring all essential tasks can be done in the app.  
@@ -23,6 +24,8 @@ WanderWise is a travel planning app that helps to ease the logistical burdens of
 The app provides users with an empty itinerary for users to customise. Additionally, users are able to use OpenAI for generating itineraries and input their date and duration of travel, budget, and intention of travel, and from there, the app will recommend activities to be added into the itinerary. Furthermore, the app allows the user to upload important documents pertaining to their flight and hotel information all within the app, ensuring that all essential tasks are completed and not forgotten.
 
 
-**Tech stack**: Flutter, Dart, Firebase
+**Tech stack**: Dart (Flutter framework) with Firebase as database
+
+Link to app files: https://github.com/matthewyeo1/WanderWise.git
 
 Milestone 1 readme: [Milestone 1](https://docs.google.com/document/d/1LRuA1FyeeX3d_JOzHiaAOsS60t6KVYsPz-0rUzcvP6E/edit?usp=sharing)
