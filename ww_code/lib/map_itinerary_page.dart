@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'aesthetics/colour_gradient.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'edit_itinerary_page.dart';
+import 'map_view.dart';
 
 class MapItineraryPage extends StatefulWidget {
   const MapItineraryPage({super.key});
@@ -240,10 +241,7 @@ class MapItineraryPageState extends State<MapItineraryPage> {
         ),
         child: Center(
           child: _selectedIndex == 0
-              ? const Text(
-                  '<google maps>',
-                  style: TextStyle(fontSize: 24, color: Colors.white),
-                )
+              ? const GoogleMapWidget()
               : _buildItineraryList(),
         ),
       ),
