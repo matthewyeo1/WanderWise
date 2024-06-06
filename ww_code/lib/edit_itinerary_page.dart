@@ -116,6 +116,8 @@ class _EditItineraryPageState extends State<EditItineraryPage> {
               decoration: const InputDecoration(
                 labelText: 'Title',
                 labelStyle: TextStyle(color: Colors.grey),
+                border: InputBorder.none,
+                focusedBorder: InputBorder.none,
               ),
             ),
             TextField(
@@ -126,6 +128,8 @@ class _EditItineraryPageState extends State<EditItineraryPage> {
                 labelText: 'Start Date',
                 labelStyle: TextStyle(color: Colors.grey),
                 suffixIcon: Icon(Icons.calendar_today, color: Colors.grey),
+                border: InputBorder.none,
+                focusedBorder: InputBorder.none,
               ),
               onTap: () => _selectDate(context, startDateController),
             ),
@@ -137,6 +141,8 @@ class _EditItineraryPageState extends State<EditItineraryPage> {
                 labelText: 'End Date',
                 labelStyle: TextStyle(color: Colors.grey),
                 suffixIcon: Icon(Icons.calendar_today, color: Colors.grey),
+                border: InputBorder.none,
+                focusedBorder: InputBorder.none,
               ),
               onTap: () => _selectDate(context, endDateController),
             ),
@@ -154,50 +160,23 @@ class _EditItineraryPageState extends State<EditItineraryPage> {
                         labelText: 'Description',
                         labelStyle: TextStyle(color: Colors.grey),
                         border: InputBorder.none,
+                        focusedBorder: InputBorder.none,
                       ),
-                    ),
-                    GestureDetector(
-                      onTap: () async {
-                        // Implement paste image functionality
-                        // For simplicity, you can prompt the user to input image URLs or implement image picker
-                        // Then, you can insert the image URLs into the description text field
-                        // Example:
-                        final String? imageUrl = await showDialog<String>(
-                          context: context,
-                          builder: (context) => SimpleDialog(
-                            title: const Text('Paste Image URL'),
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.all(16.0),
-                                child: TextField(
-                                  decoration: const InputDecoration(
-                                    hintText: 'Enter image URL',
-                                  ),
-                                  onSubmitted: (value) {
-                                    Navigator.pop(context, value);
-                                  },
-                                ),
-                              ),
-                            ],
-                          ),
-                        );
-                        if (imageUrl != null && imageUrl.isNotEmpty) {
-                          setState(() {
-                            descriptionController.text +=
-                                '\n![Image]($imageUrl)';
-                          });
+                      onChanged: (value) {
+                        // Check for pasted content
+                        if (value.contains('![Image]')) {
+                          // Clear the text and insert the image at the cursor position
+                          final newText = value.replaceAll('![Image]', '');
+                          final textSelection = descriptionController.selection;
+                          final newTextWithImage =
+                              '${newText.substring(0, textSelection.start)}![Image]${newText.substring(textSelection.end)}';
+                          descriptionController.value = TextEditingValue(
+                            text: newTextWithImage,
+                            selection: TextSelection.collapsed(
+                                offset: textSelection.start + 8),
+                          );
                         }
                       },
-                      child: const Padding(
-                        padding:  EdgeInsets.all(8.0),
-                        child: Text(
-                          'Tap to paste image',
-                          style: TextStyle(
-                            color: Colors.blue,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
                     ),
                   ],
                 ),
