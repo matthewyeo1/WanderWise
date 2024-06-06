@@ -5,10 +5,10 @@ class EditItineraryPage extends StatefulWidget {
   final ValueChanged<Map<String, dynamic>> onSave;
 
   const EditItineraryPage({
-    super.key,
+    Key? key,
     this.initialItem,
     required this.onSave,
-  });
+  }) : super(key: key);
 
   @override
   _EditItineraryPageState createState() => _EditItineraryPageState();
@@ -16,9 +16,9 @@ class EditItineraryPage extends StatefulWidget {
 
 class _EditItineraryPageState extends State<EditItineraryPage> {
   late TextEditingController titleController;
-  late TextEditingController descriptionController;
   late TextEditingController startDateController;
   late TextEditingController endDateController;
+  late TextEditingController descriptionController;
 
   @override
   void initState() {
@@ -36,13 +36,12 @@ class _EditItineraryPageState extends State<EditItineraryPage> {
   @override
   void dispose() {
     titleController.dispose();
-    descriptionController.dispose();
     startDateController.dispose();
     endDateController.dispose();
+    descriptionController.dispose();
     super.dispose();
   }
 
-  // Grants access to calendar when selecting dates
   Future<void> _selectDate(
       BuildContext context, TextEditingController controller) async {
     final DateTime? picked = await showDatePicker(
@@ -141,15 +140,67 @@ class _EditItineraryPageState extends State<EditItineraryPage> {
               ),
               onTap: () => _selectDate(context, endDateController),
             ),
-            TextField(
-              cursorColor: Colors.lightBlue,
-              controller: descriptionController,
-              style: const TextStyle(color: Colors.black),
-              maxLines: null,
-              decoration: const InputDecoration(
-                labelText: 'Description',
-                labelStyle: TextStyle(color: Colors.grey),
-                border: InputBorder.none,
+            Expanded(
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    TextField(
+                      controller: descriptionController,
+                      keyboardType: TextInputType.multiline,
+                      maxLines: null,
+                      style: const TextStyle(color: Colors.black),
+                      decoration: const InputDecoration(
+                        labelText: 'Description',
+                        labelStyle: TextStyle(color: Colors.grey),
+                        border: InputBorder.none,
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () async {
+                        // Implement paste image functionality
+                        // For simplicity, you can prompt the user to input image URLs or implement image picker
+                        // Then, you can insert the image URLs into the description text field
+                        // Example:
+                        final String? imageUrl = await showDialog<String>(
+                          context: context,
+                          builder: (context) => SimpleDialog(
+                            title: const Text('Paste Image URL'),
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.all(16.0),
+                                child: TextField(
+                                  decoration: const InputDecoration(
+                                    hintText: 'Enter image URL',
+                                  ),
+                                  onSubmitted: (value) {
+                                    Navigator.pop(context, value);
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                        if (imageUrl != null && imageUrl.isNotEmpty) {
+                          setState(() {
+                            descriptionController.text +=
+                                '\n![Image]($imageUrl)';
+                          });
+                        }
+                      },
+                      child: const Padding(
+                        padding:  EdgeInsets.all(8.0),
+                        child: Text(
+                          'Tap to paste image',
+                          style: TextStyle(
+                            color: Colors.blue,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ],
