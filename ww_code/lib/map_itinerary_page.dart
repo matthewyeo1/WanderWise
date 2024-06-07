@@ -13,10 +13,10 @@ class MapItineraryPage extends StatefulWidget {
 }
 
 class MapItineraryPageState extends State<MapItineraryPage> {
-  final CollectionReference _itineraryCollection = FirebaseFirestore.instance.collection('Users');       // Update fields under each user
+  final CollectionReference _itineraryCollection = FirebaseFirestore.instance.collection('Users');
   int _selectedIndex = 0;
   List<Map<String, dynamic>> _itineraryItems = [];
-  late String userId; 
+  late String userId;
 
   @override
   void initState() {
@@ -24,14 +24,12 @@ class MapItineraryPageState extends State<MapItineraryPage> {
     _initializeUserId();
   }
 
-  // To ensure that data is up-to-date across all pages
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     _loadItineraryItems();
   }
 
-  // To check if the user is indeed signed in correctly before displaying their data onto the screen
   Future<void> _initializeUserId() async {
     User? user = FirebaseAuth.instance.currentUser;
     if (user != null) {
@@ -70,7 +68,6 @@ class MapItineraryPageState extends State<MapItineraryPage> {
     });
   }
 
-  // Add new itinerary
   Future<void> _addItineraryItem() async {
     await Navigator.push<Map<String, dynamic>>(
       context,
@@ -99,7 +96,6 @@ class MapItineraryPageState extends State<MapItineraryPage> {
     }
   }
 
-  // Remove itinerary
   Future<void> _removeItineraryItem(int index) async {
     bool confirmDelete = await _showDeleteConfirmationDialog();
     if (confirmDelete) {
@@ -164,9 +160,8 @@ class MapItineraryPageState extends State<MapItineraryPage> {
         ),
       ),
     );
-  } 
+  }
 
-  // Edit data on the app and reflect the changes on firestore
   Future<void> _updateItineraryInFirestore(
       Map<String, dynamic> itinerary) async {
     String docId = itinerary['itinerary.id'];
@@ -193,6 +188,10 @@ class MapItineraryPageState extends State<MapItineraryPage> {
             title: Text(
               _itineraryItems[index]['itinerary.title'],
               style: const TextStyle(color: Colors.black),
+            ),
+            subtitle: Text(
+              'Start Date: ${_itineraryItems[index]['itinerary.startDate']}\nEnd Date: ${_itineraryItems[index]['itinerary.endDate']}',
+              style: const TextStyle(color: Colors.black54),
             ),
             trailing: Row(
               mainAxisSize: MainAxisSize.min,
@@ -223,8 +222,7 @@ class MapItineraryPageState extends State<MapItineraryPage> {
           style: const TextStyle(color: Color(0xFF00A6DF)),
         ),
         iconTheme: const IconThemeData(
-          color: Color(
-              0xFF00A6DF),
+          color: Color(0xFF00A6DF),
         ),
         actions: _selectedIndex == 1
             ? [
@@ -266,6 +264,5 @@ class MapItineraryPageState extends State<MapItineraryPage> {
     );
   }
 }
-
 
 
