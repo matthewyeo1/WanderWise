@@ -5,10 +5,10 @@ class EditItineraryPage extends StatefulWidget {
   final ValueChanged<Map<String, dynamic>> onSave;
 
   const EditItineraryPage({
-    Key? key,
+    super.key,
     this.initialItem,
     required this.onSave,
-  }) : super(key: key);
+  });
 
   @override
   _EditItineraryPageState createState() => _EditItineraryPageState();
@@ -162,6 +162,21 @@ class _EditItineraryPageState extends State<EditItineraryPage> {
                         border: InputBorder.none,
                         focusedBorder: InputBorder.none,
                       ),
+                      onChanged: (value) {
+                        // Check for pasted content
+                        if (value.contains('![Image]')) {
+                          // Clear the text and insert the image at the cursor position
+                          final newText = value.replaceAll('![Image]', '');
+                          final textSelection = descriptionController.selection;
+                          final newTextWithImage =
+                              '${newText.substring(0, textSelection.start)}![Image]${newText.substring(textSelection.end)}';
+                          descriptionController.value = TextEditingValue(
+                            text: newTextWithImage,
+                            selection: TextSelection.collapsed(
+                                offset: textSelection.start + 8),
+                          );
+                        }
+                      },
                     ),
                   ],
                 ),
