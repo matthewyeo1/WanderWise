@@ -7,11 +7,13 @@ import 'menu_page.dart';
 import 'create_account.dart';
 import 'forgot_password.dart';
 import 'aesthetics/splashscreen.dart';
+import 'package:firebase_app_check/firebase_app_check.dart';
 
 void main() async {
   _setupLogging();
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  await FirebaseAppCheck.instance.activate();
   FirebaseFirestore.instance.settings = const Settings(persistenceEnabled: true);
   runApp(const MyApp());
 }
@@ -56,7 +58,7 @@ class MyApp extends StatelessWidget {
         '/create_account': (content) => const CreateAccountPage(),
         '/forgot_password': (context) => const ForgotPasswordPage(),
       }, 
-      debugShowCheckedModeBanner: false,
+      debugShowCheckedModeBanner: true,
     );
   }
 }

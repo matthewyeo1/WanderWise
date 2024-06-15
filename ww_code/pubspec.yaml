@@ -36,7 +36,10 @@ dependencies:
   file_picker: ^8.0.3
   firebase_storage: ^11.7.7
   gallery_picker: ^0.4.7
-
+  url_launcher: ^6.3.0
+  flutter_pdfview: ^1.0.0
+  path_provider: ^2.0.0
+  
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -48,6 +51,9 @@ dependencies:
   cloud_firestore: ^4.17.3
   crypto: ^3.0.0
   google_maps_flutter: ^2.1.1
+  firebase_app_check: ^0.2.2
+
+
   
 
 dev_dependencies:
