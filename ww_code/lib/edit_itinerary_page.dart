@@ -163,9 +163,7 @@ class _EditItineraryPageState extends State<EditItineraryPage> {
                         focusedBorder: InputBorder.none,
                       ),
                       onChanged: (value) {
-                        // Check for pasted content
                         if (value.contains('![Image]')) {
-                          // Clear the text and insert the image at the cursor position
                           final newText = value.replaceAll('![Image]', '');
                           final textSelection = descriptionController.selection;
                           final newTextWithImage =
