@@ -1,17 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'dart:io';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_pdfview/flutter_pdfview.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'aesthetics/colour_gradient.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:http/http.dart' as http;
 
 class ManageFlightsBookingsPage extends StatefulWidget {
-  const ManageFlightsBookingsPage({Key? key}) : super(key: key);
+  const ManageFlightsBookingsPage({super.key});
 
   @override
   ManageFlightsBookingsPageState createState() =>
@@ -102,7 +100,7 @@ class ManageFlightsBookingsPageState extends State<ManageFlightsBookingsPage> {
 
         setState(() {
           url = downloadUrl;
-          loadFileUrl(); // Reload files to update the list
+          loadFileUrl();
         });
 
         ScaffoldMessenger.of(context).showSnackBar(
@@ -125,79 +123,148 @@ class ManageFlightsBookingsPageState extends State<ManageFlightsBookingsPage> {
   Future<File> downloadFile(String url) async {
     final response = await http.get(Uri.parse(url));
     final dir = await getTemporaryDirectory();
-    final file = File('${dir.path}/${DateTime.now().millisecondsSinceEpoch}.pdf');
+    final file =
+        File('${dir.path}/${DateTime.now().millisecondsSinceEpoch}.pdf');
     return file.writeAsBytes(response.bodyBytes);
   }
 
-  Widget viewFile(DocumentSnapshot fileDoc) {
+  void viewFile(DocumentSnapshot fileDoc) {
     String fileUrl = fileDoc['url'];
     bool fileIsPDF = fileDoc['isPDF'];
 
     if (fileIsPDF) {
-      return FutureBuilder<File>(
-        future: downloadFile(fileUrl),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.done) {
-            if (snapshot.hasData) {
-              return Expanded(
-                child: PDFView(
-                  filePath: snapshot.data!.path,
-                  enableSwipe: true,
-                  swipeHorizontal: true,
-                  autoSpacing: false,
-                  pageFling: true,
-                  onError: (error) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text('Error loading PDF: $error'),
-                      ),
-                    );
-                  },
-                  onRender: (pages) {
-                    print('Rendered $pages pages');
-                  },
-                  onPageError: (page, error) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text('Error on page $page: $error'),
-                      ),
-                    );
-                  },
-                ),
-              );
-            } else {
-              return Center(child: Text('Error: ${snapshot.error}'));
-            }
-          } else {
-            return Center(child: CircularProgressIndicator());
-          }
-        },
+      showDialog(
+        context: context,
+        builder: (context) => Dialog(
+          child: FutureBuilder<File>(
+            future: downloadFile(fileUrl),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.done) {
+                if (snapshot.hasData) {
+                  return Scaffold(
+                    appBar: AppBar(
+                      title: const Text('PDF Document',
+                          style: TextStyle(color: Color(0xFF00A6DF))),
+                      iconTheme: const IconThemeData(color: Color(0xFF00A6DF)),
+                    ),
+                    body: PDFView(
+                      filePath: snapshot.data!.path,
+                      enableSwipe: true,
+                      swipeHorizontal: true,
+                      autoSpacing: false,
+                      pageFling: true,
+                      onError: (error) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('Error loading PDF: $error'),
+                          ),
+                        );
+                      },
+                      onRender: (pages) {
+                        print('Rendered $pages pages');
+                      },
+                      onPageError: (page, error) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('Error on page $page: $error'),
+                          ),
+                        );
+                      },
+                    ),
+                  );
+                } else {
+                  return Center(child: Text('Error: ${snapshot.error}'));
+                }
+              } else {
+                return const Center(
+                    child: CircularProgressIndicator(
+                  color: Colors.blue,
+                ));
+              }
+            },
+          ),
+        ),
       );
     } else {
-      return InkWell(
-        onTap: () async {
-          if (await canLaunch(fileUrl)) {
-            await launch(fileUrl);
-          } else {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Could not open file.'),
-              ),
-            );
-          }
-        },
-        child: Container(
-          padding: const EdgeInsets.all(16.0),
-          child:
-              const Text('View Document', style: TextStyle(color: Colors.blue)),
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Document type not supported for viewing'),
         ),
       );
     }
   }
 
+  Future<void> deleteFile(DocumentSnapshot fileDoc) async {
+    String fileUrl = fileDoc['url'];
+    String fileName = fileDoc['fileName'];
+    try {
+      await FirebaseFirestore.instance
+          .collection('Users')
+          .doc(userId)
+          .collection('Documents')
+          .doc(fileName)
+          .delete();
+      await FirebaseStorage.instance.refFromURL(fileUrl).delete();
+      loadFileUrl(); // Reload files to update the list
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Delete successful!'),
+        ),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('An error occurred: $e'),
+        ),
+      );
+    }
+  }
+
+  Future<void> confirmDelete(DocumentSnapshot fileDoc) async {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Confirm Delete'),
+        content: const Text('Are you sure you want to delete this document?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Cancel',
+                style: TextStyle(color: Color(0xFF00A6DF))),
+          ),
+          TextButton(
+            onPressed: () {
+              deleteFile(fileDoc);
+              Navigator.of(context).pop();
+            },
+            child: const Text('Delete',
+                style: TextStyle(color: Color(0xFF00A6DF))),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget buildFileList() {
     return files.isEmpty
-        ? const Center(child: Text('No files uploaded.'))
+        ? Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Image.asset(
+                  'images/upload.png',
+                  width: 250,
+                  height: 250,
+                ),
+                const SizedBox(height: 10),
+                const Text('Upload flights/bookings documents here!',
+                    style: TextStyle(
+                      fontSize: 18,
+                      color: Colors.black45,
+                    )),
+              ],
+            ),
+          )
         : ListView.builder(
             itemCount: files.length,
             itemBuilder: (context, index) {
@@ -205,12 +272,11 @@ class ManageFlightsBookingsPageState extends State<ManageFlightsBookingsPage> {
               return ListTile(
                 title: Text(fileDoc['fileName']),
                 subtitle: Text(fileDoc['isPDF'] ? 'PDF Document' : 'Document'),
-                onTap: () {
-                  setState(() {
-                    url = fileDoc['url'];
-                    isPDF = fileDoc['isPDF'];
-                  });
-                },
+                onTap: () => viewFile(fileDoc),
+                trailing: IconButton(
+                  icon: const Icon(Icons.delete, color: Colors.black45),
+                  onPressed: () => confirmDelete(fileDoc),
+                ),
               );
             },
           );
@@ -236,17 +302,15 @@ class ManageFlightsBookingsPageState extends State<ManageFlightsBookingsPage> {
         ],
       ),
       body: Container(
-        decoration: BoxDecoration(
-          gradient: getAppGradient(),
+        decoration: const BoxDecoration(
+          color: Colors.white,
         ),
         child: Column(
           children: [
             Expanded(child: buildFileList()),
-            if (url != null) viewFile(files.firstWhere((file) => file['url'] == url)),
           ],
         ),
       ),
     );
   }
 }
-

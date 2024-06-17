@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'aesthetics/colour_gradient.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'edit_itinerary_page.dart';
 import 'map_view.dart';
@@ -13,7 +12,8 @@ class MapItineraryPage extends StatefulWidget {
 }
 
 class MapItineraryPageState extends State<MapItineraryPage> {
-  final CollectionReference _itineraryCollection = FirebaseFirestore.instance.collection('Users');
+  final CollectionReference _itineraryCollection =
+      FirebaseFirestore.instance.collection('Users');
   int _selectedIndex = 0;
   List<Map<String, dynamic>> _itineraryItems = [];
   late String userId;
@@ -110,7 +110,7 @@ class MapItineraryPageState extends State<MapItineraryPage> {
         setState(() {
           _itineraryItems.removeAt(index);
         });
-        print('DELETED');
+        print('Deleted');
       } catch (e) {
         print('Error deleting itinerary item: $e');
       }
@@ -177,39 +177,62 @@ class MapItineraryPageState extends State<MapItineraryPage> {
   }
 
   Widget _buildItineraryList() {
-    return ListView.builder(
-      padding: const EdgeInsets.all(16),
-      itemCount: _itineraryItems.length,
-      itemBuilder: (context, index) {
-        return Card(
-          color: Colors.white.withOpacity(0.8),
-          margin: const EdgeInsets.symmetric(vertical: 8),
-          child: ListTile(
-            title: Text(
-              _itineraryItems[index]['itinerary.title'],
-              style: const TextStyle(color: Colors.black),
+    if (_itineraryItems.isEmpty) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Image.asset(
+              'images/itinerary.jpg',
+              width: 250,
+              height: 250,
             ),
-            subtitle: Text(
-              'Start Date: ${_itineraryItems[index]['itinerary.startDate']}\nEnd Date: ${_itineraryItems[index]['itinerary.endDate']}',
-              style: const TextStyle(color: Colors.black54),
+            const SizedBox(height: 10),
+            const Text(
+              'Create itineraries with friends!',
+              style: TextStyle(
+                fontSize: 18, // Adjust the font size as needed
+                color: Colors.black45, // Optional: make the text bold
+              ),
             ),
-            trailing: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                IconButton(
-                  icon: const Icon(Icons.edit, color: Colors.blue),
-                  onPressed: () => _editItineraryItem(index),
-                ),
-                IconButton(
-                  icon: const Icon(Icons.delete, color: Colors.black45),
-                  onPressed: () => _removeItineraryItem(index),
-                ),
-              ],
+          ],
+        ),
+      );
+    } else {
+      return ListView.builder(
+        padding: const EdgeInsets.all(16),
+        itemCount: _itineraryItems.length,
+        itemBuilder: (context, index) {
+          return Card(
+            color: Colors.white.withOpacity(0.8),
+            margin: const EdgeInsets.symmetric(vertical: 8),
+            child: ListTile(
+              title: Text(
+                _itineraryItems[index]['itinerary.title'],
+                style: const TextStyle(color: Colors.black),
+              ),
+              subtitle: Text(
+                'Start Date: ${_itineraryItems[index]['itinerary.startDate']}\nEnd Date: ${_itineraryItems[index]['itinerary.endDate']}',
+                style: const TextStyle(color: Colors.black54),
+              ),
+              trailing: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.edit, color: Colors.blue),
+                    onPressed: () => _editItineraryItem(index),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.delete, color: Colors.black45),
+                    onPressed: () => _removeItineraryItem(index),
+                  ),
+                ],
+              ),
             ),
-          ),
-        );
-      },
-    );
+          );
+        },
+      );
+    }
   }
 
   @override
@@ -234,8 +257,8 @@ class MapItineraryPageState extends State<MapItineraryPage> {
             : null,
       ),
       body: Container(
-        decoration: BoxDecoration(
-          gradient: getAppGradient(),
+        decoration: const BoxDecoration(
+          color: Colors.white,
         ),
         child: Center(
           child: _selectedIndex == 0
@@ -264,5 +287,3 @@ class MapItineraryPageState extends State<MapItineraryPage> {
     );
   }
 }
-
-

@@ -58,7 +58,7 @@ class MyApp extends StatelessWidget {
         '/create_account': (content) => const CreateAccountPage(),
         '/forgot_password': (context) => const ForgotPasswordPage(),
       }, 
-      debugShowCheckedModeBanner: true,
+      debugShowCheckedModeBanner: false,
     );
   }
 }

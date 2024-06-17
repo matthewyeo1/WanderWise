@@ -11,10 +11,10 @@ class EditItineraryPage extends StatefulWidget {
   });
 
   @override
-  _EditItineraryPageState createState() => _EditItineraryPageState();
+  EditItineraryPageState createState() => EditItineraryPageState();
 }
 
-class _EditItineraryPageState extends State<EditItineraryPage> {
+class EditItineraryPageState extends State<EditItineraryPage> {
   late TextEditingController titleController;
   late TextEditingController startDateController;
   late TextEditingController endDateController;
