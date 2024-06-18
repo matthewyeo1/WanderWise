@@ -17,12 +17,13 @@ class ManageFlightsBookingsPage extends StatefulWidget {
 }
 
 class ManageFlightsBookingsPageState extends State<ManageFlightsBookingsPage> {
-  File? file;
-  String? url;
-  String? fileName;
-  bool isPDF = false;
-  late String userId;
-  List<DocumentSnapshot> files = [];
+  File? file;                             // file to be uploaded
+  String? url;                            // url of file to be uploaded
+  String? fileName;                       // name of file to be uploaded
+  bool isPDF = false;                     
+  bool isLoading = true;
+  late String userId;                     // ID of authenticated user
+  List<DocumentSnapshot> files = [];      // document(s) of authenticated user
 
   @override
   void initState() {
@@ -44,6 +45,9 @@ class ManageFlightsBookingsPageState extends State<ManageFlightsBookingsPage> {
 
   Future<void> loadFileUrl() async {
     try {
+      setState(() {
+        isLoading = true;
+      });
       final QuerySnapshot snapshot = await FirebaseFirestore.instance
           .collection("Users")
           .doc(userId)
@@ -51,8 +55,12 @@ class ManageFlightsBookingsPageState extends State<ManageFlightsBookingsPage> {
           .get();
       setState(() {
         files = snapshot.docs;
+        isLoading = false;
       });
     } catch (e) {
+      setState(() {
+        isLoading = false;
+      });
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text("Error loading document"),
@@ -100,8 +108,10 @@ class ManageFlightsBookingsPageState extends State<ManageFlightsBookingsPage> {
 
         setState(() {
           url = downloadUrl;
-          loadFileUrl();
         });
+
+        loadFileUrl();
+
 
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -136,52 +146,71 @@ class ManageFlightsBookingsPageState extends State<ManageFlightsBookingsPage> {
       showDialog(
         context: context,
         builder: (context) => Dialog(
-          child: FutureBuilder<File>(
-            future: downloadFile(fileUrl),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.done) {
-                if (snapshot.hasData) {
-                  return Scaffold(
-                    appBar: AppBar(
-                      title: const Text('PDF Document',
-                          style: TextStyle(color: Color(0xFF00A6DF))),
-                      iconTheme: const IconThemeData(color: Color(0xFF00A6DF)),
-                    ),
-                    body: PDFView(
-                      filePath: snapshot.data!.path,
-                      enableSwipe: true,
-                      swipeHorizontal: true,
-                      autoSpacing: false,
-                      pageFling: true,
-                      onError: (error) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text('Error loading PDF: $error'),
-                          ),
-                        );
-                      },
-                      onRender: (pages) {
-                        print('Rendered $pages pages');
-                      },
-                      onPageError: (page, error) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text('Error on page $page: $error'),
-                          ),
-                        );
-                      },
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          insetPadding: const EdgeInsets.all(10),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(20),
+            child: FutureBuilder<File>(
+              future: downloadFile(fileUrl),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.done) {
+                  if (snapshot.hasData) {
+                    return Scaffold(
+                      appBar: AppBar(
+                        title: const Text(
+                          'View PDF',
+                          style: TextStyle(color: Color(0xFF00A6DF)),
+                        ),
+                        backgroundColor: Colors.white,
+                        iconTheme:
+                            const IconThemeData(color: Color(0xFF00A6DF)),
+                        leading: IconButton(
+                          icon:
+                              const Icon(Icons.close, color: Color(0xFF00A6DF)),
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                        ),
+                      ),
+                      body: PDFView(
+                        filePath: snapshot.data!.path,
+                        enableSwipe: true,
+                        swipeHorizontal: true,
+                        autoSpacing: false,
+                        pageFling: true,
+                        onError: (error) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('Error loading PDF: $error'),
+                            ),
+                          );
+                        },
+                        onRender: (pages) {
+                          print('Rendered $pages pages');
+                        },
+                        onPageError: (page, error) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('Error on page $page: $error'),
+                            ),
+                          );
+                        },
+                      ),
+                    );
+                  } else {
+                    return Center(child: Text('Error: ${snapshot.error}'));
+                  }
+                } else {
+                  return const Center(
+                    child: CircularProgressIndicator(
+                      color: Colors.blue,
                     ),
                   );
-                } else {
-                  return Center(child: Text('Error: ${snapshot.error}'));
                 }
-              } else {
-                return const Center(
-                    child: CircularProgressIndicator(
-                  color: Colors.blue,
-                ));
-              }
-            },
+              },
+            ),
           ),
         ),
       );
@@ -205,7 +234,7 @@ class ManageFlightsBookingsPageState extends State<ManageFlightsBookingsPage> {
           .doc(fileName)
           .delete();
       await FirebaseStorage.instance.refFromURL(fileUrl).delete();
-      loadFileUrl(); // Reload files to update the list
+      loadFileUrl(); 
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Delete successful!'),
@@ -246,6 +275,13 @@ class ManageFlightsBookingsPageState extends State<ManageFlightsBookingsPage> {
   }
 
   Widget buildFileList() {
+    if (isLoading) {
+      return const Center(
+        child: CircularProgressIndicator(
+          color: Colors.lightBlue,
+        ),
+      );
+    }
     return files.isEmpty
         ? Center(
             child: Column(
