@@ -293,7 +293,7 @@ class ManageFlightsBookingsPageState extends State<ManageFlightsBookingsPage> {
                   height: 250,
                 ),
                 const SizedBox(height: 10),
-                const Text('Upload flights/bookings documents here!',
+                const Text('Upload flights/bookings documents here',
                     style: TextStyle(
                       fontSize: 18,
                       color: Colors.black45,

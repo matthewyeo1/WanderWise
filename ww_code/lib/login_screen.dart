@@ -138,7 +138,12 @@ class _MyHomePageState extends State<MyHomePage> {
                   'images/login.png',
                   height: MediaQuery.of(context).size.height * 0.3,
                 ),
-                const SizedBox(height: 32),
+                const SizedBox(height: 1),
+                const Text(
+                  'Hello, Wanderer!',
+                  style: TextStyle(fontSize: 18, color: Colors.black),
+                  ),
+                const SizedBox(height: 5),
                 const Text(
                   'Sign in with your email & password:',
                   style: TextStyle(fontSize: 18, color: Colors.black),

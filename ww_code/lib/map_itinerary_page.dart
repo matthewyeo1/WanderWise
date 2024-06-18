@@ -189,10 +189,10 @@ class MapItineraryPageState extends State<MapItineraryPage> {
             ),
             const SizedBox(height: 10),
             const Text(
-              'Create itineraries with friends!',
+              'Create itineraries with friends',
               style: TextStyle(
-                fontSize: 18, // Adjust the font size as needed
-                color: Colors.black45, // Optional: make the text bold
+                fontSize: 18, 
+                color: Colors.black45, 
               ),
             ),
           ],

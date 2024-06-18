@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ww_code/aesthetics/colour_gradient.dart';
+import 'profile_page.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -22,10 +23,7 @@ class SettingsPageState extends State<SettingsPage> {
   Widget _getSelectedWidget(int index) {
     switch (index) {
       case 0:
-        return const Text(
-          "Profile",
-          style: TextStyle(fontSize: 20, color: Colors.white),
-        );
+        return const ProfilePage();
       case 1:
         return const Text(
           "Security",
@@ -42,10 +40,7 @@ class SettingsPageState extends State<SettingsPage> {
           style: TextStyle(fontSize: 20, color: Colors.white),
         );
       default:
-        return const Text(
-          "Profile",
-          style: TextStyle(fontSize: 20, color: Colors.white),
-        );
+        return const ProfilePage();
     }
   }
 
