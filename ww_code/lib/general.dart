@@ -76,7 +76,7 @@ class GeneralSettingsPage extends StatelessWidget {
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text("Delete Account"),
-          content: const Text("Are you sure you want to delete your account?"),
+          content: const Text("WARNING: Your content will be lost forever!"),
           actions: <Widget>[
             TextButton(
               onPressed: () {
@@ -89,7 +89,7 @@ class GeneralSettingsPage extends StatelessWidget {
             TextButton(
               onPressed: () async {
                 await FirebaseAuth.instance.currentUser?.delete();
-                Navigator.of(context).pushNamedAndRemoveUntil('/login', (route) => false); // Redirect to login page
+                Navigator.of(context).pushNamedAndRemoveUntil('/login', (route) => false); 
               },
               child: const Text("Yes",
               style: TextStyle(color: Color(0xFF00A6DF))

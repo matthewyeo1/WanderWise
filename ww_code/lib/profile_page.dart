@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'dart:io';
+import 'utilities/utils.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -18,6 +19,13 @@ class ProfilePageState extends State<ProfilePage> {
   String? _profileImageUrl;
   final ImagePicker _picker = ImagePicker();
   late User _user;
+
+  @override
+  void dispose() {
+    _usernameController.dispose();
+    _bioController.dispose();
+    super.dispose();
+  }
 
   @override
   void initState() {
@@ -93,7 +101,26 @@ class ProfilePageState extends State<ProfilePage> {
     }
   }
 
+  
+
   Future<void> _updateUserProfile() async {
+    if (!isValidUsername(_usernameController.text)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Username must be between 4-15 characters'),
+        ),
+      );
+      return;
+    }
+
+    if (!isValidBio(_bioController.text)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Bio must be not more than 30 characters'),
+        ),
+      );
+      return;
+    }
     try {
       await FirebaseFirestore.instance
           .collection('Users')

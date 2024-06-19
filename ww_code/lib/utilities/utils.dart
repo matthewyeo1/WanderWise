@@ -11,3 +11,6 @@ bool isValidUsername(String username) {
   return username.length >= 4 && username.length <= 15;
 }
 
+bool isValidBio(String bio) {
+  return bio.length <= 30;
+}
