@@ -219,7 +219,7 @@ class MapItineraryPageState extends State<MapItineraryPage> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   IconButton(
-                    icon: const Icon(Icons.edit, color: Colors.blue),
+                    icon: const Icon(Icons.edit, color: Color(0xFF00A6DF)),
                     onPressed: () => _editItineraryItem(index),
                   ),
                   IconButton(

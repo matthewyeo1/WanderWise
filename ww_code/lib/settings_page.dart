@@ -26,7 +26,7 @@ class SettingsPageState extends State<SettingsPage> {
       case 0:
         return const ProfilePage();
       case 1:
-        return const GeneralSettingsPage();         
+        return const GeneralSettingsPage();
       default:
         return const ProfilePage();
     }
@@ -48,25 +48,32 @@ class SettingsPageState extends State<SettingsPage> {
           child: _getSelectedWidget(selectedIndex),
         ),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profile',
+      bottomNavigationBar: Container(
+        decoration: const BoxDecoration(
+          border: Border(
+            top: BorderSide(color: Colors.grey, width: 0.25),
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.settings),
-            label: 'General',
-          ),
-        ],
-        currentIndex: selectedIndex,
-        selectedItemColor: const Color(0xFF00A6DF),
-        backgroundColor: Colors.white,
-        elevation: 0.0,
-        onTap: _onItemTapped,
-        selectedLabelStyle: const TextStyle(fontSize: 12), 
-        unselectedLabelStyle: const TextStyle(fontSize: 10), 
+        ),
+        child: BottomNavigationBar(
+          type: BottomNavigationBarType.fixed,
+          items: const <BottomNavigationBarItem>[
+            BottomNavigationBarItem(
+              icon: Icon(Icons.person),
+              label: 'Profile',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.settings),
+              label: 'General',
+            ),
+          ],
+          currentIndex: selectedIndex,
+          selectedItemColor: const Color(0xFF00A6DF),
+          backgroundColor: Colors.white,
+          elevation: 0.0,
+          onTap: _onItemTapped,
+          selectedLabelStyle: const TextStyle(fontSize: 12),
+          unselectedLabelStyle: const TextStyle(fontSize: 10),
+        ),
       ),
     );
   }

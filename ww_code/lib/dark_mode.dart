@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 
 class DarkModeSettingsPage extends StatelessWidget {
-  const DarkModeSettingsPage({Key? key}) : super(key: key);
+  const DarkModeSettingsPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Dark Mode Settings'),
+        title: const Text('Dark Mode Settings'),
       ),
-      body: Center(
+      body: const Center(
         child: Text('Dark Mode Settings Page'),
       ),
     );

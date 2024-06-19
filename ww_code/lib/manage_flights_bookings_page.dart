@@ -253,8 +253,8 @@ class ManageFlightsBookingsPageState extends State<ManageFlightsBookingsPage> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Confirm Delete'),
-        content: const Text('Are you sure you want to delete this document?'),
+        title: const Text('Delete Document'),
+        content: const Text('Delete this document?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
