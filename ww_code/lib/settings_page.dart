@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ww_code/aesthetics/colour_gradient.dart';
 import 'profile_page.dart';
+import 'general.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -18,27 +19,14 @@ class SettingsPageState extends State<SettingsPage> {
     });
   }
 
-  final List<String> options = ['Profile', 'Security', 'Change Display', 'Offline Sync'];
+  final List<String> options = ['Profile', 'General'];
 
   Widget _getSelectedWidget(int index) {
     switch (index) {
       case 0:
         return const ProfilePage();
       case 1:
-        return const Text(
-          "Security",
-          style: TextStyle(fontSize: 20, color: Colors.white),
-        );
-      case 2:
-        return const Text(
-          "Change Display",
-          style: TextStyle(fontSize: 20, color: Colors.white),
-        );
-      case 3:
-        return const Text(
-          "Offline Sync",
-          style: TextStyle(fontSize: 20, color: Colors.white),
-        );
+        return const GeneralSettingsPage();         
       default:
         return const ProfilePage();
     }
@@ -68,16 +56,8 @@ class SettingsPageState extends State<SettingsPage> {
             label: 'Profile',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.password),
-            label: 'Security',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.display_settings),
-            label: 'Change Display',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.offline_bolt),
-            label: 'Offline Sync',
+            icon: Icon(Icons.settings),
+            label: 'General',
           ),
         ],
         currentIndex: selectedIndex,

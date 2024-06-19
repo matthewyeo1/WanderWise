@@ -188,8 +188,7 @@ class ProfilePageState extends State<ProfilePage> {
               decoration: const InputDecoration(
                 filled: true,
                 fillColor: Color.fromARGB(255, 208, 208, 208),
-                prefixIcon:
-Icon(Icons.book, color: Colors.black45),
+                prefixIcon:Icon(Icons.edit_note_sharp, color: Colors.black45),
                 hintText: 'Bio',
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.all(Radius.circular(20)),
