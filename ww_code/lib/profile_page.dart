@@ -9,35 +9,47 @@ class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
 
   @override
-  _ProfilePageState createState() => _ProfilePageState();
+  ProfilePageState createState() => ProfilePageState();
 }
 
-class _ProfilePageState extends State<ProfilePage> {
+class ProfilePageState extends State<ProfilePage> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _bioController = TextEditingController();
   String? _profileImageUrl;
   final ImagePicker _picker = ImagePicker();
-  final User? _user = FirebaseAuth.instance.currentUser;
+  late User _user;
 
   @override
   void initState() {
     super.initState();
+    _user = FirebaseAuth.instance.currentUser!;
     _loadUserProfile();
   }
 
   Future<void> _loadUserProfile() async {
-    if (_user != null) {
+    try {
       DocumentSnapshot userDoc = await FirebaseFirestore.instance
           .collection('Users')
           .doc(_user.uid)
           .get();
+
       if (userDoc.exists) {
-        Map<String, dynamic>? data = userDoc.data() as Map<String, dynamic>?;
-        _usernameController.text = data?['Username'] ?? '';
-        _bioController.text = data?['bio'] ?? '';
-        _profileImageUrl = data?['profileImageUrl'];
-        setState(() {});
+        Map<String, dynamic>? data =
+            userDoc.data() as Map<String, dynamic>?;
+
+        setState(() {
+          _usernameController.text = data?['Username'] ?? '';
+          _bioController.text = data?['bio'] ?? '';
+          _profileImageUrl = data?['profileImageUrl'];
+
+        });
       }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Error loading user profile'),
+        ),
+      );
     }
   }
 
@@ -62,7 +74,7 @@ class _ProfilePageState extends State<ProfilePage> {
       final Reference storageRef = FirebaseStorage.instance
           .ref()
           .child('profile_pics')
-          .child('${_user!.uid}.jpg');
+          .child('${_user.uid}.jpg');
       await storageRef.putFile(File(image.path));
       String downloadUrl = await storageRef.getDownloadURL();
       setState(() {
@@ -82,29 +94,27 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Future<void> _updateUserProfile() async {
-    if (_user != null) {
-      try {
-        await FirebaseFirestore.instance
-            .collection('Users')
-            .doc(_user.uid)
-            .update({
-          'Username': _usernameController.text,
-          'bio': _bioController.text,
-          'profileImageUrl': _profileImageUrl,
-        });
+    try {
+      await FirebaseFirestore.instance
+          .collection('Users')
+          .doc(_user.uid)
+          .update({
+        'Username': _usernameController.text,
+        'bio': _bioController.text,
+        'profileImageUrl': _profileImageUrl,
+      });
 
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Personal information saved!'),
-          ),
-        );
-      } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Error saving information'),
-          ),
-        );
-      }
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Personal information saved!'),
+        ),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Error saving information'),
+        ),
+      );
     }
   }
 
@@ -127,8 +137,9 @@ class _ProfilePageState extends State<ProfilePage> {
                 backgroundColor: Colors.white,
                 foregroundColor: Colors.black45,
                 radius: 60,
-                child: Icon(Icons.person,
-                size: 80,
+                child: Icon(
+                  Icons.person,
+                  size: 80,
                 ),
               ),
             Row(
@@ -177,7 +188,8 @@ class _ProfilePageState extends State<ProfilePage> {
               decoration: const InputDecoration(
                 filled: true,
                 fillColor: Color.fromARGB(255, 208, 208, 208),
-                prefixIcon: Icon(Icons.book, color: Colors.black45),
+                prefixIcon:
+Icon(Icons.book, color: Colors.black45),
                 hintText: 'Bio',
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.all(Radius.circular(20)),
@@ -198,12 +210,13 @@ class _ProfilePageState extends State<ProfilePage> {
               onPressed: _updateUserProfile,
               style: ElevatedButton.styleFrom(
                 backgroundColor:
-                    Colors.white, 
+                    Colors.white,
               ),
               child: const Text(
                 'Save',
                 style: TextStyle(
-                    color: Color(0xFF00A6DF)), 
+                  color: Color(0xFF00A6DF),
+                ),
               ),
             ),
           ],

@@ -65,6 +65,38 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
+  Future<void> loadUserProfile() async {
+    final User? user = FirebaseAuth.instance.currentUser;
+
+    if (user != null) {
+      DocumentSnapshot userDoc = await FirebaseFirestore.instance
+          .collection('Users')
+          .doc(user.uid)
+          .get();
+
+      if (!userDoc.exists) {
+        await FirebaseFirestore.instance.collection('Users').doc(user.uid).set({
+          'Email': user.email,
+          'Username': user.displayName ?? user.email?.split('@')[0],
+          'profileImageUrl': null,
+          'bio': '',
+        });
+      } else {
+        Map<String, dynamic>? data = userDoc.data() as Map<String, dynamic>?;
+        if (data != null) {
+          if (data['Username'] == null || data['Username'].isEmpty) {
+            await FirebaseFirestore.instance
+                .collection('Users')
+                .doc(user.uid)
+                .update({
+              'Username': user.displayName ?? user.email?.split('@')[0],
+            });
+          }
+        }
+      }
+    }
+  }
+
   void _navigateToForgotPassword(BuildContext context) {
     Navigator.push(
       context,
@@ -91,21 +123,35 @@ class _MyHomePageState extends State<MyHomePage> {
         );
         final userCredential =
             await FirebaseAuth.instance.signInWithCredential(credential);
+        final User? user = userCredential.user;
 
-        if (userCredential.user != null) {
-          await FirebaseFirestore.instance
-              .collection('Users')
-              .doc(userCredential.user!.uid)
-              .set({
-            'Email': userCredential.user!.email,
-            'Username': userCredential.user!.displayName,
-          });
+        if (user != null) {
+          final DocumentReference userDocRef =
+              FirebaseFirestore.instance.collection('Users').doc(user.uid);
+          final DocumentSnapshot userDoc = await userDocRef.get();
+
+          if (!userDoc.exists) {
+            await userDocRef.set({
+              'Email': user.email,
+              'Username': user.displayName,
+              'profileImageUrl': null,
+              'bio': "",
+            });
+          } else {
+            Map<String, dynamic> userData =
+                userDoc.data() as Map<String, dynamic>;
+            if (userData['Username'] == null || userData['Username'].isEmpty) {
+              userData['Username'] =
+                  user.displayName ?? user.email?.split('@')[0];
+            }
+            await userDocRef.update(userData);
+          }
         }
         Navigator.pushReplacementNamed(context, '/menu');
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Invalid email or password.'),
+            content: Text('Failed to sign in with Google.'),
           ),
         );
       }
@@ -142,7 +188,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 const Text(
                   'Hello, Wanderer!',
                   style: TextStyle(fontSize: 18, color: Colors.black),
-                  ),
+                ),
                 const SizedBox(height: 5),
                 const Text(
                   'Sign in with your email & password:',
