@@ -147,6 +147,9 @@ class ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final iconColor = theme.iconTheme.color;
+
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -174,12 +177,12 @@ class ProfilePageState extends State<ProfilePage> {
               children: [
                 IconButton(
                   color: Colors.white,
-                  icon: const Icon(Icons.photo),
+                  icon:  Icon(Icons.photo, color: iconColor),
                   onPressed: _pickImage,
                 ),
                 IconButton(
                   color: Colors.white,
-                  icon: const Icon(Icons.camera_alt),
+                  icon: Icon(Icons.camera_alt, color: iconColor),
                   onPressed: _takePhoto,
                 ),
               ],

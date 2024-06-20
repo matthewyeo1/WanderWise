@@ -122,8 +122,10 @@ class MapItineraryPageState extends State<MapItineraryPage> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text('Delete Itinerary'),
-          content: const Text('Delete this itinerary?'),
+          title: const Text('Delete Itinerary',
+              style: TextStyle(color: Colors.black)),
+          content: const Text('Delete this itinerary?',
+              style: TextStyle(color: Colors.black)),
           actions: [
             TextButton(
               onPressed: () {
@@ -191,8 +193,8 @@ class MapItineraryPageState extends State<MapItineraryPage> {
             const Text(
               'Create itineraries with friends',
               style: TextStyle(
-                fontSize: 18, 
-                color: Colors.black45, 
+                fontSize: 18,
+                color: Colors.black45,
               ),
             ),
           ],
@@ -219,7 +221,7 @@ class MapItineraryPageState extends State<MapItineraryPage> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   IconButton(
-                    icon: const Icon(Icons.edit, color: Color(0xFF00A6DF)),
+                    icon: const Icon(Icons.edit, color: Colors.black45),
                     onPressed: () => _editItineraryItem(index),
                   ),
                   IconButton(
@@ -239,13 +241,8 @@ class MapItineraryPageState extends State<MapItineraryPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.white,
         title: Text(
           _selectedIndex == 0 ? 'Map' : 'Itinerary',
-          style: const TextStyle(color: Color(0xFF00A6DF)),
-        ),
-        iconTheme: const IconThemeData(
-          color: Color(0xFF00A6DF),
         ),
         actions: _selectedIndex == 1
             ? [
@@ -256,15 +253,10 @@ class MapItineraryPageState extends State<MapItineraryPage> {
               ]
             : null,
       ),
-      body: Container(
-        decoration: const BoxDecoration(
-          color: Colors.white,
-        ),
-        child: Center(
-          child: _selectedIndex == 0
-              ? const GoogleMapWidget()
-              : _buildItineraryList(),
-        ),
+      body: Center(
+        child: _selectedIndex == 0
+            ? const GoogleMapWidget()
+            : _buildItineraryList(),
       ),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
@@ -278,10 +270,6 @@ class MapItineraryPageState extends State<MapItineraryPage> {
           ),
         ],
         currentIndex: _selectedIndex,
-        selectedItemColor: const Color(0xFF00A6DF),
-        unselectedItemColor: Colors.grey,
-        backgroundColor: Colors.white,
-        elevation: 0.0,
         onTap: _onItemTapped,
       ),
     );

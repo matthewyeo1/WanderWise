@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'aesthetics/themes.dart';
+
 
 class DarkModeSettingsPage extends StatelessWidget {
-  const DarkModeSettingsPage({super.key});
+  const DarkModeSettingsPage({Key? key});
 
   @override
   Widget build(BuildContext context) {
@@ -11,23 +13,28 @@ class DarkModeSettingsPage extends StatelessWidget {
         title: const Text('Dark Mode Settings'),
       ),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Text(
-              'Dark Mode Settings Page',
-              //style: Theme.of(context).textTheme.headline4,
-            ),
-            SwitchListTile(
-              title: const Text('Enable Dark Mode'),
-              value: false,
-              onChanged: (value) {
-                //Provider.of<ThemeNotifier>(context, listen: false).toggleTheme();
-              },
-            ),
-          ],
+        child: Consumer<ThemeNotifier>(
+          builder: (context, themeNotifier, _) {
+            return Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SwitchListTile(
+                  title: Text('Enable Dark Mode',
+                  style: Theme.of(context).textTheme.headlineSmall
+                  ),
+                  value: themeNotifier.getTheme() == darkTheme,
+                  onChanged: (value) {
+                    themeNotifier.toggleTheme();
+                  },
+                  activeTrackColor: const Color.fromARGB(255, 54, 54, 114),
+                ),
+              ],
+            );
+          },
         ),
       ),
     );
   }
 }
+
+

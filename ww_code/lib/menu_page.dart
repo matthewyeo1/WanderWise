@@ -8,6 +8,7 @@ import 'aesthetics/colour_gradient.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart'; 
 
+
 // Main menu widget
 class MenuPage extends StatefulWidget {
   final String? username;
@@ -138,8 +139,12 @@ class _MenuPageState extends State<MenuPage> {
     return showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Logout'),
-        content: const Text('Are you sure you want to log out?'),
+        title: const Text('Logout',
+        style: TextStyle(color: Colors.black)
+        ),
+        content: const Text('Are you sure you want to log out?',
+        style: TextStyle(color: Colors.black)
+        ),
         actions: <Widget>[
           TextButton(
             onPressed: () {
@@ -165,8 +170,6 @@ class _MenuPageState extends State<MenuPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.white,
-        foregroundColor: const Color(0xFF00A6DF),
         title: const Text('Home'),
         leading: IconButton(
           icon: const Icon(Icons.logout),
@@ -181,7 +184,7 @@ class _MenuPageState extends State<MenuPage> {
       backgroundColor: Colors.transparent,
       body: Container(
         decoration: BoxDecoration(
-          //color: Colors.white,
+          
           gradient: getAppGradient(),
         ),
         child: Padding(
@@ -232,7 +235,8 @@ class _MenuPageState extends State<MenuPage> {
                     const SizedBox(height: 16),
                     Row(
                       children: [
-                        _buildExpandedButton(context, 'Map/Itinerary'),
+                        _buildExpandedButton(context, 'Map/Itinerary',
+                        ),
                         const SizedBox(width: 16),
                         _buildExpandedButton(
                             context, 'Flights/Bookings'),

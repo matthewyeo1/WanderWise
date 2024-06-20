@@ -152,6 +152,7 @@ class EditItineraryPageState extends State<EditItineraryPage> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     TextField(
+                      cursorColor: Colors.lightBlue,
                       controller: descriptionController,
                       keyboardType: TextInputType.multiline,
                       maxLines: null,

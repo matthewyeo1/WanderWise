@@ -27,3 +27,6 @@ LinearGradient getAppGradient() {
     ],
   );
 }
+
+//light blue: Color(0xFF00A6DF)
+//midnight blue: Color(0xFF191970)

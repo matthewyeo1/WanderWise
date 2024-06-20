@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:ww_code/aesthetics/colour_gradient.dart';
 import 'profile_page.dart';
 import 'general.dart';
 
@@ -36,18 +35,15 @@ class SettingsPageState extends State<SettingsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.white,
-        foregroundColor: const Color(0xFF00A6DF),
+        
         title: Text(options[selectedIndex]),
       ),
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: getAppGradient(),
-        ),
-        child: Center(
+      body: 
+        
+        Center(
           child: _getSelectedWidget(selectedIndex),
         ),
-      ),
+      
       bottomNavigationBar: Container(
         decoration: const BoxDecoration(
           border: Border(
@@ -67,9 +63,7 @@ class SettingsPageState extends State<SettingsPage> {
             ),
           ],
           currentIndex: selectedIndex,
-          selectedItemColor: const Color(0xFF00A6DF),
-          backgroundColor: Colors.white,
-          elevation: 0.0,
+         
           onTap: _onItemTapped,
           selectedLabelStyle: const TextStyle(fontSize: 12),
           unselectedLabelStyle: const TextStyle(fontSize: 10),
