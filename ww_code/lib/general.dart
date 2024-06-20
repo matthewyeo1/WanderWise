@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'change_email_password.dart';
+import 'change_email.dart';
+import 'change_password.dart';
 import 'dark_mode.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -18,14 +19,28 @@ class GeneralSettingsPage extends StatelessWidget {
           _buildSectionHeader('Security', theme),
           ListTile(
             title: Text(
-              'Change Email/Password',
+              'Change Email',
               style: theme.textTheme.bodySmall?.copyWith(fontSize: 20),
             ),
             onTap: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => const ChangeEmailPasswordPage(),
+                  builder: (context) => const ChangeEmailPage(),
+                ),
+              );
+            },
+          ),
+          ListTile(
+            title: Text(
+              'Change Password',
+              style: theme.textTheme.bodySmall?.copyWith(fontSize: 20),
+            ),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const ChangePasswordPage(),
                 ),
               );
             },

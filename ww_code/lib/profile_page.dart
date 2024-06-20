@@ -42,14 +42,12 @@ class ProfilePageState extends State<ProfilePage> {
           .get();
 
       if (userDoc.exists) {
-        Map<String, dynamic>? data =
-            userDoc.data() as Map<String, dynamic>?;
+        Map<String, dynamic>? data = userDoc.data() as Map<String, dynamic>?;
 
         setState(() {
           _usernameController.text = data?['username'] ?? '';
           _bioController.text = data?['bio'] ?? '';
           _profileImageUrl = data?['profileImageUrl'];
-
         });
       }
     } catch (e) {
@@ -100,8 +98,6 @@ class ProfilePageState extends State<ProfilePage> {
       );
     }
   }
-
-  
 
   Future<void> _updateUserProfile() async {
     if (!isValidUsername(_usernameController.text)) {
@@ -177,7 +173,7 @@ class ProfilePageState extends State<ProfilePage> {
               children: [
                 IconButton(
                   color: Colors.white,
-                  icon:  Icon(Icons.photo, color: iconColor),
+                  icon: Icon(Icons.photo, color: iconColor),
                   onPressed: _pickImage,
                 ),
                 IconButton(
@@ -218,7 +214,7 @@ class ProfilePageState extends State<ProfilePage> {
               decoration: const InputDecoration(
                 filled: true,
                 fillColor: Color.fromARGB(255, 208, 208, 208),
-                prefixIcon:Icon(Icons.edit_note_sharp, color: Colors.black45),
+                prefixIcon: Icon(Icons.edit_note_sharp, color: Colors.black45),
                 hintText: 'Bio',
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.all(Radius.circular(20)),
@@ -237,15 +233,8 @@ class ProfilePageState extends State<ProfilePage> {
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: _updateUserProfile,
-              style: ElevatedButton.styleFrom(
-                backgroundColor:
-                    Colors.white,
-              ),
               child: const Text(
                 'Save',
-                style: TextStyle(
-                  color: Color(0xFF00A6DF),
-                ),
               ),
             ),
           ],
