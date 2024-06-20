@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class DarkModeSettingsPage extends StatelessWidget {
   const DarkModeSettingsPage({super.key});
@@ -9,8 +10,23 @@ class DarkModeSettingsPage extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Dark Mode Settings'),
       ),
-      body: const Center(
-        child: Text('Dark Mode Settings Page'),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Text(
+              'Dark Mode Settings Page',
+              //style: Theme.of(context).textTheme.headline4,
+            ),
+            SwitchListTile(
+              title: const Text('Enable Dark Mode'),
+              value: false,
+              onChanged: (value) {
+                //Provider.of<ThemeNotifier>(context, listen: false).toggleTheme();
+              },
+            ),
+          ],
+        ),
       ),
     );
   }

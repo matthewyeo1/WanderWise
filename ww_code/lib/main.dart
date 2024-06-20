@@ -17,6 +17,7 @@ void main() async {
   FirebaseFirestore.instance.settings = const Settings(persistenceEnabled: true);
   runApp(const MyApp());
 }
+
 // Logging set up to monitor activity on the terminals
 void _setupLogging() {
   Logger.root.level = Level.ALL; // Set the root logger level to ALL

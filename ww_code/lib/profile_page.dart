@@ -46,7 +46,7 @@ class ProfilePageState extends State<ProfilePage> {
             userDoc.data() as Map<String, dynamic>?;
 
         setState(() {
-          _usernameController.text = data?['Username'] ?? '';
+          _usernameController.text = data?['username'] ?? '';
           _bioController.text = data?['bio'] ?? '';
           _profileImageUrl = data?['profileImageUrl'];
 
@@ -126,7 +126,7 @@ class ProfilePageState extends State<ProfilePage> {
           .collection('Users')
           .doc(_user.uid)
           .update({
-        'Username': _usernameController.text,
+        'username': _usernameController.text,
         'bio': _bioController.text,
         'profileImageUrl': _profileImageUrl,
       });
