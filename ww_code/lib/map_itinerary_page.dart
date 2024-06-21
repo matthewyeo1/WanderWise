@@ -111,6 +111,11 @@ class MapItineraryPageState extends State<MapItineraryPage> {
           _itineraryItems.removeAt(index);
         });
         print('Deleted');
+        ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Delete Successful!'),
+        ),
+      );
       } catch (e) {
         print('Error deleting itinerary item: $e');
       }
@@ -122,6 +127,7 @@ class MapItineraryPageState extends State<MapItineraryPage> {
       context: context,
       builder: (context) {
         return AlertDialog(
+          backgroundColor: Colors.white,
           title: const Text('Delete Itinerary',
               style: TextStyle(color: Colors.black)),
           content: const Text('Delete this itinerary?',
@@ -185,7 +191,7 @@ class MapItineraryPageState extends State<MapItineraryPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Image.asset(
-              'images/itinerary.jpg',
+              'images/itinerary2.png',
               width: 250,
               height: 250,
             ),
@@ -194,7 +200,6 @@ class MapItineraryPageState extends State<MapItineraryPage> {
               'Create itineraries with friends',
               style: TextStyle(
                 fontSize: 18,
-                color: Colors.black45,
               ),
             ),
           ],

@@ -16,6 +16,7 @@ class ThemeNotifier with ChangeNotifier {
 }
 
 final lightTheme = ThemeData(
+  brightness: Brightness.light,
   inputDecorationTheme: const InputDecorationTheme(
     focusedBorder: UnderlineInputBorder(
       borderSide: BorderSide(color: Colors.lightBlue),
@@ -52,9 +53,12 @@ final lightTheme = ThemeData(
       foregroundColor: Colors.lightBlue,
     ),
   ),
+  
+  
 );
 
 final darkTheme = ThemeData(
+  brightness: Brightness.dark,
   inputDecorationTheme: const InputDecorationTheme(
     focusedBorder: UnderlineInputBorder(
       borderSide: BorderSide(color: Colors.white),
@@ -91,4 +95,5 @@ final darkTheme = ThemeData(
       foregroundColor: Colors.white,
     ),
   ),
+ 
 );

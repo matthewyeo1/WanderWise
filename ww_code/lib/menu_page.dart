@@ -139,6 +139,7 @@ class _MenuPageState extends State<MenuPage> {
     return showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
+        backgroundColor: Colors.white,
         title: const Text('Logout',
         style: TextStyle(color: Colors.black)
         ),

@@ -77,10 +77,17 @@ class EditItineraryPageState extends State<EditItineraryPage> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final inputTextColor =
+        theme.brightness == Brightness.dark ? Colors.white : Colors.black;
+    final cursorColor =
+        theme.brightness == Brightness.dark ? Colors.white : Colors.black;
+    final saveButtonTextColor = theme.brightness == Brightness.dark
+        ? Colors.white
+        : const Color(0xFF00A6DF);
+
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.lightBlue,
         title: const Text('Edit Itinerary'),
         actions: [
           TextButton(
@@ -95,24 +102,21 @@ class EditItineraryPageState extends State<EditItineraryPage> {
               });
               Navigator.pop(context);
             },
-            child: const Text(
+            child: Text(
               'Save',
-              style: TextStyle(
-                color: Colors.lightBlue,
-              ),
+              style: TextStyle(color: saveButtonTextColor),
             ),
           ),
         ],
       ),
       body: Container(
-        color: Colors.white,
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
             TextField(
-              cursorColor: Colors.lightBlue,
+              cursorColor: cursorColor,
               controller: titleController,
-              style: const TextStyle(color: Colors.black),
+              style: TextStyle(color: inputTextColor),
               decoration: const InputDecoration(
                 labelText: 'Title',
                 labelStyle: TextStyle(color: Colors.grey),
@@ -121,9 +125,9 @@ class EditItineraryPageState extends State<EditItineraryPage> {
               ),
             ),
             TextField(
-              cursorColor: Colors.lightBlue,
+              cursorColor: cursorColor,
               controller: startDateController,
-              style: const TextStyle(color: Colors.black),
+              style: TextStyle(color: inputTextColor),
               decoration: const InputDecoration(
                 labelText: 'Start Date',
                 labelStyle: TextStyle(color: Colors.grey),
@@ -134,9 +138,9 @@ class EditItineraryPageState extends State<EditItineraryPage> {
               onTap: () => _selectDate(context, startDateController),
             ),
             TextField(
-              cursorColor: Colors.lightBlue,
+              cursorColor: cursorColor,
               controller: endDateController,
-              style: const TextStyle(color: Colors.black),
+              style: TextStyle(color: inputTextColor),
               decoration: const InputDecoration(
                 labelText: 'End Date',
                 labelStyle: TextStyle(color: Colors.grey),
@@ -152,11 +156,11 @@ class EditItineraryPageState extends State<EditItineraryPage> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     TextField(
-                      cursorColor: Colors.lightBlue,
+                      cursorColor: cursorColor,
                       controller: descriptionController,
                       keyboardType: TextInputType.multiline,
                       maxLines: null,
-                      style: const TextStyle(color: Colors.black),
+                      style: TextStyle(color: inputTextColor),
                       decoration: const InputDecoration(
                         labelText: 'Description',
                         labelStyle: TextStyle(color: Colors.grey),

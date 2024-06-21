@@ -49,17 +49,17 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
         title: const Text('Forgot Password'),
         elevation: 0,
       ),
-      backgroundColor: Colors.white, 
+      backgroundColor: Colors.white,
       body: SafeArea(
         child: SingleChildScrollView(
           child: Container(
-            color: Colors.white, 
+            color: Colors.white,
             padding: const EdgeInsets.all(16.0),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 Image.asset(
-                  'images/forgot_password.jpg', 
+                  'images/forgot_password.jpg',
                   height: MediaQuery.of(context).size.height * 0.4,
                 ),
                 const SizedBox(height: 16),
@@ -76,11 +76,12 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                     filled: true,
                     fillColor: Color.fromARGB(255, 208, 208, 208),
                     hintText: 'Email',
+                    hintStyle: TextStyle(color: Colors.black45),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(20)),
                       borderSide: BorderSide.none,
                     ),
-                     enabledBorder: OutlineInputBorder(
+                    enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(20)),
                       borderSide: BorderSide.none,
                     ),

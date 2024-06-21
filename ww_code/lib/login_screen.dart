@@ -204,7 +204,8 @@ class _MyHomePageState extends State<MyHomePage> {
                     filled: true,
                     fillColor: Color.fromARGB(255, 208, 208, 208),
                     prefixIcon: Icon(Icons.person, color: Colors.black45),
-                    hintText: 'Email',
+                    hintText: 'Email', 
+                    hintStyle: TextStyle(color: Colors.black45),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(20)),
                       borderSide: BorderSide.none,
@@ -230,6 +231,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     fillColor: Color.fromARGB(255, 208, 208, 208),
                     prefixIcon: Icon(Icons.lock, color: Colors.black45),
                     hintText: 'Password',
+                    hintStyle: TextStyle(color: Colors.black45),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(20)),
                       borderSide: BorderSide.none,

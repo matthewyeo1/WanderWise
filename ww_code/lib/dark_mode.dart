@@ -15,18 +15,22 @@ class DarkModeSettingsPage extends StatelessWidget {
       body: Center(
         child: Consumer<ThemeNotifier>(
           builder: (context, themeNotifier, _) {
+            bool isDarkMode = themeNotifier.getTheme() == darkTheme;
+
             return Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 SwitchListTile(
-                  title: Text('Enable Dark Mode',
-                  style: Theme.of(context).textTheme.headlineSmall
+                  title: Text(
+                    'Enable Dark Mode',
+                    style: Theme.of(context).textTheme.headlineSmall,
                   ),
-                  value: themeNotifier.getTheme() == darkTheme,
+                  value: isDarkMode,
                   onChanged: (value) {
                     themeNotifier.toggleTheme();
                   },
                   activeTrackColor: const Color.fromARGB(255, 54, 54, 114),
+                  activeColor: isDarkMode ? Colors.white : Colors.black45,
                 ),
               ],
             );
@@ -36,5 +40,4 @@ class DarkModeSettingsPage extends StatelessWidget {
     );
   }
 }
-
 

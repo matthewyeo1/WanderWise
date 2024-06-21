@@ -97,6 +97,7 @@ class GeneralSettingsPage extends StatelessWidget {
         final theme = Theme.of(context);
 
         return AlertDialog(
+          backgroundColor: Colors.white,
           title: Text(
             "Delete Account",
             style: theme.textTheme.bodyLarge?.copyWith(color: Colors.black),
@@ -112,7 +113,7 @@ class GeneralSettingsPage extends StatelessWidget {
               },
               child: const Text(
                 "No",
-                style: TextStyle(color: Color(0xFF00A6DF)),
+                style: TextStyle(color: Colors.black),
               ),
             ),
             TextButton(
@@ -123,7 +124,7 @@ class GeneralSettingsPage extends StatelessWidget {
               },
               child: const Text(
                 "Yes",
-                style: TextStyle(color: Color(0xFF00A6DF)),
+                style: TextStyle(color: Colors.red),
               ),
             ),
           ],

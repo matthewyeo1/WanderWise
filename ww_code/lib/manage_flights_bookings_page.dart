@@ -17,13 +17,13 @@ class ManageFlightsBookingsPage extends StatefulWidget {
 }
 
 class ManageFlightsBookingsPageState extends State<ManageFlightsBookingsPage> {
-  File? file;                             // file to be uploaded
-  String? url;                            // url of file to be uploaded
-  String? fileName;                       // name of file to be uploaded
-  bool isPDF = false;                     
+  File? file; // file to be uploaded
+  String? url; // url of file to be uploaded
+  String? fileName; // name of file to be uploaded
+  bool isPDF = false;
   bool isLoading = true;
-  late String userId;                     // ID of authenticated user
-  List<DocumentSnapshot> files = [];      // document(s) of authenticated user
+  late String userId; // ID of authenticated user
+  List<DocumentSnapshot> files = []; // document(s) of authenticated user
 
   @override
   void initState() {
@@ -111,7 +111,6 @@ class ManageFlightsBookingsPageState extends State<ManageFlightsBookingsPage> {
         });
 
         loadFileUrl();
-
 
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -234,7 +233,7 @@ class ManageFlightsBookingsPageState extends State<ManageFlightsBookingsPage> {
           .doc(fileName)
           .delete();
       await FirebaseStorage.instance.refFromURL(fileUrl).delete();
-      loadFileUrl(); 
+      loadFileUrl();
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Delete successful!'),
@@ -253,12 +252,11 @@ class ManageFlightsBookingsPageState extends State<ManageFlightsBookingsPage> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
+        backgroundColor: Colors.white,
         title: const Text('Delete Document',
-        style: TextStyle(color: Colors.black)
-        ),
+            style: TextStyle(color: Colors.black)),
         content: const Text('Delete this document?',
-        style: TextStyle(color: Colors.black)
-        ),
+            style: TextStyle(color: Colors.black)),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
@@ -300,7 +298,6 @@ class ManageFlightsBookingsPageState extends State<ManageFlightsBookingsPage> {
                 const Text('Upload flights/bookings documents here',
                     style: TextStyle(
                       fontSize: 18,
-                      color: Colors.black45,
                     )),
               ],
             ),
@@ -314,7 +311,7 @@ class ManageFlightsBookingsPageState extends State<ManageFlightsBookingsPage> {
                 subtitle: Text(fileDoc['isPDF'] ? 'PDF Document' : 'Document'),
                 onTap: () => viewFile(fileDoc),
                 trailing: IconButton(
-                  icon: const Icon(Icons.delete, color: Colors.black45),
+                  icon: const Icon(Icons.delete),
                   onPressed: () => confirmDelete(fileDoc),
                 ),
               );
@@ -326,13 +323,8 @@ class ManageFlightsBookingsPageState extends State<ManageFlightsBookingsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.white,
         title: const Text(
           'Upload Docs',
-          style: TextStyle(color: Color(0xFF00A6DF)),
-        ),
-        iconTheme: const IconThemeData(
-          color: Color(0xFF00A6DF),
         ),
         actions: [
           IconButton(
@@ -341,15 +333,10 @@ class ManageFlightsBookingsPageState extends State<ManageFlightsBookingsPage> {
           ),
         ],
       ),
-      body: Container(
-        decoration: const BoxDecoration(
-          color: Colors.white,
-        ),
-        child: Column(
-          children: [
-            Expanded(child: buildFileList()),
-          ],
-        ),
+      body: Column(
+        children: [
+          Expanded(child: buildFileList()),
+        ],
       ),
     );
   }
