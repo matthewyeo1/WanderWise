@@ -45,7 +45,7 @@ class ProfilePageState extends State<ProfilePage> {
         Map<String, dynamic>? data = userDoc.data() as Map<String, dynamic>?;
 
         setState(() {
-          _usernameController.text = data?['username'] ?? '';
+          _usernameController.text = data?['Username'] ?? '';
           _bioController.text = data?['bio'] ?? '';
           _profileImageUrl = data?['profileImageUrl'];
         });
@@ -122,7 +122,7 @@ class ProfilePageState extends State<ProfilePage> {
           .collection('Users')
           .doc(_user.uid)
           .update({
-        'username': _usernameController.text,
+        'Username': _usernameController.text,
         'bio': _bioController.text,
         'profileImageUrl': _profileImageUrl,
       });
@@ -192,6 +192,8 @@ class ProfilePageState extends State<ProfilePage> {
                 fillColor: Color.fromARGB(255, 208, 208, 208),
                 prefixIcon: Icon(Icons.person, color: Colors.black45),
                 hintText: 'Username',
+                    hintStyle: TextStyle(color: Colors.black45),
+
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.all(Radius.circular(20)),
                   borderSide: BorderSide.none,
@@ -216,6 +218,8 @@ class ProfilePageState extends State<ProfilePage> {
                 fillColor: Color.fromARGB(255, 208, 208, 208),
                 prefixIcon: Icon(Icons.edit_note_sharp, color: Colors.black45),
                 hintText: 'Bio',
+                    hintStyle: TextStyle(color: Colors.black45),
+
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.all(Radius.circular(20)),
                   borderSide: BorderSide.none,

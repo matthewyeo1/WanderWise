@@ -46,9 +46,6 @@ class SettingsPageState extends State<SettingsPage> {
       
       bottomNavigationBar: Container(
         decoration: const BoxDecoration(
-          border: Border(
-            top: BorderSide(color: Colors.grey, width: 0.25),
-          ),
         ),
         child: BottomNavigationBar(
           type: BottomNavigationBarType.fixed,
@@ -62,8 +59,7 @@ class SettingsPageState extends State<SettingsPage> {
               label: 'General',
             ),
           ],
-          currentIndex: selectedIndex,
-         
+          currentIndex: selectedIndex,    
           onTap: _onItemTapped,
           selectedLabelStyle: const TextStyle(fontSize: 12),
           unselectedLabelStyle: const TextStyle(fontSize: 10),
