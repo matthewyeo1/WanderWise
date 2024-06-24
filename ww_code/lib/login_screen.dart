@@ -32,6 +32,7 @@ class _MyHomePageState extends State<MyHomePage> {
     super.dispose();
   }
 
+  // Normal login function
   Future<void> _login() async {
     String email = _emailController.text;
     String password = _passwordController.text;
@@ -65,6 +66,7 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
+  // Retrieve user's info to display in app
   Future<void> loadUserProfile() async {
     final User? user = FirebaseAuth.instance.currentUser;
 
@@ -111,6 +113,7 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
+  // Google signin function
   Future<void> _handleGoogleSignIn() async {
     try {
       final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
@@ -124,7 +127,8 @@ class _MyHomePageState extends State<MyHomePage> {
         final userCredential =
             await FirebaseAuth.instance.signInWithCredential(credential);
         final User? user = userCredential.user;
-
+        
+        // Retrieve user's info to display in app
         if (user != null) {
           final DocumentReference userDocRef =
               FirebaseFirestore.instance.collection('Users').doc(user.uid);

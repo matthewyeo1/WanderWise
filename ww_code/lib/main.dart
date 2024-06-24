@@ -37,7 +37,7 @@ void main() async {
     }
   }
 
-  // Run the app
+  // Run app and set the theme according to the user's preference
   runApp(
     ChangeNotifierProvider(
       create: (context) => themeNotifier,
