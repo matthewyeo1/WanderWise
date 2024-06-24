@@ -3,9 +3,15 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ThemeNotifier with ChangeNotifier {
   late bool isDarkMode;
-  final String? userId;
+  late String? userId;
 
   ThemeNotifier(this.userId, {required this.isDarkMode});
+
+   void initialize(String userId, bool isDarkMode) {
+    this.userId = userId;
+    this.isDarkMode = isDarkMode;
+    notifyListeners();
+  }
 
   ThemeData getTheme() => isDarkMode ? darkTheme : lightTheme;
 
@@ -18,7 +24,7 @@ class ThemeNotifier with ChangeNotifier {
   Future<void> _saveThemePreference() async {
     if (userId != null) {
       await FirebaseFirestore.instance.collection('Users').doc(userId).set({
-        'isDarkMode': isDarkMode,
+        'darkMode': isDarkMode,
       }, SetOptions(merge: true));
     }
   }
@@ -30,7 +36,7 @@ class ThemeNotifier with ChangeNotifier {
           .doc(userId)
           .get();
       if (doc.exists && doc.data() != null) {
-        bool? darkMode = doc['isDarkMode'];
+        bool? darkMode = doc['darkMode'];
         if (darkMode != null) {
           isDarkMode = darkMode;
           notifyListeners();

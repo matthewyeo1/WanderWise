@@ -1,0 +1,20 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Allow users to read, write, and delete their own user documents
+    match /Users/{userId} {
+      allow read, write, delete: if request.auth.uid != null && request.auth.uid == userId;
+    }
+
+    // Allow users to read, write, and delete documents in their Itineraries subcollection
+    match /Users/{userId}/Itineraries/{document} {
+      allow read, write, delete: if request.auth.uid == userId;
+    }
+
+    // Allow users to read, write, and delete documents in their Documents subcollection
+    match /Users/{userId}/Documents/{document} {
+      allow read, write, delete: if request.auth.uid == userId;
+    }
+  }
+}

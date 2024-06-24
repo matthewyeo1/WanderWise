@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'aesthetics/splashscreen.dart';
@@ -10,14 +9,15 @@ import 'login_screen.dart';
 import 'menu_page.dart';
 import 'create_account.dart';
 import 'forgot_password.dart';
+//import 'package:firebase_app_check/firebase_app_check.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
+
   // Initialize Firebase and Firebase App Check
   await Firebase.initializeApp();
-  await FirebaseAppCheck.instance.activate();
-  
+  //await FirebaseAppCheck.instance.activate();
+
   // Set Firestore settings
   FirebaseFirestore.instance.settings = const Settings(persistenceEnabled: true);
 
@@ -30,6 +30,7 @@ void main() async {
   // Load theme preference if user is authenticated
   if (user != null) {
     try {
+      themeNotifier.userId = user.uid;
       await themeNotifier.loadThemePreference();
     } catch (e) {
       // Handle any errors that occur during theme preference loading
@@ -45,6 +46,7 @@ void main() async {
     ),
   );
 }
+
 
 
 class MyApp extends StatelessWidget {

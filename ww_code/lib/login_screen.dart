@@ -6,6 +6,9 @@ import 'forgot_password.dart';
 import 'create_account.dart';
 import 'utilities/utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'aesthetics/themes.dart';
+import 'package:provider/provider.dart';
+
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
@@ -40,10 +43,24 @@ class _MyHomePageState extends State<MyHomePage> {
 
     try {
       if (isValidEmail(email) && isValidPassword(password)) {
-        await FirebaseAuth.instance.signInWithEmailAndPassword(
+        UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
           email: email,
           password: password,
         );
+
+        String userId = userCredential.user!.uid;
+      bool isDarkMode = false;
+      try {
+        DocumentSnapshot doc = await FirebaseFirestore.instance.collection('Users').doc(userId).get();
+        if (doc.exists && doc['darkMode'] != null) {
+          isDarkMode = doc['darkMode'];
+        }
+      } catch (e) {
+        print('Error loading theme preference: $e');
+      }
+
+      Provider.of<ThemeNotifier>(context, listen: false).initialize(userId, isDarkMode);
+
         Navigator.pushReplacementNamed(context, '/menu').then((_) {
           // Once navigated to menu page, clear text fields for email and password
           _emailController.clear();
@@ -172,7 +189,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.transparent,
+      backgroundColor: Colors.white,
       body: SafeArea(
         child: SingleChildScrollView(
           child: Container(
