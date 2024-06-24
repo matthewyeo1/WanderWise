@@ -5,6 +5,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'utilities/utils.dart';
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(

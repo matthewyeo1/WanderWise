@@ -1,17 +1,15 @@
 import 'package:flutter/material.dart';
-import 'dart:async';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+
 import 'map_itinerary_page.dart';
 import 'manage_flights_bookings_page.dart';
 import 'settings_page.dart';
 import 'help_page.dart';
-import 'aesthetics/colour_gradient.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:google_sign_in/google_sign_in.dart'; 
 
-
-// Main menu widget
 class MenuPage extends StatefulWidget {
   final String? username;
+
   const MenuPage({super.key, this.username});
 
   @override
@@ -19,111 +17,134 @@ class MenuPage extends StatefulWidget {
 }
 
 class _MenuPageState extends State<MenuPage> {
-  final List<String> _images = [          // Montage of images for menu page graphics
+  final List<String> _images = [
     'images/borealis.png',
-    'images/guanmingdeng.png',
     'images/torii_gates.png',
-    'images/great_wall..jpg',
     'images/rome.jpg',
     'images/taj_mahal.jpg',
+    'images/zhongguo.jpg',
+    'images/santorini.jpg',
   ];
-  int _currentIndex = 0;
-  late Timer _timer;
-  final GoogleSignIn _googleSignIn = GoogleSignIn(); // Create instance of GoogleSignIn
+  int currentIndex = 0;
+
+  final GoogleSignIn _googleSignIn = GoogleSignIn();
 
   @override
-  void initState() {
-    super.initState();
-    _startImageCycle();
-  }
-
-  void _startImageCycle() {              // Animated switcher clock
-    _timer = Timer.periodic(const Duration(seconds: 5), (timer) {
-      setState(() {
-        _currentIndex = (_currentIndex + 1) % _images.length;
-      });
-    });
-  }
-
-  @override
-  void dispose() {               // Free resources used
-    _timer.cancel();
-    super.dispose();
-  }
-
-  Future<void> _navigateToMapItinerary(BuildContext context) async {
-  User? user = FirebaseAuth.instance.currentUser;
-  if (user != null) {
-     print('User ID: ${user.uid}');
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => const MapItineraryPage()),
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Stack(
+        children: [
+          PageView.builder(
+            itemCount: _images.length,
+            onPageChanged: (index) {
+              setState(() {
+                currentIndex = index;
+              });
+            },
+            itemBuilder: (context, index) {
+              return Image.asset(
+                _images[index],
+                fit: BoxFit.cover,
+                width: double.infinity,
+                height: double.infinity,
+              );
+            },
+          ),
+          Positioned(
+            top: 24.0,
+            left: 16.0,
+            child: Column(
+              children: [
+                IconButton(
+                  icon: const Icon(Icons.logout, color: Colors.white),
+                  onPressed: () async {
+                    bool? confirmed = await _showLogoutConfirmationDialog();
+                    if (confirmed != null && confirmed) {
+                      await _logout();
+                    }
+                  },
+                ),
+                const Text(
+                  'Logout',
+                  style: TextStyle(color: Colors.white, fontSize: 12),
+                ),
+              ],
+            ),
+          ),
+          const Center(
+            child: Text('Where will you go next?',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  shadows: [
+                    Shadow(
+                      offset: Offset(2.0, 2.0),
+                      blurRadius: 3.0,
+                      color: Color.fromARGB(255, 0, 0, 0),
+                    ),
+                  ],
+                )),
+          ),
+          Positioned(
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: Container(
+              color: Colors.black.withOpacity(0.4),
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      _buildExpandedButton(
+                          context, 'Map/Itinerary', _navigateToMapItinerary),
+                      _buildExpandedButton(context, 'Flights/Bookings',
+                          _navigateToManageFlightsBookings),
+                    ],
+                  ),
+                  const SizedBox(height: 24),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      _buildExpandedButton(
+                          context, 'Settings', _navigateToSettings),
+                      _buildExpandedButton(context, 'Help', _navigateToHelp),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
     );
-    print("STILL LOGGED IN");
-  } else {
-    // Redirect to login page if user is not authenticated
-    Navigator.pushReplacementNamed(context, '/login');
-  }
-}
-
-  void _navigateToManageFlightsBookings(BuildContext context) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-          builder: (context) => const ManageFlightsBookingsPage()),
-    );
   }
 
-  void _navigateToSettings(BuildContext context) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => const SettingsPage()),
-    );
-  }
-
-  void _navigateToHelp(BuildContext context) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => const HelpPage()),
-    );
-  }
-
-  Widget _buildExpandedButton(BuildContext context, String text) {     // Frontend for buttons & montage; above is the corresponding backend 
+  Widget _buildExpandedButton(
+      BuildContext context, String text, VoidCallback onPressed) {
     return Expanded(
-      child: SizedBox(
-        height: 100,
-        child: ElevatedButton(
-          onPressed: () {
-            if (text == 'Map/Itinerary') {
-              _navigateToMapItinerary(context);
-            } else if (text == 'Flights/Bookings') {
-              _navigateToManageFlightsBookings(context);
-            } else if (text == 'Settings') {
-              _navigateToSettings(context);
-            } else if (text == 'Help') {
-              _navigateToHelp(context);
-            }
-          },
-          style: ElevatedButton.styleFrom(
-            padding: const EdgeInsets.all(16),
-            backgroundColor: Colors.white,
-            foregroundColor: const Color(0xFF00A6DF),
-            side: const BorderSide(color: Colors.lightBlue),
-          ),
-          child: Text(
-            text,
-            textAlign: TextAlign.center,
-            style: const TextStyle(fontSize: 18),
-          ),
+      child: TextButton(
+        onPressed: onPressed,
+        style: TextButton.styleFrom(
+          foregroundColor: Colors.white,
+          backgroundColor: Colors.transparent,
+          padding: EdgeInsets.zero,
+        ),
+        child: Text(
+          text,
+          textAlign: TextAlign.center,
+          style: const TextStyle(fontSize: 18),
         ),
       ),
     );
   }
 
-  Future<void> _logout() async {        // Logout feature
+  Future<void> _logout() async {
     try {
-      await FirebaseAuth.instance.signOut();         // Return to login page upon successful logout (user pressed 'Yes' on dialog box and there are no errors)
-      await _googleSignIn.signOut(); // Sign out from Google
+      await FirebaseAuth.instance.signOut();
+      await _googleSignIn.signOut();
       Navigator.pushReplacementNamed(context, '/');
     } catch (e) {
       print("Logout error: $e");
@@ -135,17 +156,14 @@ class _MenuPageState extends State<MenuPage> {
     }
   }
 
-  Future<bool?> _showLogoutConfirmationDialog() async {           // Logout confirmation dialog widget
+  Future<bool?> _showLogoutConfirmationDialog() async {
     return showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: Colors.white,
-        title: const Text('Logout',
-        style: TextStyle(color: Colors.black)
-        ),
+        title: const Text('Logout', style: TextStyle(color: Colors.black)),
         content: const Text('Are you sure you want to log out?',
-        style: TextStyle(color: Colors.black)
-        ),
+            style: TextStyle(color: Colors.black)),
         actions: <Widget>[
           TextButton(
             onPressed: () {
@@ -167,98 +185,25 @@ class _MenuPageState extends State<MenuPage> {
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Home'),
-        leading: IconButton(
-          icon: const Icon(Icons.logout),
-          onPressed: () async {
-            bool? confirmed = await _showLogoutConfirmationDialog();       // Navigate to login page 
-            if (confirmed != null && confirmed) {
-              await _logout();
-            }
-          },
-        ),
-      ),
-      backgroundColor: Colors.transparent,
-      body: Container(
-        decoration: BoxDecoration(
-          
-          gradient: getAppGradient(),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: <Widget>[
-              Expanded(
-                child: Column(
-                  children: [
-                    Expanded(
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(20),
-                        child: AnimatedSwitcher(                                 // Animated montage
-                          duration: const Duration(seconds: 1),
-                          child: Stack(
-                            key: ValueKey<String>(_images[_currentIndex]),
-                            children: [
-                              Image.asset(
-                                _images[_currentIndex],
-                                fit: BoxFit.cover,
-                                width: double.infinity,
-                                height: double.infinity,
-                              ),
-                              const Align(
-                                alignment: Alignment.center,
-                                child: Text(
-                                  'Where will you go next?',
-                                  style: TextStyle(
-                                    fontSize: 24,
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                    shadows: [
-                                      Shadow(
-                                        offset: Offset(1.0, 1.0),
-                                        blurRadius: 2.0,
-                                        color: Colors.black,
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    Row(
-                      children: [
-                        _buildExpandedButton(context, 'Map/Itinerary',
-                        ),
-                        const SizedBox(width: 16),
-                        _buildExpandedButton(
-                            context, 'Flights/Bookings'),
-                      ],
-                    ),
-                    const SizedBox(height: 24),
-                    Row(
-                      children: [
-                        _buildExpandedButton(context, 'Settings'),
-                        const SizedBox(width: 16),
-                        _buildExpandedButton(context, 'Help'),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
+  void _navigateToMapItinerary() {
+    Navigator.push(context,
+        MaterialPageRoute(builder: (context) => const MapItineraryPage()));
+  }
+
+  void _navigateToManageFlightsBookings() {
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => const ManageFlightsBookingsPage()));
+  }
+
+  void _navigateToSettings() {
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => const SettingsPage()));
+  }
+
+  void _navigateToHelp() {
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => const HelpPage()));
   }
 }
-

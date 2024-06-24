@@ -1,19 +1,49 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ThemeNotifier with ChangeNotifier {
-  bool isDarkMode = false;
+  late bool isDarkMode;
+  final String? userId;
+
+  ThemeNotifier(this.userId, {required this.isDarkMode});
 
   ThemeData getTheme() => isDarkMode ? darkTheme : lightTheme;
 
-  void toggleTheme() {
+  Future<void> toggleTheme() async {
     isDarkMode = !isDarkMode;
     notifyListeners();
+    await _saveThemePreference();
+  }
+
+  Future<void> _saveThemePreference() async {
+    if (userId != null) {
+      await FirebaseFirestore.instance.collection('Users').doc(userId).set({
+        'isDarkMode': isDarkMode,
+      }, SetOptions(merge: true));
+    }
+  }
+
+  Future<void> loadThemePreference() async {
+    if (userId != null) {
+      DocumentSnapshot doc = await FirebaseFirestore.instance
+          .collection('Users')
+          .doc(userId)
+          .get();
+      if (doc.exists && doc.data() != null) {
+        bool? darkMode = doc['isDarkMode'];
+        if (darkMode != null) {
+          isDarkMode = darkMode;
+          notifyListeners();
+        }
+      }
+    }
   }
 
   ThemeMode getThemeMode() {
     return isDarkMode ? ThemeMode.dark : ThemeMode.light;
   }
 }
+
 
 final lightTheme = ThemeData(
   brightness: Brightness.light,
@@ -53,8 +83,6 @@ final lightTheme = ThemeData(
       foregroundColor: Colors.lightBlue,
     ),
   ),
-  
-  
 );
 
 final darkTheme = ThemeData(
@@ -95,5 +123,4 @@ final darkTheme = ThemeData(
       foregroundColor: Colors.white,
     ),
   ),
- 
 );

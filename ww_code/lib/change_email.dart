@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -15,7 +17,7 @@ class MyApp extends StatelessWidget {
 }
 
 class ChangeEmailPage extends StatefulWidget {
-  const ChangeEmailPage({Key? key}) : super(key: key);
+  const ChangeEmailPage({super.key});
 
   @override
   ChangeEmailPageState createState() => ChangeEmailPageState();

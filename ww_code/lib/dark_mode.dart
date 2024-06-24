@@ -4,7 +4,7 @@ import 'aesthetics/themes.dart';
 
 
 class DarkModeSettingsPage extends StatelessWidget {
-  const DarkModeSettingsPage({Key? key});
+  const DarkModeSettingsPage({super.key});
 
   @override
   Widget build(BuildContext context) {
