@@ -29,6 +29,8 @@ class _MenuPageState extends State<MenuPage> {
 
   final GoogleSignIn _googleSignIn = GoogleSignIn();
 
+
+  // Menu page UI
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -122,6 +124,7 @@ class _MenuPageState extends State<MenuPage> {
     );
   }
 
+  // Option buttons
   Widget _buildExpandedButton(
       BuildContext context, String text, VoidCallback onPressed) {
     return Expanded(
@@ -146,6 +149,11 @@ class _MenuPageState extends State<MenuPage> {
       await FirebaseAuth.instance.signOut();
       await _googleSignIn.signOut();
       Navigator.pushReplacementNamed(context, '/');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Logout successful!'),
+        ),
+      );
     } catch (e) {
       print("Logout error: $e");
       ScaffoldMessenger.of(context).showSnackBar(

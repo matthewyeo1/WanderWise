@@ -1,40 +1,21 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
-import 'dart:math' as math;
 
 class SplashScreen extends StatefulWidget {
-  const SplashScreen({super.key});
+  const SplashScreen({Key? key}) : super(key: key);
 
   @override
   _SplashScreenState createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation<double> _animation;
-
+class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    
+
     Timer(const Duration(seconds: 5), () {
-      _controller.stop();
       Navigator.pushReplacementNamed(context, '/login');
     });
-
-    _controller = AnimationController(
-      vsync: this,
-      duration: const Duration(seconds: 5),
-    )..repeat();
-
-    _animation = Tween(begin: 0.0, end: -2 * math.pi).animate(_controller);
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
   }
 
   @override
@@ -86,22 +67,14 @@ class _SplashScreenState extends State<SplashScreen>
               ],
             ),
           ),
-          Positioned(
-            bottom: 20,
+          const Positioned(
             left: 0,
             right: 0,
-            child: AnimatedBuilder(
-              animation: _animation,
-              builder: (context, child) {
-                return Transform.rotate(
-                  angle: _animation.value,
-                  child: Image.asset(
-                    'images/plane.jpg',
-                    width: 80,
-                    height: 80,
-                  ),
-                );
-              },
+            bottom: 70,
+            child: Center(
+              child: CircularProgressIndicator(
+                color: Colors.lightBlue,
+              ),
             ),
           ),
         ],
@@ -109,4 +82,3 @@ class _SplashScreenState extends State<SplashScreen>
     );
   }
 }
-

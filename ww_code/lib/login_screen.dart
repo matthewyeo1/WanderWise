@@ -9,7 +9,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'aesthetics/themes.dart';
 import 'package:provider/provider.dart';
 
-
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
   final String title;
@@ -43,28 +42,39 @@ class _MyHomePageState extends State<MyHomePage> {
 
     try {
       if (isValidEmail(email) && isValidPassword(password)) {
-        UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
+        UserCredential userCredential =
+            await FirebaseAuth.instance.signInWithEmailAndPassword(
           email: email,
           password: password,
         );
 
         String userId = userCredential.user!.uid;
-      bool isDarkMode = false;
-      try {
-        DocumentSnapshot doc = await FirebaseFirestore.instance.collection('Users').doc(userId).get();
-        if (doc.exists && doc['darkMode'] != null) {
-          isDarkMode = doc['darkMode'];
+        bool isDarkMode = false;
+        try {
+          DocumentSnapshot doc = await FirebaseFirestore.instance
+              .collection('Users')
+              .doc(userId)
+              .get();
+          if (doc.exists && doc['darkMode'] != null) {
+            isDarkMode = doc['darkMode'];
+          }
+          
+        } catch (e) {
+          print('Error loading theme preference: $e');
         }
-      } catch (e) {
-        print('Error loading theme preference: $e');
-      }
 
-      Provider.of<ThemeNotifier>(context, listen: false).initialize(userId, isDarkMode);
+        Provider.of<ThemeNotifier>(context, listen: false)
+            .initialize(userId, isDarkMode);
 
         Navigator.pushReplacementNamed(context, '/menu').then((_) {
           // Once navigated to menu page, clear text fields for email and password
           _emailController.clear();
           _passwordController.clear();
+          ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Logged in as $userId'),
+          ),
+        );
         });
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -93,13 +103,24 @@ class _MyHomePageState extends State<MyHomePage> {
           .doc(user.uid)
           .get();
 
+          bool darkMode = await _getUserDarkModePreference(user);
+
+          ScaffoldMessenger.of(context).showSnackBar(
+           SnackBar(
+            content: Text("${user.uid}, isDarkMode: $darkMode"),
+          ),
+        );
+
       if (!userDoc.exists) {
         await FirebaseFirestore.instance.collection('Users').doc(user.uid).set({
           'Email': user.email,
           'Username': user.displayName ?? user.email?.split('@')[0],
           'profileImageUrl': null,
           'bio': '',
+          'darkMode': darkMode,
+          
         });
+        
       } else {
         Map<String, dynamic>? data = userDoc.data() as Map<String, dynamic>?;
         if (data != null) {
@@ -115,6 +136,22 @@ class _MyHomePageState extends State<MyHomePage> {
       }
     }
   }
+
+  Future<bool> _getUserDarkModePreference(User user) async {
+  try {
+    final DocumentSnapshot doc = await FirebaseFirestore.instance
+        .collection('Users')
+        .doc(user.uid)
+        .get();
+    if (doc.exists) {
+      return doc.get('darkMode') ?? false;
+    }
+  } catch (e) {
+    print('Error getting user preference: $e');
+  }
+  return false; 
+}
+
 
   void _navigateToForgotPassword(BuildContext context) {
     Navigator.push(
@@ -144,12 +181,19 @@ class _MyHomePageState extends State<MyHomePage> {
         final userCredential =
             await FirebaseAuth.instance.signInWithCredential(credential);
         final User? user = userCredential.user;
-        
+
         // Retrieve user's info to display in app
         if (user != null) {
+          bool darkMode = await _getUserDarkModePreference(user);
+
           final DocumentReference userDocRef =
               FirebaseFirestore.instance.collection('Users').doc(user.uid);
           final DocumentSnapshot userDoc = await userDocRef.get();
+          ScaffoldMessenger.of(context).showSnackBar(
+           SnackBar(
+            content: Text("${user.uid}, : isDarkMode: $darkMode"),
+          ),
+        );
 
           if (!userDoc.exists) {
             await userDocRef.set({
@@ -157,6 +201,7 @@ class _MyHomePageState extends State<MyHomePage> {
               'Username': user.displayName,
               'profileImageUrl': null,
               'bio': "",
+              'darkMode': false,
             });
           } else {
             Map<String, dynamic> userData =
@@ -225,7 +270,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     filled: true,
                     fillColor: Color.fromARGB(255, 208, 208, 208),
                     prefixIcon: Icon(Icons.person, color: Colors.black45),
-                    hintText: 'Email', 
+                    hintText: 'Email',
                     hintStyle: TextStyle(color: Colors.black45),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(20)),
