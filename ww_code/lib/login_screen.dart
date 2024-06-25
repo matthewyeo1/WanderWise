@@ -113,7 +113,7 @@ class _MyHomePageState extends State<MyHomePage> {
       if (!userDoc.exists) {
         await FirebaseFirestore.instance.collection('Users').doc(user.uid).set({
           'Email': user.email,
-          'Username': user.displayName ?? user.email?.split('@')[0],
+          'username': user.displayName ?? user.email?.split('@')[0],
           'profileImageUrl': null,
           'bio': '',
           'darkMode': darkMode,
@@ -190,7 +190,7 @@ class _MyHomePageState extends State<MyHomePage> {
             darkMode = false;
             await userDocRef.set({
               'Email': user.email,
-              'Username': user.displayName ?? user.email?.split('@')[0],
+              'username': user.displayName ?? user.email?.split('@')[0],
               'profileImageUrl': null,
               'bio': '',
               'darkMode': darkMode,
@@ -200,8 +200,8 @@ class _MyHomePageState extends State<MyHomePage> {
             Map<String, dynamic> userData =
                 userDoc.data() as Map<String, dynamic>;
             darkMode = userData['darkMode'] ?? false;
-            if (userData['Username'] == null || userData['Username'].isEmpty) {
-              userData['Username'] =
+            if (userData['username'] == null || userData['username'].isEmpty) {
+              userData['username'] =
                   user.displayName ?? user.email?.split('@')[0];
               await userDocRef.update(userData);
             }
