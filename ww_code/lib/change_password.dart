@@ -1,8 +1,6 @@
 import "package:flutter/material.dart";
 import 'package:firebase_auth/firebase_auth.dart';
-import 'utilities/utils.dart'; 
-
-
+import 'utilities/utils.dart';
 
 class ChangePasswordPage extends StatefulWidget {
   const ChangePasswordPage({super.key});
@@ -12,14 +10,25 @@ class ChangePasswordPage extends StatefulWidget {
 }
 
 class ChangePasswordPageState extends State<ChangePasswordPage> {
-  final TextEditingController currentPasswordController = TextEditingController();
+  final TextEditingController currentPasswordController =
+      TextEditingController();
   final TextEditingController newPasswordController = TextEditingController();
-  final TextEditingController confirmNewPasswordController = TextEditingController();
+  final TextEditingController confirmNewPasswordController =
+      TextEditingController();
 
   final FirebaseAuth auth = FirebaseAuth.instance;
   final User? currentUser = FirebaseAuth.instance.currentUser;
 
-  Future<void> changePassword({required String currentPassword, required String newPassword}) async {
+  @override
+  void dispose() {
+    currentPasswordController.dispose();
+    newPasswordController.dispose();
+    confirmNewPasswordController.dispose();
+    super.dispose();
+  }
+
+  Future<void> changePassword(
+      {required String currentPassword, required String newPassword}) async {
     try {
       if (currentUser == null) {
         throw FirebaseAuthException(
@@ -35,7 +44,7 @@ class ChangePasswordPageState extends State<ChangePasswordPage> {
       await currentUser!.updatePassword(newPassword);
 
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Password changed successfully")),
+        const SnackBar(content: Text("Password changed successfully!")),
       );
     } catch (error) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -44,9 +53,11 @@ class ChangePasswordPageState extends State<ChangePasswordPage> {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final textColor =
+        theme.brightness == Brightness.dark ? Colors.white : Colors.black;
     return Scaffold(
       appBar: AppBar(
         title: const Text('Change Password'),
@@ -54,10 +65,11 @@ class ChangePasswordPageState extends State<ChangePasswordPage> {
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            const SizedBox(height: 80),
+            const SizedBox(height: 100),
             TextFormField(
+              cursorColor: Colors.black,
               controller: currentPasswordController,
               style: const TextStyle(color: Colors.black),
               decoration: const InputDecoration(
@@ -83,6 +95,7 @@ class ChangePasswordPageState extends State<ChangePasswordPage> {
             ),
             const SizedBox(height: 10),
             TextField(
+              cursorColor: Colors.black,
               controller: newPasswordController,
               style: const TextStyle(color: Colors.black),
               decoration: const InputDecoration(
@@ -107,6 +120,7 @@ class ChangePasswordPageState extends State<ChangePasswordPage> {
             ),
             const SizedBox(height: 10),
             TextField(
+              cursorColor: Colors.black,
               controller: confirmNewPasswordController,
               style: const TextStyle(color: Colors.black),
               decoration: const InputDecoration(
@@ -142,7 +156,8 @@ class ChangePasswordPageState extends State<ChangePasswordPage> {
                   return;
                 }
                 // Check if new passwords match
-                if (newPasswordController.text == confirmNewPasswordController.text) {
+                if (newPasswordController.text ==
+                    confirmNewPasswordController.text) {
                   await changePassword(
                     currentPassword: currentPasswordController.text,
                     newPassword: newPasswordController.text,
@@ -155,17 +170,17 @@ class ChangePasswordPageState extends State<ChangePasswordPage> {
               },
               child: const Text('Change Password'),
             ),
+            const SizedBox(height: 20),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 0),
+              child: Text(
+                'Remember your new password once you have created it!',
+                style: TextStyle(color: textColor),
+              ),
+            ),
           ],
         ),
       ),
     );
-  }
-
-  @override
-  void dispose() {
-    currentPasswordController.dispose();
-    newPasswordController.dispose();
-    confirmNewPasswordController.dispose();
-    super.dispose();
   }
 }
