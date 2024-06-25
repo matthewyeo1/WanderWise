@@ -9,7 +9,6 @@ import 'login_screen.dart';
 import 'menu_page.dart';
 import 'create_account.dart';
 import 'forgot_password.dart';
-//import 'package:firebase_app_check/firebase_app_check.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
