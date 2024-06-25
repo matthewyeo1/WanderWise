@@ -28,7 +28,6 @@ class _DarkModeSettingsPageState extends State<DarkModeSettingsPage> {
       });
     } else {
       Navigator.pushReplacementNamed(context, '/login');
-      
     }
   }
 
@@ -52,7 +51,7 @@ class _DarkModeSettingsPageState extends State<DarkModeSettingsPage> {
       await FirebaseFirestore.instance
           .collection('Users')
           .doc(userId)
-          .set({'darkMode': darkMode}, SetOptions(merge: true)); 
+          .set({'darkMode': darkMode}, SetOptions(merge: true));
     } catch (e) {
       print('Error saving user preference: $e');
     }
@@ -60,43 +59,56 @@ class _DarkModeSettingsPageState extends State<DarkModeSettingsPage> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final textColor =
+        theme.brightness == Brightness.dark ? Colors.white : Colors.black;
     return Scaffold(
       appBar: AppBar(
         title: const Text('Dark Mode Settings'),
       ),
-      body: Center(
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
         child: Consumer<ThemeNotifier>(
           builder: (context, themeNotifier, _) {
             return FutureBuilder<bool>(
-              future: _getUserDarkModePreference(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const CircularProgressIndicator();
-                } else {
+                future: _getUserDarkModePreference(),
+                builder: (context, snapshot) {
                   bool isDarkMode = snapshot.data ?? false;
 
-                  return SwitchListTile(
-                    title: Text(
-                      'Enable Dark Mode',
-                      style: Theme.of(context).textTheme.headlineMedium,
-                    ),
-                    value: isDarkMode,
-                    onChanged: (value) {
-                      setState(() {
-                        themeNotifier.toggleTheme();
-                      });
-                      _saveUserDarkModePreference(value);
-                    },
-                    activeTrackColor: const Color.fromARGB(255, 54, 54, 114),
-                    activeColor: isDarkMode ? Colors.white : Colors.black45,
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(height: 100),
+                      SwitchListTile(
+                        title: Text(
+                          'Enable Dark Mode',
+                          style: Theme.of(context).textTheme.headlineSmall,
+                        ),
+                        value: isDarkMode,
+                        onChanged: (value) {
+                          setState(() {
+                            themeNotifier.toggleTheme();
+                          });
+                          _saveUserDarkModePreference(value);
+                        },
+                        activeTrackColor:
+                            const Color.fromARGB(255, 54, 54, 114),
+                        activeColor: isDarkMode ? Colors.white : Colors.black45,
+                      ),
+                      const SizedBox(height: 20),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                        child: Text(
+                          'Toggle dark mode',
+                          style: TextStyle(color: textColor),
+                        ),
+                      ),
+                    ],
                   );
-                }
-              },
-            );
+                });
           },
         ),
       ),
     );
   }
 }
-
