@@ -51,10 +51,6 @@ class ChangePasswordPageState extends State<ChangePasswordPage> {
       appBar: AppBar(
         title: const Text('Change Password'),
       ),
-      // body: Container(
-      //   decoration: const BoxDecoration(
-      //     color: Colors.white,
-      //   ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
