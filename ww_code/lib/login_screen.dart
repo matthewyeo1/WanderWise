@@ -58,7 +58,6 @@ class _MyHomePageState extends State<MyHomePage> {
           if (doc.exists && doc['darkMode'] != null) {
             isDarkMode = doc['darkMode'];
           }
-          
         } catch (e) {
           print('Error loading theme preference: $e');
         }
@@ -71,10 +70,10 @@ class _MyHomePageState extends State<MyHomePage> {
           _emailController.clear();
           _passwordController.clear();
           ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Logged in as $userId'),
-          ),
-        );
+            SnackBar(
+              content: Text('Logged in as $userId'),
+            ),
+          );
         });
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -103,13 +102,13 @@ class _MyHomePageState extends State<MyHomePage> {
           .doc(user.uid)
           .get();
 
-          bool darkMode = await _getUserDarkModePreference(user);
+      bool darkMode = await _getUserDarkModePreference(user);
 
-          ScaffoldMessenger.of(context).showSnackBar(
-           SnackBar(
-            content: Text("${user.uid}, isDarkMode: $darkMode"),
-          ),
-        );
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("${user.uid}, isDarkMode: $darkMode"),
+        ),
+      );
 
       if (!userDoc.exists) {
         await FirebaseFirestore.instance.collection('Users').doc(user.uid).set({
@@ -118,9 +117,7 @@ class _MyHomePageState extends State<MyHomePage> {
           'profileImageUrl': null,
           'bio': '',
           'darkMode': darkMode,
-          
         });
-        
       } else {
         Map<String, dynamic>? data = userDoc.data() as Map<String, dynamic>?;
         if (data != null) {
@@ -138,20 +135,19 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Future<bool> _getUserDarkModePreference(User user) async {
-  try {
-    final DocumentSnapshot doc = await FirebaseFirestore.instance
-        .collection('Users')
-        .doc(user.uid)
-        .get();
-    if (doc.exists) {
-      return doc.get('darkMode') ?? false;
+    try {
+      final DocumentSnapshot doc = await FirebaseFirestore.instance
+          .collection('Users')
+          .doc(user.uid)
+          .get();
+      if (doc.exists) {
+        return doc.get('darkMode') ?? false;
+      }
+    } catch (e) {
+      print('Error getting user preference: $e');
     }
-  } catch (e) {
-    print('Error getting user preference: $e');
+    return false;
   }
-  return false; 
-}
-
 
   void _navigateToForgotPassword(BuildContext context) {
     Navigator.push(
@@ -184,34 +180,43 @@ class _MyHomePageState extends State<MyHomePage> {
 
         // Retrieve user's info to display in app
         if (user != null) {
-          bool darkMode = await _getUserDarkModePreference(user);
-
           final DocumentReference userDocRef =
               FirebaseFirestore.instance.collection('Users').doc(user.uid);
           final DocumentSnapshot userDoc = await userDocRef.get();
-          ScaffoldMessenger.of(context).showSnackBar(
-           SnackBar(
-            content: Text("${user.uid}, : isDarkMode: $darkMode"),
-          ),
-        );
 
+          bool darkMode;
           if (!userDoc.exists) {
+            // Set default values for new user
+            darkMode = false;
             await userDocRef.set({
               'Email': user.email,
-              'Username': user.displayName,
+              'Username': user.displayName ?? user.email?.split('@')[0],
               'profileImageUrl': null,
-              'bio': "",
-              'darkMode': false,
+              'bio': '',
+              'darkMode': darkMode,
             });
           } else {
+            // Retrieve existing user data
             Map<String, dynamic> userData =
                 userDoc.data() as Map<String, dynamic>;
+            darkMode = userData['darkMode'] ?? false;
             if (userData['Username'] == null || userData['Username'].isEmpty) {
               userData['Username'] =
                   user.displayName ?? user.email?.split('@')[0];
+              await userDocRef.update(userData);
             }
-            await userDocRef.update(userData);
           }
+
+          // Display SnackBar with user info
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text("${user.uid}, isDarkMode: $darkMode"),
+            ),
+          );
+
+          // Update theme preference in the provider
+          Provider.of<ThemeNotifier>(context, listen: false)
+              .initialize(user.uid, darkMode);
         }
         Navigator.pushReplacementNamed(context, '/menu');
       } else {

@@ -1,7 +1,5 @@
 import "package:flutter/material.dart";
-
 import 'package:firebase_auth/firebase_auth.dart';
-
 import 'utilities/utils.dart';
 
 class MyApp extends StatelessWidget {
