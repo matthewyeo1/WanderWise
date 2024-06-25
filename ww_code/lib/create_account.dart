@@ -214,7 +214,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                   ),
                 ),
                 const SizedBox(
-                    height: 20), // This space will match the background
+                    height: 20), 
               ],
             ),
           ),
