@@ -155,6 +155,13 @@ class ChangePasswordPageState extends State<ChangePasswordPage> {
                   );
                   return;
                 }
+                // Check if old and new passwords match
+                if (currentPasswordController.text == newPasswordController.text) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text("New password cannot be the same as the current password")),
+                  );
+                  return;
+                }
                 // Check if new passwords match
                 if (newPasswordController.text ==
                     confirmNewPasswordController.text) {

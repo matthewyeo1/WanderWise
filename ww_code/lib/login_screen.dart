@@ -167,7 +167,9 @@ class _MyHomePageState extends State<MyHomePage> {
   Future<void> _handleGoogleSignIn() async {
     try {
       final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
-      if (googleUser != null) {
+      if (googleUser == null) {
+        return;
+      }
         final GoogleSignInAuthentication googleAuth =
             await googleUser.authentication;
         final credential = GoogleAuthProvider.credential(
@@ -217,7 +219,8 @@ class _MyHomePageState extends State<MyHomePage> {
           // Update theme preference in the provider
           Provider.of<ThemeNotifier>(context, listen: false)
               .initialize(user.uid, darkMode);
-        }
+        
+    
         Navigator.pushReplacementNamed(context, '/menu');
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -226,6 +229,7 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         );
       }
+  
     } catch (e) {
       _logger.warning('Failed to sign in with Google: $e');
       ScaffoldMessenger.of(context).showSnackBar(
@@ -235,6 +239,7 @@ class _MyHomePageState extends State<MyHomePage> {
       );
     }
   }
+  
 
   @override
   Widget build(BuildContext context) {

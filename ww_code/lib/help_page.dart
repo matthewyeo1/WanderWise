@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ww_code/feedback_page.dart';
 
 class HelpPage extends StatelessWidget {
   const HelpPage({super.key});
@@ -24,7 +25,7 @@ class HelpPage extends StatelessWidget {
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 8),
-          _buildContactSection(),
+          _buildContactSection(context),
         ],
       ),
     );
@@ -51,7 +52,7 @@ class HelpPage extends StatelessWidget {
     );
   }
 
-  Widget _buildContactSection() {
+  Widget _buildContactSection(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -75,7 +76,10 @@ class HelpPage extends StatelessWidget {
           leading: const Icon(Icons.feedback),
           title: const Text('Send Feedback'),
           onTap: () {
-            // Implement feedback form functionality
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const FeedbackPage()),
+            );
           },
         ),
       ],
