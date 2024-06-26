@@ -9,6 +9,7 @@ import 'login_screen.dart';
 import 'menu_page.dart';
 import 'create_account.dart';
 import 'forgot_password.dart';
+import 'help_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -66,6 +67,7 @@ class MyApp extends StatelessWidget {
             '/menu': (context) => const MenuPage(),
             '/create_account': (context) => const CreateAccountPage(),
             '/forgot_password': (context) => const ForgotPasswordPage(),
+             '/help': (context) => HelpPage(),
           },
           debugShowCheckedModeBanner: false,
         );

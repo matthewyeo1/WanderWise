@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-
 import 'map_itinerary_page.dart';
 import 'manage_flights_bookings_page.dart';
 import 'settings_page.dart';
+import 'wendy_chatbot.dart';
 import 'help_page.dart';
 
 class MenuPage extends StatefulWidget {
@@ -28,7 +28,6 @@ class _MenuPageState extends State<MenuPage> {
   int currentIndex = 0;
 
   final GoogleSignIn _googleSignIn = GoogleSignIn();
-
 
   // Menu page UI
   @override
@@ -73,6 +72,27 @@ class _MenuPageState extends State<MenuPage> {
               ],
             ),
           ),
+          Positioned(
+            top: 24.0,
+            right: 16.0,
+            child: Column(
+              children: [
+                IconButton(
+                  icon: const Icon(Icons.help, color: Colors.white),
+                  onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => HelpPage()),
+              );
+            },
+                ),
+                const Text(
+                  'Help',
+                  style: TextStyle(color: Colors.white, fontSize: 12),
+                ),
+              ],
+            ),
+          ),
           const Center(
             child: Text('Where will you go next?',
                 style: TextStyle(
@@ -112,7 +132,8 @@ class _MenuPageState extends State<MenuPage> {
                     children: [
                       _buildExpandedButton(
                           context, 'Settings', _navigateToSettings),
-                      _buildExpandedButton(context, 'Help', _navigateToHelp),
+                      _buildExpandedButton(
+                        context, 'Ask Wendy', _navigateToWendyAI),
                     ],
                   ),
                 ],
@@ -210,8 +231,8 @@ class _MenuPageState extends State<MenuPage> {
         context, MaterialPageRoute(builder: (context) => const SettingsPage()));
   }
 
-  void _navigateToHelp() {
+  void _navigateToWendyAI() {
     Navigator.push(
-        context, MaterialPageRoute(builder: (context) => const HelpPage()));
+        context, MaterialPageRoute(builder: (context) => const WendyAI()));
   }
 }

@@ -88,7 +88,7 @@ class EditItineraryPageState extends State<EditItineraryPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Edit Itinerary'),
+        title: const Text('View/Edit Itinerary'),
         actions: [
           TextButton(
             onPressed: () {
