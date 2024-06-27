@@ -13,6 +13,8 @@ class DarkModeSettingsPage extends StatefulWidget {
 
 class _DarkModeSettingsPageState extends State<DarkModeSettingsPage> {
   late String? userId;
+  bool isLoading = true;
+  bool userDarkModePreference = false;
 
   @override
   void initState() {
@@ -26,24 +28,30 @@ class _DarkModeSettingsPageState extends State<DarkModeSettingsPage> {
       setState(() {
         userId = user.uid;
       });
+      await _getUserDarkModePreference();
     } else {
       Navigator.pushReplacementNamed(context, '/login');
     }
   }
 
-  Future<bool> _getUserDarkModePreference() async {
+  Future<void> _getUserDarkModePreference() async {
     try {
       final DocumentSnapshot doc = await FirebaseFirestore.instance
           .collection('Users')
           .doc(userId)
           .get();
       if (doc.exists) {
-        return doc.get('darkMode') ?? false;
+        setState(() {
+          userDarkModePreference = doc.get('darkMode') ?? false;
+          isLoading = false;
+        });
       }
     } catch (e) {
       print('Error getting user preference: $e');
+      setState(() {
+        isLoading = false;
+      });
     }
-    return false;
   }
 
   Future<void> _saveUserDarkModePreference(bool darkMode) async {
@@ -68,13 +76,10 @@ class _DarkModeSettingsPageState extends State<DarkModeSettingsPage> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Consumer<ThemeNotifier>(
-          builder: (context, themeNotifier, _) {
-            return FutureBuilder<bool>(
-                future: _getUserDarkModePreference(),
-                builder: (context, snapshot) {
-                  bool isDarkMode = snapshot.data ?? false;
-
+        child: isLoading
+            ? const Center(child: CircularProgressIndicator())
+            : Consumer<ThemeNotifier>(
+                builder: (context, themeNotifier, _) {
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -82,18 +87,20 @@ class _DarkModeSettingsPageState extends State<DarkModeSettingsPage> {
                       SwitchListTile(
                         title: Text(
                           'Enable Dark Mode',
-                          style: Theme.of(context).textTheme.headlineSmall,
+                          style: Theme.of(context).textTheme.headlineMedium,
                         ),
-                        value: isDarkMode,
+                        value: userDarkModePreference,
                         onChanged: (value) {
                           setState(() {
                             themeNotifier.toggleTheme();
+                            userDarkModePreference = value;
                           });
                           _saveUserDarkModePreference(value);
                         },
-                        activeTrackColor:
-                            const Color.fromARGB(255, 54, 54, 114),
-                        activeColor: isDarkMode ? Colors.white : Colors.black45,
+                        activeTrackColor: const Color.fromARGB(255, 54, 54, 114),
+                        activeColor: userDarkModePreference
+                            ? Colors.white
+                            : Colors.black45,
                       ),
                       const SizedBox(height: 20),
                       Padding(
@@ -105,9 +112,8 @@ class _DarkModeSettingsPageState extends State<DarkModeSettingsPage> {
                       ),
                     ],
                   );
-                });
-          },
-        ),
+                },
+              ),
       ),
     );
   }

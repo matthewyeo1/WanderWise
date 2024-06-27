@@ -28,6 +28,13 @@ class ChangeEmailPageState extends State<ChangeEmailPage> {
       String password = passwordController.text.trim();
 
       if (user != null) {
+        if (user.providerData.any((info) => info.providerId == 'google.com')) {
+        // If user is signed in with Google, show error message
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Google users cannot change their email. Please change your email on the official site')),
+        );
+        return;
+      }
         if (user.providerData.any((info) => info.providerId == 'password')) {
           // Reauthenticate with email and password
           AuthCredential credential = EmailAuthProvider.credential(
@@ -35,11 +42,10 @@ class ChangeEmailPageState extends State<ChangeEmailPage> {
             password: password,
           );
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Changing email...')),
+            const SnackBar(content: Text('Re-authenticating...')),
           );
           await user.reauthenticateWithCredential(credential);
-        } else if (user.providerData
-            .any((info) => info.providerId == 'google.com')) {
+        } else if (user.providerData.any((info) => info.providerId == 'google.com')) {
           // Reauthenticate with Google
           GoogleSignIn googleSignIn = GoogleSignIn();
           GoogleSignInAccount? googleUser = await googleSignIn.signIn();
@@ -47,14 +53,13 @@ class ChangeEmailPageState extends State<ChangeEmailPage> {
             // If user cancelled the sign-in
             return;
           }
-          GoogleSignInAuthentication googleAuth =
-              await googleUser.authentication;
+          GoogleSignInAuthentication googleAuth = await googleUser.authentication;
           AuthCredential credential = GoogleAuthProvider.credential(
             accessToken: googleAuth.accessToken,
             idToken: googleAuth.idToken,
           );
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Re-authenticating with Google')),
+            const SnackBar(content: Text('Re-authenticating with Google...')),
           );
           await user.reauthenticateWithCredential(credential);
           ScaffoldMessenger.of(context).showSnackBar(
@@ -66,15 +71,17 @@ class ChangeEmailPageState extends State<ChangeEmailPage> {
           );
           return;
         }
-        // Update email
+
+        // Update email and send verification
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Updating email to: $newEmail')),
         );
-        await user.verifyBeforeUpdateEmail(newEmail);
-        await FirebaseAuth.instance.currentUser?.sendEmailVerification();
+
+        await user.updateEmail(newEmail);
+        await user.sendEmailVerification();
         FirebaseFirestore firestore = FirebaseFirestore.instance;
         CollectionReference users = firestore.collection('Users');
-       await users.doc(user.uid).update({'email': newEmail});
+        await users.doc(user.uid).update({'email': newEmail});
 
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(

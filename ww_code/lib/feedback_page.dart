@@ -45,7 +45,7 @@ class _FeedbackPageState extends State<FeedbackPage> {
 
   @override
   Widget build(BuildContext context) {
-        final theme = Theme.of(context);
+    final theme = Theme.of(context);
     final textColor =
         theme.brightness == Brightness.dark ? Colors.white : Colors.black;
     return Scaffold(
