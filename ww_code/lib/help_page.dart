@@ -45,7 +45,7 @@ class HelpPage extends StatelessWidget {
         _buildFAQItem('How do I reset my password?',
             'To reset your password, go to the settings page and click on "Change Password". Follow the instructions provided.'),
         _buildFAQItem('What type of documents can be uploaded?',
-            'WanderWise only allows for .pdf and .doc type documents to be uploaded under "Flights/Bookings".'),
+            'WanderWise only allows for .pdf type documents to be uploaded under "Flights/Bookings".'),
         _buildFAQItem('Am I able to view my itineraries and documents offline?',
             'Unfortunately, the current version of the app does not support offline sync. Stay tuned for future updates!'),
       ],

@@ -121,8 +121,8 @@ class _MenuPageState extends State<MenuPage> {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       _buildExpandedButton(
-                          context, 'Map/Itinerary', _navigateToMapItinerary),
-                      _buildExpandedButton(context, 'Flights/Bookings',
+                          context, 'Map/Trips', _navigateToMapItinerary),
+                      _buildExpandedButton(context, 'Upload Documents',
                           _navigateToManageFlightsBookings),
                     ],
                   ),

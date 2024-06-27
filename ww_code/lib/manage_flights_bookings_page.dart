@@ -324,7 +324,7 @@ class ManageFlightsBookingsPageState extends State<ManageFlightsBookingsPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'Upload Docs',
+          'Upload Documents',
         ),
         actions: [
           IconButton(

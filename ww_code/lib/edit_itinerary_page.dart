@@ -162,24 +162,11 @@ class EditItineraryPageState extends State<EditItineraryPage> {
                       maxLines: null,
                       style: TextStyle(color: inputTextColor),
                       decoration: const InputDecoration(
-                        labelText: 'Description',
+                        labelText: 'Itinerary',
                         labelStyle: TextStyle(color: Colors.grey),
                         border: InputBorder.none,
                         focusedBorder: InputBorder.none,
                       ),
-                      onChanged: (value) {
-                        if (value.contains('![Image]')) {
-                          final newText = value.replaceAll('![Image]', '');
-                          final textSelection = descriptionController.selection;
-                          final newTextWithImage =
-                              '${newText.substring(0, textSelection.start)}![Image]${newText.substring(textSelection.end)}';
-                          descriptionController.value = TextEditingValue(
-                            text: newTextWithImage,
-                            selection: TextSelection.collapsed(
-                                offset: textSelection.start + 8),
-                          );
-                        }
-                      },
                     ),
                   ],
                 ),

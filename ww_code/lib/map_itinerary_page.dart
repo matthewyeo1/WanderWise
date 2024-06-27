@@ -247,7 +247,7 @@ class MapItineraryPageState extends State<MapItineraryPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          _selectedIndex == 0 ? 'Map' : 'Itinerary',
+          _selectedIndex == 0 ? 'Map' : 'My Trips',
         ),
         actions: _selectedIndex == 1
             ? [
@@ -271,7 +271,7 @@ class MapItineraryPageState extends State<MapItineraryPage> {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.list),
-            label: 'My Itinerary',
+            label: 'My Trips',
           ),
         ],
         currentIndex: _selectedIndex,

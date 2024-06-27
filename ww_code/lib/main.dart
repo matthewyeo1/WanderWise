@@ -67,7 +67,7 @@ class MyApp extends StatelessWidget {
             '/menu': (context) => const MenuPage(),
             '/create_account': (context) => const CreateAccountPage(),
             '/forgot_password': (context) => const ForgotPasswordPage(),
-             '/help': (context) => HelpPage(),
+            '/help': (context) => const HelpPage(),
           },
           debugShowCheckedModeBanner: false,
         );
