@@ -7,9 +7,9 @@ class WendyAI extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Ask Wendy"),
+        title: const Text("Socials"),
       ),
-      body : const Text('ChatBot to be implemented here'),
+      body : const Text('To be added later'),
     );
   }
 }

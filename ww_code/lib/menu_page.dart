@@ -4,7 +4,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'map_itinerary_page.dart';
 import 'manage_flights_bookings_page.dart';
 import 'settings_page.dart';
-import 'wendy_chatbot.dart';
+import 'socials.dart';
 import 'help_page.dart';
 
 class MenuPage extends StatefulWidget {
@@ -133,7 +133,7 @@ class _MenuPageState extends State<MenuPage> {
                       _buildExpandedButton(
                           context, 'Settings', _navigateToSettings),
                       _buildExpandedButton(
-                        context, 'Ask Wendy', _navigateToWendyAI),
+                        context, 'Socials', _navigateToWendyAI),
                     ],
                   ),
                 ],

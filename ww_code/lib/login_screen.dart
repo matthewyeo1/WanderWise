@@ -210,11 +210,11 @@ class _MyHomePageState extends State<MyHomePage> {
           }
 
           // Display SnackBar with user info
-          ScaffoldMessenger.of(context).showSnackBar(
+          /*ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text("${user.uid}, isDarkMode: $darkMode"),
             ),
-          );
+          );*/
 
           // Update theme preference in the provider
           Provider.of<ThemeNotifier>(context, listen: false)

@@ -99,6 +99,60 @@ class ProfilePageState extends State<ProfilePage> {
     }
   }
 
+  Future<void> _resetProfilePicture() async {
+  // Show confirmation dialog
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        backgroundColor: Colors.white,
+        title: const Text('Reset Profile Picture?', style: TextStyle(color: Colors.black)),
+        content: const Text('Are you sure you want to reset your profile picture?', style: TextStyle(color: Colors.black)),
+        actions: <Widget>[
+          TextButton(
+            child: const Text('Cancel', style: TextStyle(color: Colors.lightBlue)),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+          TextButton(
+            child: const Text('Reset', style: TextStyle(color: Colors.lightBlue)),
+            onPressed: () async {
+              Navigator.of(context).pop();
+              try {
+                setState(() {
+                  _profileImageUrl = null;
+                });
+                await FirebaseFirestore.instance
+                    .collection('Users')
+                    .doc(_user.uid)
+                    .update({'profileImageUrl': null});
+                if (_profileImageUrl != null) {
+                  await FirebaseStorage.instance
+                      .refFromURL(_profileImageUrl!)
+                      .delete();
+                }
+
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Profile picture reset successfully!'),
+                  ),
+                );
+              } catch (e) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Error resetting profile picture'),
+                  ),
+                );
+              }
+            },
+          ),
+        ],
+      );
+    },
+  );
+}
+
   Future<void> _updateUserProfile() async {
     if (!isValidUsername(_usernameController.text)) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -153,21 +207,33 @@ class ProfilePageState extends State<ProfilePage> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             const SizedBox(height: 20),
-            if (_profileImageUrl != null)
-              CircleAvatar(
-                radius: 60,
-                backgroundImage: NetworkImage(_profileImageUrl!),
-              )
-            else
-              const CircleAvatar(
-                backgroundColor: Colors.white,
-                foregroundColor: Colors.black45,
-                radius: 60,
-                child: Icon(
-                  Icons.person,
-                  size: 80,
+            Stack(
+              children: [
+                if (_profileImageUrl != null)
+                  CircleAvatar(
+                    radius: 60,
+                    backgroundImage: NetworkImage(_profileImageUrl!),
+                  )
+                else
+                  const CircleAvatar(
+                    backgroundColor: Colors.white,
+                    foregroundColor: Colors.black45,
+                    radius: 60,
+                    child: Icon(
+                      Icons.person,
+                      size: 80,
+                    ),
+                  ),
+                Positioned(
+                  bottom: -15,
+                  right: -15,
+                  child: IconButton(
+                    icon: const Icon(Icons.refresh),
+                    onPressed: _resetProfilePicture,
+                  ),
                 ),
-              ),
+              ],
+            ),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -192,8 +258,7 @@ class ProfilePageState extends State<ProfilePage> {
                 fillColor: Color.fromARGB(255, 208, 208, 208),
                 prefixIcon: Icon(Icons.person, color: Colors.black45),
                 hintText: 'Username',
-                    hintStyle: TextStyle(color: Colors.black45),
-
+                hintStyle: TextStyle(color: Colors.black45),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.all(Radius.circular(20)),
                   borderSide: BorderSide.none,
@@ -218,8 +283,7 @@ class ProfilePageState extends State<ProfilePage> {
                 fillColor: Color.fromARGB(255, 208, 208, 208),
                 prefixIcon: Icon(Icons.edit_note_sharp, color: Colors.black45),
                 hintText: 'Bio',
-                    hintStyle: TextStyle(color: Colors.black45),
-
+                hintStyle: TextStyle(color: Colors.black45),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.all(Radius.circular(20)),
                   borderSide: BorderSide.none,
@@ -237,9 +301,7 @@ class ProfilePageState extends State<ProfilePage> {
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: _updateUserProfile,
-              child: const Text(
-                'Save',
-              ),
+              child: const Text('Save'),
             ),
           ],
         ),
