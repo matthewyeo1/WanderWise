@@ -24,3 +24,7 @@ The app provides users with an empty itinerary for users to customise. Additiona
 Tech stack: Dart (Flutter framework) with Firebase as database
 
 Milestone 1 readme: Milestone 1
+
+
+
+

@@ -76,7 +76,7 @@ class HelpPage extends StatelessWidget {
         SizedBox(height: 8),
         Text(
           'support@example.com',
-          style: TextStyle(color: Colors.grey),
+          
         ),
         SizedBox(height: 16),
         Text(
@@ -86,7 +86,7 @@ class HelpPage extends StatelessWidget {
         SizedBox(height: 8),
         Text(
           '(123) 456-7890',
-          style: TextStyle(color: Colors.grey),
+          
         ),
         SizedBox(height: 16),
       ],
