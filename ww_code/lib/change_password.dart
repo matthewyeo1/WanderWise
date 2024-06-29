@@ -1,6 +1,7 @@
 import "package:flutter/material.dart";
 import 'package:firebase_auth/firebase_auth.dart';
 import 'utilities/utils.dart';
+import 'aesthetics/textfield_style.dart';
 
 class ChangePasswordPage extends StatefulWidget {
   const ChangePasswordPage({super.key});
@@ -68,80 +69,33 @@ class ChangePasswordPageState extends State<ChangePasswordPage> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             const SizedBox(height: 100),
-            TextFormField(
+                 TextFormField(
               cursorColor: Colors.black,
-              controller: currentPasswordController,
               style: const TextStyle(color: Colors.black),
-              decoration: const InputDecoration(
-                filled: true,
-                fillColor: Color.fromARGB(255, 208, 208, 208),
+              decoration: TextFieldConfig.buildInputDecoration(
                 hintText: 'Current Password',
-                alignLabelWithHint: true,
-                hintStyle: TextStyle(color: Colors.black45),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(20)),
-                  borderSide: BorderSide.none,
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(20)),
-                  borderSide: BorderSide.none,
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(20)),
-                  borderSide: BorderSide.none,
-                ),
+                 controller: currentPasswordController,
               ),
-              obscureText: true,
             ),
             const SizedBox(height: 10),
-            TextField(
+             TextField(
               cursorColor: Colors.black,
-              controller: newPasswordController,
               style: const TextStyle(color: Colors.black),
-              decoration: const InputDecoration(
-                filled: true,
-                fillColor: Color.fromARGB(255, 208, 208, 208),
+              decoration: TextFieldConfig.buildInputDecoration(
                 hintText: 'New Password',
-                hintStyle: TextStyle(color: Colors.black45),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(20)),
-                  borderSide: BorderSide.none,
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(20)),
-                  borderSide: BorderSide.none,
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(20)),
-                  borderSide: BorderSide.none,
-                ),
+                obscureText: true,
+                controller: newPasswordController,
               ),
-              obscureText: true,
             ),
             const SizedBox(height: 10),
-            TextField(
+             TextField(
               cursorColor: Colors.black,
-              controller: confirmNewPasswordController,
               style: const TextStyle(color: Colors.black),
-              decoration: const InputDecoration(
-                filled: true,
-                fillColor: Color.fromARGB(255, 208, 208, 208),
+              decoration: TextFieldConfig.buildInputDecoration(
                 hintText: 'Confirm New Password',
-                hintStyle: TextStyle(color: Colors.black45),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(20)),
-                  borderSide: BorderSide.none,
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(20)),
-                  borderSide: BorderSide.none,
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(20)),
-                  borderSide: BorderSide.none,
-                ),
+                obscureText: true,
+                controller: confirmNewPasswordController,
               ),
-              obscureText: true,
             ),
             const SizedBox(height: 10),
             ElevatedButton(

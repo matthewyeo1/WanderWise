@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+// Intialize user theme upon login
 class ThemeNotifier with ChangeNotifier {
   late bool isDarkMode;
   late String? userId;

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'utilities/utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'aesthetics/textfield_style.dart';
 
 class CreateAccountPage extends StatefulWidget {
   const CreateAccountPage({super.key});
@@ -123,79 +124,33 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                 ),
                 const SizedBox(height: 16),
                 TextField(
-                  focusNode: _usernameFocusNode,
                   cursorColor: Colors.black,
-                  controller: _usernameController,
                   style: const TextStyle(color: Colors.black),
-                  decoration: const InputDecoration(
-                    filled: true,
-                    fillColor: Color.fromARGB(255, 208, 208, 208),
+                  decoration: TextFieldConfig.buildInputDecoration(
                     hintText: 'Username',
-                    hintStyle: TextStyle(color: Colors.black45),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(20)),
-                      borderSide: BorderSide.none,
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(20)),
-                      borderSide: BorderSide.none,
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(20)),
-                      borderSide: BorderSide.none,
-                    ),
+                    controller: _usernameController,
+                    focusNode: _usernameFocusNode,
                   ),
                 ),
                 const SizedBox(height: 16),
                 TextField(
-                  focusNode: _emailFocusNode,
                   cursorColor: Colors.black,
-                  controller: _emailController,
                   style: const TextStyle(color: Colors.black),
-                  decoration: const InputDecoration(
-                    filled: true,
-                    fillColor: Color.fromARGB(255, 208, 208, 208),
+                  decoration: TextFieldConfig.buildInputDecoration(
                     hintText: 'Email',
-                    hintStyle: TextStyle(color: Colors.black45),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(20)),
-                      borderSide: BorderSide.none,
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(20)),
-                      borderSide: BorderSide.none,
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(20)),
-                      borderSide: BorderSide.none,
-                    ),
+                    controller: _emailController,
+                    focusNode: _emailFocusNode,
                   ),
                 ),
                 const SizedBox(height: 16),
                 TextField(
-                  focusNode: _passwordFocusNode,
                   cursorColor: Colors.black,
-                  controller: _passwordController,
                   style: const TextStyle(color: Colors.black),
-                  decoration: const InputDecoration(
-                    filled: true,
-                    fillColor: Color.fromARGB(255, 208, 208, 208),
+                  decoration: TextFieldConfig.buildInputDecoration(
                     hintText: 'Password',
-                    hintStyle: TextStyle(color: Colors.black45),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(20)),
-                      borderSide: BorderSide.none,
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(20)),
-                      borderSide: BorderSide.none,
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(20)),
-                      borderSide: BorderSide.none,
-                    ),
+                    controller: _passwordController,
+                    focusNode: _passwordFocusNode,
                   ),
-                  obscureText: true,
                 ),
                 const SizedBox(height: 40),
                 ElevatedButton(
@@ -213,8 +168,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                 ),
-                const SizedBox(
-                    height: 20), 
+                const SizedBox(height: 20),
               ],
             ),
           ),

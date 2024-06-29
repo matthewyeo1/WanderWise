@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'edit_itinerary_page.dart';
 import 'map_view.dart';
+import 'storage/itinerary_service.dart';
+import 'auth/auth_service.dart';
 
 class MapItineraryPage extends StatefulWidget {
   const MapItineraryPage({super.key});
@@ -10,10 +11,11 @@ class MapItineraryPage extends StatefulWidget {
   @override
   MapItineraryPageState createState() => MapItineraryPageState();
 }
-
+//
 class MapItineraryPageState extends State<MapItineraryPage> {
-  final CollectionReference _itineraryCollection =
-      FirebaseFirestore.instance.collection('Users');
+  final ItineraryService _itineraryService = ItineraryService();
+  final AuthServiceItinerary _authService = AuthServiceItinerary();
+
   int _selectedIndex = 0;
   List<Map<String, dynamic>> _itineraryItems = [];
   late String userId;
@@ -24,14 +26,8 @@ class MapItineraryPageState extends State<MapItineraryPage> {
     _initializeUserId();
   }
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    _loadItineraryItems();
-  }
-
   Future<void> _initializeUserId() async {
-    User? user = FirebaseAuth.instance.currentUser;
+    User? user = await _authService.getCurrentUser();
     if (user != null) {
       setState(() {
         userId = user.uid;
@@ -43,23 +39,10 @@ class MapItineraryPageState extends State<MapItineraryPage> {
   }
 
   Future<void> _loadItineraryItems() async {
-    try {
-      final QuerySnapshot snapshot = await FirebaseFirestore.instance
-          .collection('Users')
-          .doc(userId)
-          .collection('Itineraries')
-          .get();
-
-      setState(() {
-        _itineraryItems = snapshot.docs.map((doc) {
-          Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
-          data['itinerary.id'] = doc.id;
-          return data;
-        }).toList();
-      });
-    } catch (e) {
-      print('Error loading itinerary items: $e');
-    }
+    List<Map<String, dynamic>> items = await _itineraryService.loadItineraryItems(userId);
+    setState(() {
+      _itineraryItems = items;
+    });
   }
 
   void _onItemTapped(int index) {
@@ -74,7 +57,7 @@ class MapItineraryPageState extends State<MapItineraryPage> {
       MaterialPageRoute(
         builder: (context) => EditItineraryPage(
           onSave: (newItem) async {
-            await _saveItineraryToFirestore(newItem);
+            await _itineraryService.saveItinerary(userId, newItem);
             setState(() {
               _itineraryItems.add(newItem);
             });
@@ -84,42 +67,35 @@ class MapItineraryPageState extends State<MapItineraryPage> {
     );
   }
 
-  Future<void> _saveItineraryToFirestore(Map<String, dynamic> itinerary) async {
-    try {
-      DocumentReference docRef = await _itineraryCollection
-          .doc(userId)
-          .collection('Itineraries')
-          .add(itinerary);
-      itinerary['itinerary.id'] = docRef.id;
-    } catch (e) {
-      print('Error saving itinerary to Firestore: $e');
-    }
-  }
-
   Future<void> _removeItineraryItem(int index) async {
     bool confirmDelete = await _showDeleteConfirmationDialog();
     if (confirmDelete) {
       String docId = _itineraryItems[index]['itinerary.id'];
-      try {
-        await _itineraryCollection
-            .doc(userId)
-            .collection('Itineraries')
-            .doc(docId)
-            .delete();
-
-        setState(() {
-          _itineraryItems.removeAt(index);
-        });
-        print('Deleted');
-        ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Delete Successful!'),
-        ),
+      await _itineraryService.deleteItinerary(userId, docId);
+      setState(() {
+        _itineraryItems.removeAt(index);
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Delete Successful!')),
       );
-      } catch (e) {
-        print('Error deleting itinerary item: $e');
-      }
     }
+  }
+
+  Future<void> _editItineraryItem(int index) async {
+    await Navigator.push<Map<String, dynamic>>(
+      context,
+      MaterialPageRoute(
+        builder: (context) => EditItineraryPage(
+          initialItem: _itineraryItems[index],
+          onSave: (updatedItem) async {
+            await _itineraryService.updateItinerary(userId, updatedItem);
+            setState(() {
+              _itineraryItems[index] = updatedItem;
+            });
+          },
+        ),
+      ),
+    );
   }
 
   Future<bool> _showDeleteConfirmationDialog() {
@@ -128,10 +104,8 @@ class MapItineraryPageState extends State<MapItineraryPage> {
       builder: (context) {
         return AlertDialog(
           backgroundColor: Colors.white,
-          title: const Text('Delete Itinerary',
-              style: TextStyle(color: Colors.black)),
-          content: const Text('Delete this itinerary?',
-              style: TextStyle(color: Colors.black)),
+          title: const Text('Delete Itinerary', style: TextStyle(color: Colors.black)),
+          content: const Text('Delete this itinerary?', style: TextStyle(color: Colors.black)),
           actions: [
             TextButton(
               onPressed: () {
@@ -153,37 +127,6 @@ class MapItineraryPageState extends State<MapItineraryPage> {
     ).then((value) => value ?? false);
   }
 
-  Future<void> _editItineraryItem(int index) async {
-    await Navigator.push<Map<String, dynamic>>(
-      context,
-      MaterialPageRoute(
-        builder: (context) => EditItineraryPage(
-          initialItem: _itineraryItems[index],
-          onSave: (updatedItem) async {
-            await _updateItineraryInFirestore(updatedItem);
-            setState(() {
-              _itineraryItems[index] = updatedItem;
-            });
-          },
-        ),
-      ),
-    );
-  }
-
-  Future<void> _updateItineraryInFirestore(
-      Map<String, dynamic> itinerary) async {
-    String docId = itinerary['itinerary.id'];
-    try {
-      await _itineraryCollection
-          .doc(userId)
-          .collection('Itineraries')
-          .doc(docId)
-          .update(itinerary);
-    } catch (e) {
-      print('Error updating itinerary in Firestore: $e');
-    }
-  }
-
   Widget _buildItineraryList() {
     if (_itineraryItems.isEmpty) {
       return Center(
@@ -198,9 +141,7 @@ class MapItineraryPageState extends State<MapItineraryPage> {
             const SizedBox(height: 10),
             const Text(
               'Create itineraries with friends',
-              style: TextStyle(
-                fontSize: 18,
-              ),
+              style: TextStyle(fontSize: 18),
             ),
           ],
         ),
@@ -246,9 +187,7 @@ class MapItineraryPageState extends State<MapItineraryPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          _selectedIndex == 0 ? 'Map' : 'My Trips',
-        ),
+        title: Text(_selectedIndex == 0 ? 'Map' : 'My Trips'),
         actions: _selectedIndex == 1
             ? [
                 IconButton(

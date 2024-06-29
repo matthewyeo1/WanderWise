@@ -8,8 +8,10 @@ class FeedbackPage extends StatefulWidget {
   _FeedbackPageState createState() => _FeedbackPageState();
 }
 
+// Feedback page
 class _FeedbackPageState extends State<FeedbackPage> {
   final TextEditingController feedbackController = TextEditingController();
+  final FeedbackService feedbackService = FeedbackService();
 
   @override
   void dispose() {
@@ -21,26 +23,24 @@ class _FeedbackPageState extends State<FeedbackPage> {
     final feedback = feedbackController.text;
 
     if (feedback.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Please enter your feedback")),
-      );
+      showSnackBar("Please enter your feedback");
       return;
     }
 
-    try {
-      await FirebaseFirestore.instance.collection('UserFeedback').add({
-        'feedback': feedback,
-        'timestamp': FieldValue.serverTimestamp(),
-      });
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Thank you for your feedback!")),
-      );
+    final success = await feedbackService.submitFeedback(feedback);
+
+    if (success) {
+      showSnackBar("Thank you for your feedback!");
       feedbackController.clear();
-    } catch (error) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Error submitting feedback: $error")),
-      );
+    } else {
+      showSnackBar("Error submitting feedback");
     }
+  }
+
+  void showSnackBar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message)),
+    );
   }
 
   @override
@@ -80,5 +80,21 @@ class _FeedbackPageState extends State<FeedbackPage> {
         ),
       ),
     );
+  }
+}
+
+// Upload feedback to Firestore
+class FeedbackService {
+  Future<bool> submitFeedback(String feedback) async {
+    try {
+      await FirebaseFirestore.instance.collection('UserFeedback').add({
+        'feedback': feedback,
+        'timestamp': FieldValue.serverTimestamp(),
+      });
+      return true;
+    } catch (error) {
+      print("Error submitting feedback: $error");
+      return false;
+    }
   }
 }

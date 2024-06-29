@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'dart:io';
 import 'utilities/utils.dart';
+import 'aesthetics/textfield_style.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -100,58 +101,63 @@ class ProfilePageState extends State<ProfilePage> {
   }
 
   Future<void> _resetProfilePicture() async {
-  // Show confirmation dialog
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        backgroundColor: Colors.white,
-        title: const Text('Reset Profile Picture?', style: TextStyle(color: Colors.black)),
-        content: const Text('Are you sure you want to reset your profile picture?', style: TextStyle(color: Colors.black)),
-        actions: <Widget>[
-          TextButton(
-            child: const Text('Cancel', style: TextStyle(color: Colors.lightBlue)),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-          ),
-          TextButton(
-            child: const Text('Reset', style: TextStyle(color: Colors.lightBlue)),
-            onPressed: () async {
-              Navigator.of(context).pop();
-              try {
-                setState(() {
-                  _profileImageUrl = null;
-                });
-                await FirebaseFirestore.instance
-                    .collection('Users')
-                    .doc(_user.uid)
-                    .update({'profileImageUrl': null});
-                if (_profileImageUrl != null) {
-                  await FirebaseStorage.instance
-                      .refFromURL(_profileImageUrl!)
-                      .delete();
-                }
+    // Show confirmation dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: Colors.white,
+          title: const Text('Reset Profile Picture?',
+              style: TextStyle(color: Colors.black)),
+          content: const Text(
+              'Are you sure you want to reset your profile picture?',
+              style: TextStyle(color: Colors.black)),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Cancel',
+                  style: TextStyle(color: Colors.lightBlue)),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('Reset',
+                  style: TextStyle(color: Colors.lightBlue)),
+              onPressed: () async {
+                Navigator.of(context).pop();
+                try {
+                  setState(() {
+                    _profileImageUrl = null;
+                  });
+                  await FirebaseFirestore.instance
+                      .collection('Users')
+                      .doc(_user.uid)
+                      .update({'profileImageUrl': null});
+                  if (_profileImageUrl != null) {
+                    await FirebaseStorage.instance
+                        .refFromURL(_profileImageUrl!)
+                        .delete();
+                  }
 
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Profile picture reset successfully!'),
-                  ),
-                );
-              } catch (e) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Error resetting profile picture'),
-                  ),
-                );
-              }
-            },
-          ),
-        ],
-      );
-    },
-  );
-}
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Profile picture reset successfully!'),
+                    ),
+                  );
+                } catch (e) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Error resetting profile picture'),
+                    ),
+                  );
+                }
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   Future<void> _updateUserProfile() async {
     if (!isValidUsername(_usernameController.text)) {
@@ -251,51 +257,21 @@ class ProfilePageState extends State<ProfilePage> {
             ),
             TextField(
               cursorColor: Colors.black,
-              controller: _usernameController,
               style: const TextStyle(color: Colors.black),
-              decoration: const InputDecoration(
-                filled: true,
-                fillColor: Color.fromARGB(255, 208, 208, 208),
-                prefixIcon: Icon(Icons.person, color: Colors.black45),
+              decoration: TextFieldConfig.buildInputDecoration(
                 hintText: 'Username',
-                hintStyle: TextStyle(color: Colors.black45),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(20)),
-                  borderSide: BorderSide.none,
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(20)),
-                  borderSide: BorderSide.none,
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(20)),
-                  borderSide: BorderSide.none,
-                ),
+                controller: _usernameController,
+                prefixIcon: const Icon(Icons.person, color: Colors.black45),
               ),
             ),
             const SizedBox(height: 10),
             TextField(
               cursorColor: Colors.black,
-              controller: _bioController,
               style: const TextStyle(color: Colors.black),
-              decoration: const InputDecoration(
-                filled: true,
-                fillColor: Color.fromARGB(255, 208, 208, 208),
-                prefixIcon: Icon(Icons.edit_note_sharp, color: Colors.black45),
+              decoration: TextFieldConfig.buildInputDecoration(
                 hintText: 'Bio',
-                hintStyle: TextStyle(color: Colors.black45),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(20)),
-                  borderSide: BorderSide.none,
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(20)),
-                  borderSide: BorderSide.none,
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(20)),
-                  borderSide: BorderSide.none,
-                ),
+                controller: _bioController,
+                prefixIcon: const Icon(Icons.book, color: Colors.black45),
               ),
             ),
             const SizedBox(height: 20),

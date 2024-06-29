@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ww_code/feedback_page.dart';
 
+// Contains FAQ, email and contact no. widgets and feedback section 
 class HelpPage extends StatelessWidget {
   const HelpPage({super.key});
 

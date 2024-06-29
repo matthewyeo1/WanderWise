@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'utilities/utils.dart';
+import 'aesthetics/textfield_style.dart';
 
 class ForgotPasswordPage extends StatefulWidget {
   const ForgotPasswordPage({super.key});
@@ -69,26 +70,11 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                 ),
                 const SizedBox(height: 16),
                 TextField(
-                  controller: emailController,
                   cursorColor: Colors.black,
                   style: const TextStyle(color: Colors.black),
-                  decoration: const InputDecoration(
-                    filled: true,
-                    fillColor: Color.fromARGB(255, 208, 208, 208),
+                  decoration: TextFieldConfig.buildInputDecoration(
                     hintText: 'Email',
-                    hintStyle: TextStyle(color: Colors.black45),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(20)),
-                      borderSide: BorderSide.none,
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(20)),
-                      borderSide: BorderSide.none,
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(20)),
-                      borderSide: BorderSide.none,
-                    ),
+                    controller: emailController,
                   ),
                 ),
                 const SizedBox(height: 40),
