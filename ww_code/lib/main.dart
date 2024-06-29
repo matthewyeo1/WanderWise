@@ -10,8 +10,17 @@ import 'menu_page.dart';
 import 'create_account.dart';
 import 'forgot_password.dart';
 import 'help_page.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 void main() async {
+  // Load the .env file
+  try {
+    await dotenv.load();
+    String apiKey = dotenv.env['API_KEY']!;
+    print('API Key: $apiKey');
+  } catch (e) {
+    print('Error loading environment variables: $e');
+  }
   WidgetsFlutterBinding.ensureInitialized();
 
   // Initialize Firebase and Firebase App Check
@@ -19,13 +28,15 @@ void main() async {
   //await FirebaseAppCheck.instance.activate();
 
   // Set Firestore settings
-  FirebaseFirestore.instance.settings = const Settings(persistenceEnabled: true);
+  FirebaseFirestore.instance.settings =
+      const Settings(persistenceEnabled: true);
 
   // Get the current user
   User? user = FirebaseAuth.instance.currentUser;
 
   // Initialize ThemeNotifier
-  ThemeNotifier themeNotifier = ThemeNotifier(user?.uid ?? '', isDarkMode: false);
+  ThemeNotifier themeNotifier =
+      ThemeNotifier(user?.uid ?? '', isDarkMode: false);
 
   // Load theme preference if user is authenticated
   if (user != null) {
@@ -47,8 +58,6 @@ void main() async {
   );
 }
 
-
-
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -57,20 +66,19 @@ class MyApp extends StatelessWidget {
     return Consumer<ThemeNotifier>(
       builder: (context, themeNotifier, child) {
         return MaterialApp(
-          title: 'WanderWise App',
-          theme: lightTheme,
-          darkTheme: darkTheme,
-          themeMode: themeNotifier.getThemeMode(),
-          home: const SplashScreen(),
-          routes: {
-            '/login': (context) => const MyHomePage(title: 'Login'),
-            '/menu': (context) => const MenuPage(),
-            '/create_account': (context) => const CreateAccountPage(),
-            '/forgot_password': (context) => const ForgotPasswordPage(),
-            '/help': (context) => const HelpPage(),
-          },
-          debugShowCheckedModeBanner: false
-        );
+            title: 'WanderWise App',
+            theme: lightTheme,
+            darkTheme: darkTheme,
+            themeMode: themeNotifier.getThemeMode(),
+            home: const SplashScreen(),
+            routes: {
+              '/login': (context) => const MyHomePage(title: 'Login'),
+              '/menu': (context) => const MenuPage(),
+              '/create_account': (context) => const CreateAccountPage(),
+              '/forgot_password': (context) => const ForgotPasswordPage(),
+              '/help': (context) => const HelpPage(),
+            },
+            debugShowCheckedModeBanner: false);
       },
     );
   }
