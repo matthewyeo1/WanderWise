@@ -5,7 +5,7 @@ class ThemeNotifier with ChangeNotifier {
   late bool isDarkMode;
   late String? userId;
 
-  ThemeNotifier(this.userId, {required this.isDarkMode});
+  ThemeNotifier(userId, {required this.isDarkMode});
 
    void initialize(String userId, bool isDarkMode) {
     this.userId = userId;

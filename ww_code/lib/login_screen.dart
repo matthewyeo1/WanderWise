@@ -14,30 +14,30 @@ class MyHomePage extends StatefulWidget {
   final String title;
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<MyHomePage> createState() => MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
+class MyHomePageState extends State<MyHomePage> {
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
   final Logger _logger = Logger('MyHomePage');
-  final FocusNode _emailFocusNode = FocusNode();
-  final FocusNode _passwordFocusNode = FocusNode();
-  final GoogleSignIn _googleSignIn = GoogleSignIn();
+  final FocusNode emailFocusNode = FocusNode();
+  final FocusNode passwordFocusNode = FocusNode();
+  final GoogleSignIn googleSignIn = GoogleSignIn();
 
   @override
   void dispose() {
-    _emailController.dispose();
-    _passwordController.dispose();
-    _emailFocusNode.dispose();
-    _passwordFocusNode.dispose();
+    emailController.dispose();
+    passwordController.dispose();
+    emailFocusNode.dispose();
+    passwordFocusNode.dispose();
     super.dispose();
   }
 
   // Normal login function
-  Future<void> _login() async {
-    String email = _emailController.text;
-    String password = _passwordController.text;
+  Future<void> login(FirebaseAuth auth, FirebaseFirestore firestore, ThemeNotifier themenotifier) async {
+    String email = emailController.text;
+    String password = passwordController.text;
     _logger.info('Attempting login with email: $email and password: $password');
 
     try {
@@ -67,8 +67,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
         Navigator.pushReplacementNamed(context, '/menu').then((_) {
           // Once navigated to menu page, clear text fields for email and password
-          _emailController.clear();
-          _passwordController.clear();
+          emailController.clear();
+          passwordController.clear();
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text('Logged in as $userId'),
@@ -166,7 +166,7 @@ class _MyHomePageState extends State<MyHomePage> {
   // Google signin function
   Future<void> _handleGoogleSignIn() async {
     try {
-      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+      final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
       if (googleUser == null) {
         return;
       }
@@ -273,8 +273,8 @@ class _MyHomePageState extends State<MyHomePage> {
                 const SizedBox(height: 16),
                 TextField(
                   cursorColor: Colors.black,
-                  controller: _emailController,
-                  focusNode: _emailFocusNode,
+                  controller: emailController,
+                  focusNode: emailFocusNode,
                   style: const TextStyle(color: Colors.black),
                   decoration: const InputDecoration(
                     filled: true,
@@ -299,8 +299,8 @@ class _MyHomePageState extends State<MyHomePage> {
                 const SizedBox(height: 16),
                 TextField(
                   cursorColor: Colors.black,
-                  controller: _passwordController,
-                  focusNode: _passwordFocusNode,
+                  controller: passwordController,
+                  focusNode: passwordFocusNode,
                   style: const TextStyle(color: Colors.black),
                   decoration: const InputDecoration(
                     filled: true,
@@ -339,7 +339,13 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
                 const SizedBox(height: 16),
                 ElevatedButton(
-                  onPressed: _login,
+                  onPressed: () async {
+                    await login(
+                      FirebaseAuth.instance,
+                      FirebaseFirestore.instance,
+                      Provider.of<ThemeNotifier>(context, listen: false),
+                    ); 
+                  },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.lightBlue,
                     foregroundColor: Colors.white,
