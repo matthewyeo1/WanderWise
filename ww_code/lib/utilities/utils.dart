@@ -1,4 +1,5 @@
 
+
 bool isValidEmail(String email) {
   return RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(email);
 }
@@ -13,4 +14,12 @@ bool isValidUsername(String username) {
 
 bool isValidBio(String bio) {
   return bio.length <= 30;
+}
+
+bool isValidBudget(int budget) {
+  return budget >= 500; 
+}
+
+bool isValidDuration(int duration) {
+  return duration >= 1 && duration <= 30;
 }

@@ -5,7 +5,7 @@ class TextFieldConfig {
     required String hintText,
     Icon? prefixIcon,
     FocusNode? focusNode,
-    required TextEditingController controller,
+    TextEditingController? controller,
     bool? obscureText,
   }) {
     return InputDecoration(

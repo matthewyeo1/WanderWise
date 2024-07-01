@@ -3,11 +3,13 @@ import 'package:flutter/material.dart';
 class EditItineraryPage extends StatefulWidget {
   final Map<String, dynamic>? initialItem;
   final ValueChanged<Map<String, dynamic>> onSave;
+  final String title;
 
   const EditItineraryPage({
     super.key,
     this.initialItem,
     required this.onSave,
+    required this.title,
   });
 
   @override
@@ -88,7 +90,7 @@ class EditItineraryPageState extends State<EditItineraryPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('View/Edit Itinerary'),
+        title: Text(widget.title),
         actions: [
           TextButton(
             onPressed: () {

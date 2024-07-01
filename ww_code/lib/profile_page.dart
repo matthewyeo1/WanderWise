@@ -256,21 +256,21 @@ class ProfilePageState extends State<ProfilePage> {
               ],
             ),
             TextField(
+              controller: _usernameController,
               cursorColor: Colors.black,
               style: const TextStyle(color: Colors.black),
               decoration: TextFieldConfig.buildInputDecoration(
-                hintText: 'Username',
-                controller: _usernameController,
+                hintText: 'Username',          
                 prefixIcon: const Icon(Icons.person, color: Colors.black45),
               ),
             ),
             const SizedBox(height: 10),
             TextField(
+                controller: _bioController,
               cursorColor: Colors.black,
               style: const TextStyle(color: Colors.black),
               decoration: TextFieldConfig.buildInputDecoration(
                 hintText: 'Bio',
-                controller: _bioController,
                 prefixIcon: const Icon(Icons.book, color: Colors.black45),
               ),
             ),

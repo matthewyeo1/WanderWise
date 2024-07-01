@@ -4,6 +4,7 @@ import 'edit_itinerary_page.dart';
 import 'map_view.dart';
 import 'storage/itinerary_service.dart';
 import 'auth/auth_service.dart';
+import 'ai_itinerary_page.dart';
 
 class MapItineraryPage extends StatefulWidget {
   const MapItineraryPage({super.key});
@@ -11,7 +12,7 @@ class MapItineraryPage extends StatefulWidget {
   @override
   MapItineraryPageState createState() => MapItineraryPageState();
 }
-//
+
 class MapItineraryPageState extends State<MapItineraryPage> {
   final ItineraryService _itineraryService = ItineraryService();
   final AuthServiceItinerary _authService = AuthServiceItinerary();
@@ -56,6 +57,7 @@ class MapItineraryPageState extends State<MapItineraryPage> {
       context,
       MaterialPageRoute(
         builder: (context) => EditItineraryPage(
+          title: 'Add New Trip',
           onSave: (newItem) async {
             await _itineraryService.saveItinerary(userId, newItem);
             setState(() {
@@ -86,6 +88,7 @@ class MapItineraryPageState extends State<MapItineraryPage> {
       context,
       MaterialPageRoute(
         builder: (context) => EditItineraryPage(
+          title: 'View/Edit Trip',
           initialItem: _itineraryItems[index],
           onSave: (updatedItem) async {
             await _itineraryService.updateItinerary(userId, updatedItem);
@@ -183,6 +186,15 @@ class MapItineraryPageState extends State<MapItineraryPage> {
     }
   }
 
+  Future<void> _navigateToAIItineraryPage() async {
+  await Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (context) => AIItineraryPage(),
+    ),
+  );
+}
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -193,6 +205,10 @@ class MapItineraryPageState extends State<MapItineraryPage> {
                 IconButton(
                   icon: const Icon(Icons.add),
                   onPressed: _addItineraryItem,
+                ),
+                IconButton(
+                icon: const Icon(Icons.lightbulb), 
+                onPressed: _navigateToAIItineraryPage,
                 ),
               ]
             : null,
@@ -219,3 +235,4 @@ class MapItineraryPageState extends State<MapItineraryPage> {
     );
   }
 }
+

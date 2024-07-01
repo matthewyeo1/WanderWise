@@ -11,6 +11,8 @@ import 'create_account.dart';
 import 'forgot_password.dart';
 import 'help_page.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_gemini/flutter_gemini.dart';
+import 'package:ww_code/utilities/const.dart';
 
 void main() async {
   // Load the .env file
@@ -21,6 +23,11 @@ void main() async {
   } catch (e) {
     print('Error loading environment variables: $e');
   }
+  // Load Gemini API Key
+  Gemini.init(
+    apiKey: GEMINI_API_KEY,
+  );
+
   WidgetsFlutterBinding.ensureInitialized();
 
   // Initialize Firebase and Firebase App Check
