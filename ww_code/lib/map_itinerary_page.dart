@@ -190,7 +190,7 @@ class MapItineraryPageState extends State<MapItineraryPage> {
   await Navigator.push(
     context,
     MaterialPageRoute(
-      builder: (context) => AIItineraryPage(),
+      builder: (context) => GeminiChatPage(),
     ),
   );
 }

@@ -93,7 +93,8 @@ final lightTheme = ThemeData(
   snackBarTheme: const SnackBarThemeData(
     backgroundColor: Colors.black54,
     contentTextStyle: TextStyle(color: Colors.white),
-  )
+  ),
+
 );
 
 final darkTheme = ThemeData(
@@ -137,5 +138,6 @@ final darkTheme = ThemeData(
   snackBarTheme: const SnackBarThemeData(
     backgroundColor: Colors.black54,
     contentTextStyle: TextStyle(color: Colors.white),
-  )
+  ),
+
 );
