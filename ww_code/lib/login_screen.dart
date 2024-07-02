@@ -154,7 +154,6 @@ class MyHomePageState extends State<MyHomePage> {
                     prefixIcon: const Icon(Icons.person, color: Colors.black45),
                     focusNode: emailFocusNode,
                     controller: emailController,
-                    obscureText: false,
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -168,8 +167,8 @@ class MyHomePageState extends State<MyHomePage> {
                     prefixIcon: const Icon(Icons.lock, color: Colors.black45),
                     focusNode: passwordFocusNode,
                     controller: passwordController,
-                    obscureText: true,
                   ),
+                  obscureText: true,
                 ),
                 const SizedBox(height: 0),
                 Align(
