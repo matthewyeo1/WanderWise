@@ -63,6 +63,7 @@ class MapItineraryPageState extends State<MapItineraryPage> {
             setState(() {
               _itineraryItems.add(newItem);
             });
+          
           },
         ),
       ),
@@ -190,7 +191,7 @@ class MapItineraryPageState extends State<MapItineraryPage> {
   await Navigator.push(
     context,
     MaterialPageRoute(
-      builder: (context) => GeminiChatPage(),
+      builder: (context) => const GeminiChatPage(),
     ),
   );
 }

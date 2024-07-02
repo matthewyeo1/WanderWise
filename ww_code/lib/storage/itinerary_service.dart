@@ -29,7 +29,12 @@ class ItineraryService {
       DocumentReference docRef = await _itineraryCollection
           .doc(userId)
           .collection('Itineraries')
-          .add(itinerary);
+         .add({
+            'itinerary.title': itinerary['itinerary.title'],
+            'itinerary.description': itinerary['itinerary.description'],
+            'itinerary.startDate': itinerary['itinerary.startDate'],
+            'itinerary.endDate': itinerary['itinerary.endDate'],
+          });
       itinerary['itinerary.id'] = docRef.id;
     } catch (e) {
       print('Error saving itinerary to Firestore: $e');
@@ -43,7 +48,12 @@ class ItineraryService {
           .doc(userId)
           .collection('Itineraries')
           .doc(docId)
-          .update(itinerary);
+          .update({
+            'itinerary.title': itinerary['itinerary.title'],
+            'itinerary.description': itinerary['itinerary.description'],
+            'itinerary.startDate': itinerary['itinerary.startDate'],
+            'itinerary.endDate': itinerary['itinerary.endDate'],
+          });
     } catch (e) {
       print('Error updating itinerary in Firestore: $e');
     }
