@@ -5,6 +5,7 @@ import 'package:flutter_gemini/flutter_gemini.dart';
 import 'package:dash_chat_2/dash_chat_2.dart';
 import 'aesthetics/textfield_style.dart';
 import 'utilities/utils.dart';
+import 'storage/itinerary_service.dart';
 
 class GeminiChatPage extends StatefulWidget {
   const GeminiChatPage({super.key});
@@ -20,8 +21,10 @@ class GeminiChatPageState extends State<GeminiChatPage> {
   TextEditingController destinationController = TextEditingController();
   TextEditingController durationController = TextEditingController();
   bool isDarkMode = false;
+  bool isLoading = true;
+  final ItineraryService _itineraryService = ItineraryService();
 
-  // Gemini identity on Firestore 
+  // Gemini identity on Firestore
   ChatUser geminiUser = ChatUser(
     id: '0',
     profileImage:
@@ -59,6 +62,9 @@ class GeminiChatPageState extends State<GeminiChatPage> {
   }
 
   Future<void> _loadMessages() async {
+    setState(() {
+      isLoading = true;
+    });
     QuerySnapshot snapshot = await FirebaseFirestore.instance
         .collection('Users')
         .doc(userId)
@@ -71,6 +77,7 @@ class GeminiChatPageState extends State<GeminiChatPage> {
           .map(
               (doc) => ChatMessage.fromJson(doc.data() as Map<String, dynamic>))
           .toList();
+      isLoading = false;
     });
   }
 
@@ -83,13 +90,24 @@ class GeminiChatPageState extends State<GeminiChatPage> {
         .set(message.toJson());
   }
 
+  Future<void> _saveToItineraryPage(ChatMessage message) async {
+    Map<String, dynamic> newItem = {
+      'itinerary.title': 'Generated Itinerary',
+      'itinerary.startDate': '-',
+      'itinerary.endDate': '-',
+      'itinerary.description': message.text,
+      'itinerary.id': message.createdAt.toIso8601String(),
+    };
+    await _itineraryService.saveItinerary(userId, newItem);
+  }
+
   Future<void> _clearMessages() async {
     QuerySnapshot snapshot = await FirebaseFirestore.instance
         .collection('Users')
         .doc(userId)
         .collection('AI_Generated_Itineraries')
         .get();
-    
+
     for (DocumentSnapshot doc in snapshot.docs) {
       await doc.reference.delete();
     }
@@ -102,110 +120,140 @@ class GeminiChatPageState extends State<GeminiChatPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Planning with AI'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.delete),
-            onPressed: _clearMessages,
-          ),
-        ]
-      ),
-      body: Column(
-        children: <Widget>[
-          Expanded(
-            child: _messages.isEmpty
-                ? Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Image.asset(
-                          'images/ai_itinerary.png',
-                          width: 200,
-                          height: 200,
+      appBar: AppBar(title: const Text('Planning with AI'), actions: [
+        IconButton(
+          icon: const Icon(Icons.delete),
+          onPressed: _clearMessages,
+        ),
+      ]),
+      body: isLoading
+          ? const Center(
+              child: CircularProgressIndicator(
+              color: Colors.lightBlue,
+            ))
+          : Column(
+              children: <Widget>[
+                Expanded(
+                  child: _messages.isEmpty
+                      ? Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Image.asset(
+                                'images/ai_itinerary.png',
+                                width: 200,
+                                height: 200,
+                              ),
+                              const SizedBox(height: 20),
+                              const Text(
+                                'Generate itineraries with Gemini AI!',
+                                style: TextStyle(fontSize: 18),
+                                textAlign: TextAlign.center,
+                              ),
+                            ],
+                          ),
+                        )
+                      : DashChat(
+                          messages: _messages,
+                          onSend: (ChatMessage chatMessage) {},
+                          currentUser: ChatUser(
+                            id: userId,
+                            firstName: userId,
+                          ),
+                          inputOptions: const InputOptions(
+                              inputDisabled: true,
+                              inputDecoration: InputDecoration()
+                              ),
+                          messageOptions: MessageOptions(
+                            currentUserContainerColor: !isDarkMode
+                                ? Colors.lightBlue
+                                : const Color(0xFF191970),
+                            currentUserTextColor:
+                                !isDarkMode ? Colors.white : Colors.white,    
+                            onPressMessage: (ChatMessage message) {
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: const Text('Save to Itinerary Page'),
+                                    content: const Text('Save to itinerary page?'),
+                                    actions: <Widget>[
+                                      TextButton(
+                                        child: const Text('Cancel', style: TextStyle(color: Colors.lightBlue)),
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                      ),
+                                      TextButton(
+                                        child: const Text('Save', style: TextStyle(color: Colors.lightBlue)),
+                                        onPressed: () {
+                                          _saveToItineraryPage(message);
+                                          Navigator.of(context).pop();
+                                        },
+                                      ),
+                                    ],
+                                  );
+                                },
+                              );
+                            }      
+                          ),
+                          
                         ),
-                        const SizedBox(height: 20),
-                        const Text(
-                          'Generate itineraries with Gemini AI!',
-                          style: TextStyle(fontSize: 18),
-                          textAlign: TextAlign.center,
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    children: [
+                      TextField(
+                        style: const TextStyle(color: Colors.black),
+                        cursorColor: Colors.black,
+                        controller: budgetController,
+                        decoration: TextFieldConfig.buildInputDecoration(
+                          hintText: 'Enter budget',
+                          prefixIcon: const Icon(
+                            Icons.attach_money,
+                            color: Colors.black45,
+                          ),
                         ),
-                      ],
-                    ),
-                  )
-                : DashChat(
-                    messages: _messages,
-                    onSend: (ChatMessage chatMessage) {},
-                    currentUser: ChatUser(
-                      id: userId,
-                      firstName: userId,
-                    ),
-                    inputOptions: const InputOptions(
-                        inputDisabled: true,
-                        inputDecoration: InputDecoration()),
-                    messageOptions: MessageOptions(
-                      currentUserContainerColor: !isDarkMode
-                          ? Colors.lightBlue
-                          : const Color(0xFF191970),
-                      currentUserTextColor:
-                          !isDarkMode ? Colors.white : Colors.white,
-                    ),
+                        keyboardType: TextInputType.number,
+                      ),
+                      const SizedBox(height: 5),
+                      TextField(
+                        style: const TextStyle(color: Colors.black),
+                        cursorColor: Colors.black,
+                        controller: destinationController,
+                        decoration: TextFieldConfig.buildInputDecoration(
+                          hintText: 'Enter destination',
+                          prefixIcon: const Icon(
+                            Icons.location_on,
+                            color: Colors.black45,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 5),
+                      TextField(
+                        style: const TextStyle(color: Colors.black),
+                        cursorColor: Colors.black,
+                        controller: durationController,
+                        decoration: TextFieldConfig.buildInputDecoration(
+                          hintText: 'Enter duration (days)',
+                          prefixIcon: const Icon(
+                            Icons.calendar_today,
+                            color: Colors.black45,
+                          ),
+                        ),
+                        keyboardType: TextInputType.number,
+                      ),
+                      const SizedBox(height: 8),
+                      ElevatedButton(
+                        onPressed: _handleSendMessage,
+                        child: const Text('Generate Itinerary'),
+                      ),
+                    ],
                   ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              children: [
-                TextField(
-                  style: const TextStyle(color: Colors.black),
-                  cursorColor: Colors.black,
-                  controller: budgetController,
-                  decoration: TextFieldConfig.buildInputDecoration(
-                    hintText: 'Enter budget',
-                    prefixIcon: const Icon(
-                      Icons.attach_money,
-                      color: Colors.black45,
-                    ),
-                  ),
-                  keyboardType: TextInputType.number,
-                ),
-                const SizedBox(height: 5),
-                TextField(
-                  style: const TextStyle(color: Colors.black),
-                  cursorColor: Colors.black,
-                  controller: destinationController,
-                  decoration: TextFieldConfig.buildInputDecoration(
-                    hintText: 'Enter destination',
-                    prefixIcon: const Icon(
-                      Icons.location_on,
-                      color: Colors.black45,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 5),
-                TextField(
-                  style: const TextStyle(color: Colors.black),
-                  cursorColor: Colors.black,
-                  controller: durationController,
-                  decoration: TextFieldConfig.buildInputDecoration(
-                    hintText: 'Enter duration (days)',
-                    prefixIcon: const Icon(
-                      Icons.calendar_today,
-                      color: Colors.black45,
-                    ),
-                  ),
-                  keyboardType: TextInputType.number,
-                ),
-                const SizedBox(height: 8),
-                ElevatedButton(
-                  onPressed: _handleSendMessage,
-                  child: const Text('Generate Itinerary'),
                 ),
               ],
             ),
-          ),
-        ],
-      ),
     );
   }
 
@@ -218,7 +266,8 @@ class GeminiChatPageState extends State<GeminiChatPage> {
     if (budgetStr.isEmpty || destination.isEmpty || durationStr.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Please enter your desired budget, destination and duration of stay'),
+          content: Text(
+              'Please enter your desired budget, destination and duration of stay'),
         ),
       );
       return;
@@ -257,7 +306,7 @@ class GeminiChatPageState extends State<GeminiChatPage> {
       );
       return;
     }
-    
+
     // Fixed prompt statement
     String prompt =
         'Create an itinerary to $destination, with a budget of \$$budget for $duration days.';
