@@ -85,7 +85,8 @@ class MyApp extends StatelessWidget {
               '/forgot_password': (context) => const ForgotPasswordPage(),
               '/help': (context) => const HelpPage(),
             },
-            debugShowCheckedModeBanner: false);
+            debugShowCheckedModeBanner: false
+          );
       },
     );
   }

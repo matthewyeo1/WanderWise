@@ -15,7 +15,7 @@ class ItineraryService {
 
       return snapshot.docs.map((doc) {
         Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
-        data['itinerary.id'] = doc.id;
+        data['id'] = doc.id;
         return data;
       }).toList();
     } catch (e) {
@@ -30,29 +30,29 @@ class ItineraryService {
           .doc(userId)
           .collection('Itineraries')
          .add({
-            'itinerary.title': itinerary['itinerary.title'],
-            'itinerary.description': itinerary['itinerary.description'],
-            'itinerary.startDate': itinerary['itinerary.startDate'],
-            'itinerary.endDate': itinerary['itinerary.endDate'],
+            'title': itinerary['title'],
+            'description': itinerary['description'],
+            'startDate': itinerary['startDate'],
+            'endDate': itinerary['endDate'],
           });
-      itinerary['itinerary.id'] = docRef.id;
+      itinerary['id'] = docRef.id;
     } catch (e) {
       print('Error saving itinerary to Firestore: $e');
     }
   }
 
   Future<void> updateItinerary(String userId, Map<String, dynamic> itinerary) async {
-    String docId = itinerary['itinerary.id'];
+    String docId = itinerary['id'];
     try {
       await _itineraryCollection
           .doc(userId)
           .collection('Itineraries')
           .doc(docId)
           .update({
-            'itinerary.title': itinerary['itinerary.title'],
-            'itinerary.description': itinerary['itinerary.description'],
-            'itinerary.startDate': itinerary['itinerary.startDate'],
-            'itinerary.endDate': itinerary['itinerary.endDate'],
+            'title': itinerary['title'],
+            'description': itinerary['description'],
+            'startDate': itinerary['startDate'],
+            'endDate': itinerary['endDate'],
           });
     } catch (e) {
       print('Error updating itinerary in Firestore: $e');

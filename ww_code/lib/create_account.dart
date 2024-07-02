@@ -76,7 +76,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
           .collection('Users')
           .doc(userCredential.user?.uid)
           .set({
-        'username': username,
+        'Username': username,
         'email': email,
       });
 
@@ -128,9 +128,9 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                   style: const TextStyle(color: Colors.black),
                   decoration: TextFieldConfig.buildInputDecoration(
                     hintText: 'Username',
-                    controller: _usernameController,
                     focusNode: _usernameFocusNode,
                   ),
+                  controller: _usernameController,
                 ),
                 const SizedBox(height: 16),
                 TextField(
@@ -138,9 +138,9 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                   style: const TextStyle(color: Colors.black),
                   decoration: TextFieldConfig.buildInputDecoration(
                     hintText: 'Email',
-                    controller: _emailController,
                     focusNode: _emailFocusNode,
                   ),
+                  controller: _emailController,
                 ),
                 const SizedBox(height: 16),
                 TextField(
@@ -148,9 +148,9 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                   style: const TextStyle(color: Colors.black),
                   decoration: TextFieldConfig.buildInputDecoration(
                     hintText: 'Password',
-                    controller: _passwordController,
                     focusNode: _passwordFocusNode,
                   ),
+                  controller: _passwordController,
                 ),
                 const SizedBox(height: 40),
                 ElevatedButton(

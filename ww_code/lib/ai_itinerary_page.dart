@@ -92,11 +92,11 @@ class GeminiChatPageState extends State<GeminiChatPage> {
 
   Future<void> _saveToItineraryPage(ChatMessage message) async {
     Map<String, dynamic> newItem = {
-      'itinerary.title': 'Generated Itinerary',
-      'itinerary.startDate': '-',
-      'itinerary.endDate': '-',
-      'itinerary.description': message.text,
-      'itinerary.id': message.createdAt.toIso8601String(),
+      'title': 'Generated Itinerary',
+      'startDate': '-',
+      'endDate': '-',
+      'description': message.text,
+      'id': message.createdAt.toIso8601String(),
     };
     await _itineraryService.saveItinerary(userId, newItem);
   }
@@ -120,7 +120,7 @@ class GeminiChatPageState extends State<GeminiChatPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Planning with AI'), actions: [
+      appBar: AppBar(title: const Text('Create Itineraries with Gemini'), actions: [
         IconButton(
           icon: const Icon(Icons.delete),
           onPressed: _clearMessages,
@@ -144,12 +144,19 @@ class GeminiChatPageState extends State<GeminiChatPage> {
                                 width: 200,
                                 height: 200,
                               ),
-                              const SizedBox(height: 20),
+                              const SizedBox(height: 5),
                               const Text(
                                 'Generate itineraries with Gemini AI!',
                                 style: TextStyle(fontSize: 18),
                                 textAlign: TextAlign.center,
                               ),
+                            
+                              const Text(
+                                'Enter your desired budget, destination \n and duration of stay below. Save generated \n itineraries by clicking on the text generated!',
+                                style: TextStyle(fontSize: 18),
+                                textAlign: TextAlign.center,
+                              ),
+                      
                             ],
                           ),
                         )
@@ -263,6 +270,7 @@ class GeminiChatPageState extends State<GeminiChatPage> {
     String destination = destinationController.text;
     String durationStr = durationController.text;
 
+    
     if (budgetStr.isEmpty || destination.isEmpty || durationStr.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -272,6 +280,12 @@ class GeminiChatPageState extends State<GeminiChatPage> {
       );
       return;
     }
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('WARNING: Responses generated are only suggestions, \n and merely serve as guidance for travel planning.'),
+      ),
+    );
 
     // Convert string to int for validity checks
     int budget;

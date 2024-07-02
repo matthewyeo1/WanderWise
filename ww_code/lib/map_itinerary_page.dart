@@ -73,7 +73,7 @@ class MapItineraryPageState extends State<MapItineraryPage> {
   Future<void> _removeItineraryItem(int index) async {
     bool confirmDelete = await _showDeleteConfirmationDialog();
     if (confirmDelete) {
-      String docId = _itineraryItems[index]['itinerary.id'];
+      String docId = _itineraryItems[index]['id'];
       await _itineraryService.deleteItinerary(userId, docId);
       setState(() {
         _itineraryItems.removeAt(index);
@@ -94,7 +94,10 @@ class MapItineraryPageState extends State<MapItineraryPage> {
           onSave: (updatedItem) async {
             await _itineraryService.updateItinerary(userId, updatedItem);
             setState(() {
-              _itineraryItems[index] = updatedItem;
+              _itineraryItems[index]['title'] = updatedItem['title'] ?? '';
+              _itineraryItems[index]['startDate'] = updatedItem['startDate'] ?? '';
+              _itineraryItems[index]['endDate'] = updatedItem['endDate'] ?? '';
+              _itineraryItems[index]['description'] = updatedItem['description'] ?? '';
             });
           },
         ),
@@ -160,11 +163,11 @@ class MapItineraryPageState extends State<MapItineraryPage> {
             margin: const EdgeInsets.symmetric(vertical: 8),
             child: ListTile(
               title: Text(
-                _itineraryItems[index]['itinerary.title'],
+                _itineraryItems[index]['title'],
                 style: const TextStyle(color: Colors.black),
               ),
               subtitle: Text(
-                'Start Date: ${_itineraryItems[index]['itinerary.startDate']}\nEnd Date: ${_itineraryItems[index]['itinerary.endDate']}',
+                'Start Date: ${_itineraryItems[index]['startDate']}\nEnd Date: ${_itineraryItems[index]['endDate']}',
                 style: const TextStyle(color: Colors.black54),
               ),
               trailing: Row(
