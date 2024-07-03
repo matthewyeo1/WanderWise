@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_gemini/flutter_gemini.dart';
 import 'package:dash_chat_2/dash_chat_2.dart';
+import 'package:ww_code/aesthetics/themes.dart';
 import 'aesthetics/textfield_style.dart';
 import 'utilities/utils.dart';
 import 'storage/itinerary_service.dart';
@@ -22,6 +23,7 @@ class GeminiChatPageState extends State<GeminiChatPage> {
   TextEditingController durationController = TextEditingController();
   bool isDarkMode = false;
   bool isLoading = true;
+  bool isGenerating = false;
   final ItineraryService _itineraryService = ItineraryService();
 
   // Gemini identity on Firestore
@@ -92,13 +94,16 @@ class GeminiChatPageState extends State<GeminiChatPage> {
 
   Future<void> _saveToItineraryPage(ChatMessage message) async {
     Map<String, dynamic> newItem = {
-      'title': 'Generated Itinerary',
+      'title': '*** Generated Itinerary ***',
       'startDate': '-',
       'endDate': '-',
       'description': message.text,
       'id': message.createdAt.toIso8601String(),
     };
     await _itineraryService.saveItinerary(userId, newItem);
+    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+      content: Text('Saved Trips!'),
+    ));
   }
 
   Future<void> _clearMessages() async {
@@ -120,16 +125,25 @@ class GeminiChatPageState extends State<GeminiChatPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Create Itineraries with Gemini'), actions: [
+      appBar:
+          AppBar(title: const Text('Create Itineraries with Gemini'), actions: [
         IconButton(
           icon: const Icon(Icons.delete),
           onPressed: _clearMessages,
         ),
       ]),
       body: isLoading
-          ? const Center(
+          ? Center(
               child: CircularProgressIndicator(
-              color: Colors.lightBlue,
+              valueColor: AlwaysStoppedAnimation<Color>(
+                Theme.of(context).brightness == Brightness.light
+                    ? Theme.of(context)
+                        .customColors
+                        .circularProgressIndicatorLight
+                    : Theme.of(context)
+                        .customColors
+                        .circularProgressIndicatorDark,
+              ),
             ))
           : Column(
               children: <Widget>[
@@ -147,16 +161,14 @@ class GeminiChatPageState extends State<GeminiChatPage> {
                               const SizedBox(height: 5),
                               const Text(
                                 'Generate itineraries with Gemini AI!',
-                                style: TextStyle(fontSize: 18),
+                                style: TextStyle(fontSize: 14),
                                 textAlign: TextAlign.center,
                               ),
-                            
                               const Text(
                                 'Enter your desired budget, destination \n and duration of stay below. Save generated \n itineraries by clicking on the text generated!',
-                                style: TextStyle(fontSize: 18),
+                                style: TextStyle(fontSize: 14),
                                 textAlign: TextAlign.center,
                               ),
-                      
                             ],
                           ),
                         )
@@ -167,44 +179,70 @@ class GeminiChatPageState extends State<GeminiChatPage> {
                             id: userId,
                             firstName: userId,
                           ),
-                          inputOptions: const InputOptions(
-                              inputDisabled: true,
-                              inputDecoration: InputDecoration()
-                              ),
-                          messageOptions: MessageOptions(
-                            currentUserContainerColor: !isDarkMode
-                                ? Colors.lightBlue
-                                : const Color(0xFF191970),
-                            currentUserTextColor:
-                                !isDarkMode ? Colors.white : Colors.white,    
-                            onPressMessage: (ChatMessage message) {
-                              showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return AlertDialog(
-                                    title: const Text('Save to Itinerary Page'),
-                                    content: const Text('Save to itinerary page?'),
-                                    actions: <Widget>[
-                                      TextButton(
-                                        child: const Text('Cancel', style: TextStyle(color: Colors.lightBlue)),
-                                        onPressed: () {
-                                          Navigator.of(context).pop();
-                                        },
+                          inputOptions: InputOptions(
+                            inputDisabled: true,
+                            inputDecoration: InputDecoration(
+                              border: InputBorder.none,
+                              suffixIcon: isGenerating
+                                  ? Center(
+                                      child: SizedBox(
+                                      height: 20,
+                                      width: 20,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2.0,
+                                        valueColor:
+                                            AlwaysStoppedAnimation<Color>(
+                                          Theme.of(context).brightness ==
+                                                  Brightness.light
+                                              ? Theme.of(context)
+                                                  .customColors
+                                                  .circularProgressIndicatorLight
+                                              : Theme.of(context)
+                                                  .customColors
+                                                  .circularProgressIndicatorDark,
+                                        ),
                                       ),
-                                      TextButton(
-                                        child: const Text('Save', style: TextStyle(color: Colors.lightBlue)),
-                                        onPressed: () {
-                                          _saveToItineraryPage(message);
-                                          Navigator.of(context).pop();
-                                        },
-                                      ),
-                                    ],
-                                  );
-                                },
-                              );
-                            }      
+                                    ))
+                                  : null,
+                            ),
                           ),
-                          
+                          messageOptions: MessageOptions(
+                              currentUserContainerColor: !isDarkMode
+                                  ? Colors.lightBlue
+                                  : const Color(0xFF191970),
+                              currentUserTextColor:
+                                  !isDarkMode ? Colors.white : Colors.white,
+                              onPressMessage: (ChatMessage message) {
+                                showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                      title: const Text('Save to Trips Page'),
+                                      content:
+                                          const Text('Save to Trips page?'),
+                                      actions: <Widget>[
+                                        TextButton(
+                                          child: const Text('Cancel',
+                                              style: TextStyle(
+                                                  color: Colors.lightBlue)),
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
+                                          },
+                                        ),
+                                        TextButton(
+                                          child: const Text('Save',
+                                              style: TextStyle(
+                                                  color: Colors.lightBlue)),
+                                          onPressed: () {
+                                            _saveToItineraryPage(message);
+                                            Navigator.of(context).pop();
+                                          },
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                );
+                              }),
                         ),
                 ),
                 Padding(
@@ -270,7 +308,6 @@ class GeminiChatPageState extends State<GeminiChatPage> {
     String destination = destinationController.text;
     String durationStr = durationController.text;
 
-    
     if (budgetStr.isEmpty || destination.isEmpty || durationStr.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -280,12 +317,6 @@ class GeminiChatPageState extends State<GeminiChatPage> {
       );
       return;
     }
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('WARNING: Responses generated are only suggestions, \n and merely serve as guidance for travel planning.'),
-      ),
-    );
 
     // Convert string to int for validity checks
     int budget;
@@ -336,6 +367,7 @@ class GeminiChatPageState extends State<GeminiChatPage> {
 
     setState(() {
       _messages = [chatMessage, ..._messages];
+      isGenerating = true;
     });
 
     _saveMessage(chatMessage);
@@ -376,6 +408,9 @@ class GeminiChatPageState extends State<GeminiChatPage> {
         if (partialMessage != null) {
           _saveMessage(partialMessage!);
         }
+        setState(() {
+          isGenerating = false;
+        });
       });
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -383,6 +418,9 @@ class GeminiChatPageState extends State<GeminiChatPage> {
           content: Text('An error occurred: $e'),
         ),
       );
+      setState(() {
+        isGenerating = false;
+      });
     }
   }
 }

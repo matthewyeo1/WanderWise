@@ -111,8 +111,8 @@ class MapItineraryPageState extends State<MapItineraryPage> {
       builder: (context) {
         return AlertDialog(
           backgroundColor: Colors.white,
-          title: const Text('Delete Itinerary', style: TextStyle(color: Colors.black)),
-          content: const Text('Delete this itinerary?', style: TextStyle(color: Colors.black)),
+          title: const Text('Delete Trip', style: TextStyle(color: Colors.black)),
+          content: const Text('Delete this Trip?', style: TextStyle(color: Colors.black)),
           actions: [
             TextButton(
               onPressed: () {
@@ -147,7 +147,7 @@ class MapItineraryPageState extends State<MapItineraryPage> {
             ),
             const SizedBox(height: 10),
             const Text(
-              'Create itineraries with friends',
+              'Create trip plans with friends!',
               style: TextStyle(fontSize: 18),
             ),
           ],
@@ -211,7 +211,11 @@ class MapItineraryPageState extends State<MapItineraryPage> {
                   onPressed: _addItineraryItem,
                 ),
                 IconButton(
-                icon: const Icon(Icons.lightbulb), 
+                icon: Image.asset(
+                  'images/gemini_logo.png',
+                  height: 24.0,
+                  width: 24.0,
+                ),
                 onPressed: _navigateToAIItineraryPage,
                 ),
               ]

@@ -1,6 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+
+class CustomColors {
+  final Color circularProgressIndicatorLight;
+  final Color circularProgressIndicatorDark;
+
+  const CustomColors({
+    required this.circularProgressIndicatorLight,
+    required this.circularProgressIndicatorDark,
+  });
+}
+
+extension CustomTheme on ThemeData {
+  CustomColors get customColors => const CustomColors(
+        circularProgressIndicatorLight: Colors.lightBlue,
+        circularProgressIndicatorDark: Colors.white,
+      );
+}
+
 // Intialize user theme upon login
 class ThemeNotifier with ChangeNotifier {
   late bool isDarkMode;
@@ -94,7 +112,7 @@ final lightTheme = ThemeData(
     backgroundColor: Colors.black54,
     contentTextStyle: TextStyle(color: Colors.white),
   ),
-
+  
 );
 
 final darkTheme = ThemeData(
@@ -139,5 +157,5 @@ final darkTheme = ThemeData(
     backgroundColor: Colors.black54,
     contentTextStyle: TextStyle(color: Colors.white),
   ),
-
+  
 );
