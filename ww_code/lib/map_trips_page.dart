@@ -5,6 +5,7 @@ import 'map_view.dart';
 import 'storage/itinerary_service.dart';
 import 'auth/auth_service.dart';
 import 'ai_itinerary_page.dart';
+import 'aesthetics/themes.dart';
 
 class MapItineraryPage extends StatefulWidget {
   const MapItineraryPage({super.key});
@@ -20,6 +21,8 @@ class MapItineraryPageState extends State<MapItineraryPage> {
   int _selectedIndex = 0;
   List<Map<String, dynamic>> _itineraryItems = [];
   late String userId;
+  bool savedItinerary = false;
+  bool isLoading = true;
 
   @override
   void initState() {
@@ -44,6 +47,7 @@ class MapItineraryPageState extends State<MapItineraryPage> {
     setState(() {
       _itineraryItems = items;
     });
+    isLoading = false;
   }
 
   void _onItemTapped(int index) {
@@ -203,8 +207,8 @@ class MapItineraryPageState extends State<MapItineraryPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(_selectedIndex == 0 ? 'Map' : 'My Trips'),
-        actions: _selectedIndex == 1
+        title: Text(_selectedIndex == 0 ? 'My Trips' : 'Map'),
+        actions: _selectedIndex == 0
             ? [
                 IconButton(
                   icon: const Icon(Icons.add),
@@ -221,20 +225,33 @@ class MapItineraryPageState extends State<MapItineraryPage> {
               ]
             : null,
       ),
-      body: Center(
+      body: isLoading
+          ? Center(
+              child: CircularProgressIndicator(
+              valueColor: AlwaysStoppedAnimation<Color>(
+                Theme.of(context).brightness == Brightness.light
+                    ? Theme.of(context)
+                        .customColors
+                        .circularProgressIndicatorLight
+                    : Theme.of(context)
+                        .customColors
+                        .circularProgressIndicatorDark,
+              ),
+            ))
+          : Center(
         child: _selectedIndex == 0
-            ? const GoogleMapWidget()
-            : _buildItineraryList(),
+            ? _buildItineraryList()
+            : const GoogleMapWidget(),
       ),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: Icon(Icons.map),
-            label: 'Map',
-          ),
-          BottomNavigationBarItem(
             icon: Icon(Icons.list),
             label: 'My Trips',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.map),
+            label: 'Map',
           ),
         ],
         currentIndex: _selectedIndex,

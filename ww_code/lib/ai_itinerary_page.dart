@@ -102,7 +102,7 @@ class GeminiChatPageState extends State<GeminiChatPage> {
     };
     await _itineraryService.saveItinerary(userId, newItem);
     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-      content: Text('Saved Trips!'),
+      content: Text('Saved to trips page!'),
     ));
   }
 
@@ -217,9 +217,13 @@ class GeminiChatPageState extends State<GeminiChatPage> {
                                   context: context,
                                   builder: (BuildContext context) {
                                     return AlertDialog(
-                                      title: const Text('Save to Trips Page'),
-                                      content:
-                                          const Text('Save to Trips page?'),
+                                      backgroundColor: Colors.white,
+                                      title: const Text('Save to Trips Page',
+                                          style:
+                                              TextStyle(color: Colors.black)),
+                                      content: const Text('Save to Trips page?',
+                                          style:
+                                              TextStyle(color: Colors.black)),
                                       actions: <Widget>[
                                         TextButton(
                                           child: const Text('Cancel',
