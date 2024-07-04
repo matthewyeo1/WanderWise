@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:ww_code/auth/auth_service.dart'; // Replace with your actual import path
+import 'package:ww_code/auth/auth_service.dart';
 import 'package:logging/logging.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ww_code/auth/user_class.dart';
 import 'package:ww_code/aesthetics/textfield_style.dart';
+import 'package:ww_code/friend_profile.dart';
 
 class FriendsPage extends StatefulWidget {
   const FriendsPage({super.key});
@@ -17,38 +18,40 @@ class FriendsPageState extends State<FriendsPage> {
   TextEditingController searchController = TextEditingController();
   List<UserClass> searchResults = [];
 
-  final AuthServiceItinerary _authServiceItinerary = AuthServiceItinerary(); // Initialize your AuthServiceItinerary
+  final AuthServiceItinerary _authServiceItinerary =
+      AuthServiceItinerary(); // Initialize your AuthServiceItinerary
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
   final Logger _logger = Logger('FriendsPage');
 
   void _performSearch(String query) {
-  searchResults.clear();
-  firestore
-      .collection('Users')
-      .where('Username', isGreaterThanOrEqualTo: query)
-      .where('Username', isLessThan: query + '\uf8ff')
-      .get()
-      .then((QuerySnapshot querySnapshot) {
-        querySnapshot.docs.forEach((doc) {
-          Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
-          // Assuming you have a User model or class
-          UserClass user = UserClass(
-            uid: doc.id, // Assuming doc.id is the user ID
-            displayName: data['Username'], // Replace with your actual field name
-            // Add more fields as needed
-          );
-          searchResults.add(
-        user
-          ); // Add the user object to the search results list
-        });
-        setState(() {});
-      })
-      .catchError((error) {
-        _logger.warning('Error searching users: $error');
-      });
-}
+    searchResults.clear();
 
+    // Convert searched name to lower case 
+    String queryLowerCase = query.toLowerCase();
+
+    firestore
+        .collection('Users')
+        .where('UsernameLowerCase', isGreaterThanOrEqualTo: queryLowerCase)
+        .where('UsernameLowerCase', isLessThan: queryLowerCase + '\uf8ff')
+        .get()
+        .then((QuerySnapshot querySnapshot) {
+      querySnapshot.docs.forEach((doc) {
+        Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+        // Assuming you have a User model or class
+        UserClass user = UserClass(
+          uid: doc.id, // Assuming doc.id is the user ID
+          displayName: data['Username'], // Replace with your actual field name
+          // Add more fields as needed
+        );
+        setState(() {
+          searchResults.add(user);
+        }); // Add the user object to the search results list
+      });
+    }).catchError((error) {
+      _logger.warning('Error searching users: $error');
+    });
+  }
 
   @override
   void initState() {
@@ -61,6 +64,23 @@ class FriendsPageState extends State<FriendsPage> {
       User? currentUser = await _authServiceItinerary.getCurrentUser();
       if (currentUser != null) {
         // Fetch friends or perform any initialization
+        firestore
+            .collection('Friends')
+            .where('userId', isEqualTo: currentUser.uid)
+            .get()
+            .then((QuerySnapshot querySnapshot) {
+          querySnapshot.docs.forEach((doc) {
+            Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+            UserClass friend = UserClass(
+              uid: doc.id,
+              displayName: data['Username'],
+            );
+          });
+          setState(() {});
+        }).catchError((error) {
+          _logger.warning('Error fetching friends: $error');
+        });
+
         // Example: Fetch friends from Firestore or another database
       } else {
         // Handle case where current user is not authenticated
@@ -77,6 +97,23 @@ class FriendsPageState extends State<FriendsPage> {
     super.dispose();
   }
 
+  void _handleTapOnFriend(UserClass friend) {
+    // Example: Navigate to friend's profile page
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => FriendProfilePage(friend: friend),
+      ),
+    );
+  }
+
+  void _handleSearchButtonPressed() {
+    String query = searchController.text.trim();
+    if (query.isNotEmpty) {
+      _performSearch(query);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -87,19 +124,37 @@ class FriendsPageState extends State<FriendsPage> {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            TextField(
-              cursorColor: Colors.black,
-              style: const TextStyle(color: Colors.black),
-              controller: searchController,
-              onChanged: (value) {
-                _performSearch(value);
-              },
-              decoration: TextFieldConfig.buildInputDecoration(
-                hintText: 'Search friends...',
-                prefixIcon: const Icon(Icons.search,
-                color: Colors.black45,
+            Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    cursorColor: Colors.black,
+                    style: const TextStyle(color: Colors.black),
+                    controller: searchController,
+                    onChanged: (value) {
+                      if (value.isNotEmpty) {
+                        _performSearch(value);
+                      } else {
+                        setState(() {
+                          searchResults.clear();
+                        });
+                      }
+                    },
+                    decoration: TextFieldConfig.buildInputDecoration(
+                      hintText: 'Search friends...',
+                      prefixIcon: const Icon(
+                        Icons.search,
+                        color: Colors.black45,
+                      ),
+                    ),
+                  ),
                 ),
-              ),
+                const SizedBox(width: 16),
+                ElevatedButton(
+                  onPressed: _handleSearchButtonPressed,
+                  child: const Text('Search'),
+                ),
+              ],
             ),
             const SizedBox(height: 20),
             Expanded(
@@ -107,13 +162,17 @@ class FriendsPageState extends State<FriendsPage> {
                 itemCount: searchResults.length,
                 itemBuilder: (context, index) {
                   // Replace with your user display logic
-                  return ListTile(
+                  if (index < searchResults.length) {
+                    return ListTile(
                     title: Text(searchResults[index].displayName),
                     // Add functionality like adding friend, viewing profile, etc.
                     onTap: () {
-                      // Handle tapping on search result
+                      _handleTapOnFriend(searchResults[index]);
                     },
                   );
+                  } else {
+                    return Container();
+                  }
                 },
               ),
             ),
@@ -123,6 +182,3 @@ class FriendsPageState extends State<FriendsPage> {
     );
   }
 }
-
-  
-
