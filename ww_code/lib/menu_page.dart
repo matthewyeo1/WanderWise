@@ -52,7 +52,7 @@ class _MenuPageState extends State<MenuPage> {
             },
           ),
           Positioned(
-            top: 24.0,
+            top: 50.0,
             left: 16.0,
             child: Column(
               children: [
@@ -73,7 +73,7 @@ class _MenuPageState extends State<MenuPage> {
             ),
           ),
           Positioned(
-            top: 24.0,
+            top: 50.0,
             right: 16.0,
             child: Column(
               children: [

@@ -294,7 +294,7 @@ class GeminiChatPageState extends State<GeminiChatPage> {
                         ),
                         keyboardType: TextInputType.number,
                       ),
-                      const SizedBox(height: 5),
+                      const SizedBox(height: 10),
                       TextField(
                         style: const TextStyle(color: Colors.black),
                         cursorColor: Colors.black,
@@ -307,7 +307,7 @@ class GeminiChatPageState extends State<GeminiChatPage> {
                           ),
                         ),
                       ),
-                      const SizedBox(height: 5),
+                      const SizedBox(height: 10),
                       TextField(
                         style: const TextStyle(color: Colors.black),
                         cursorColor: Colors.black,
@@ -321,7 +321,7 @@ class GeminiChatPageState extends State<GeminiChatPage> {
                         ),
                         keyboardType: TextInputType.number,
                       ),
-                      const SizedBox(height: 8),
+                      const SizedBox(height: 10),
                       ElevatedButton(
                         onPressed: _handleSendMessage,
                         child: const Text('Generate Itinerary'),

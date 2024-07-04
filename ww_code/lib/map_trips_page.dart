@@ -97,7 +97,7 @@ class MapItineraryPageState extends State<MapItineraryPage> {
         _itineraryItems.removeAt(index);
       });
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Delete Successful!')),
+        const SnackBar(content: Text('Successfully deleted trip')),
       );
     }
   }
