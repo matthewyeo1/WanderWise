@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 
-class WendyAI extends StatelessWidget {
-  const WendyAI({super.key});
 
   @override
   Widget build(BuildContext context) {
