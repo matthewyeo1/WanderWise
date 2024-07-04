@@ -1,102 +1,121 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:logging/logging.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'forgot_password.dart';
 import 'create_account.dart';
 import 'utilities/utils.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'aesthetics/themes.dart';
-import 'package:ww_code/auth/auth_service.dart';
-import 'package:ww_code/aesthetics/themes_service.dart';
-import 'aesthetics/textfield_style.dart';
+import 'package:provider/provider.dart';
+
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
   final String title;
 
   @override
-  State<MyHomePage> createState() => MyHomePageState();
+  State<MyHomePage> createState() => _MyHomePageState();
 }
 
-// Handle UI Rendering
-class MyHomePageState extends State<MyHomePage> {
-  final TextEditingController emailController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
-  final FocusNode emailFocusNode = FocusNode();
-  final FocusNode passwordFocusNode = FocusNode();
-  final AuthServiceLogin authService = AuthServiceLogin();
-  final ThemeService themeService = ThemeService();
+class _MyHomePageState extends State<MyHomePage> {
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final Logger _logger = Logger('MyHomePage');
+  final FocusNode _emailFocusNode = FocusNode();
+  final FocusNode _passwordFocusNode = FocusNode();
+  final GoogleSignIn _googleSignIn = GoogleSignIn();
 
   @override
   void dispose() {
-    emailController.dispose();
-    passwordController.dispose();
-    emailFocusNode.dispose();
-    passwordFocusNode.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
+    _emailFocusNode.dispose();
+    _passwordFocusNode.dispose();
     super.dispose();
   }
 
-  Future<void> login() async {
-    String email = emailController.text;
-    String password = passwordController.text;
+  Future<void> _login() async {
+    String email = _emailController.text;
+    String password = _passwordController.text;
+    _logger.info('Attempting login with email: $email and password: $password');
 
-    if (isValidEmail(email) && isValidPassword(password)) {
+    try {
+      if (isValidEmail(email) && isValidPassword(password)) {
+        UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
+          email: email,
+          password: password,
+        );
+
+        String userId = userCredential.user!.uid;
+      bool isDarkMode = false;
       try {
-        UserCredential? userCredential = await authService.login(email, password);
-        if (userCredential != null) {
-          String userId = userCredential.user!.uid;
-          await themeService.loadUserThemePreference(
-            userId,
-            Provider.of<ThemeNotifier>(context, listen: false),
-          );
-          Navigator.pushReplacementNamed(context, '/menu').then((_) {
-            emailController.clear();
-            passwordController.clear();
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text('Logged in as $userId'),
-              ),
-            );
-          });
+        DocumentSnapshot doc = await FirebaseFirestore.instance.collection('Users').doc(userId).get();
+        if (doc.exists && doc['darkMode'] != null) {
+          isDarkMode = doc['darkMode'];
         }
       } catch (e) {
+        print('Error loading theme preference: $e');
+      }
+
+      Provider.of<ThemeNotifier>(context, listen: false).initialize(userId, isDarkMode);
+
+        Navigator.pushReplacementNamed(context, '/menu').then((_) {
+          // Once navigated to menu page, clear text fields for email and password
+          _emailController.clear();
+          _passwordController.clear();
+        });
+      } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Failed to sign in: $e'),
+          const SnackBar(
+            content: Text('Invalid email or password.'),
           ),
         );
       }
-    } else {
+    } catch (e) {
+      _logger.warning('Failed to sign in: $e');
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Invalid email or password.'),
+        SnackBar(
+          content: Text('Failed to sign in: $e'),
         ),
       );
     }
   }
 
-  Future<void> _handleGoogleSignIn() async {
-    try {
-      UserCredential? userCredential = await authService.handleGoogleSignIn();
-      if (userCredential != null) {
-        String userId = userCredential.user!.uid;
-        await themeService.loadUserThemePreference(
-          userId,
-          Provider.of<ThemeNotifier>(context, listen: false),
-        );
-        Navigator.pushReplacementNamed(context, '/menu');
+  Future<void> loadUserProfile() async {
+    final User? user = FirebaseAuth.instance.currentUser;
+
+    if (user != null) {
+      DocumentSnapshot userDoc = await FirebaseFirestore.instance
+          .collection('Users')
+          .doc(user.uid)
+          .get();
+
+      if (!userDoc.exists) {
+        String? displayName = user.displayName;
+        String? email = user.email;
+        String username = displayName ?? email?.split('@')[0] ?? '';
+
+        await FirebaseFirestore.instance.collection('Users').doc(user.uid).set({
+          'Email': email,
+          'Username': username,
+          'profileImageUrl': null,
+          'bio': '',
+          'UsernameLowerCase': username.toLowerCase(),
+        });
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Failed to sign in with Google.'),
-          ),
-        );
+        Map<String, dynamic>? data = userDoc.data() as Map<String, dynamic>?;
+        if (data != null) {
+          if (data['Username'] == null || data['Username'].isEmpty) {
+            await FirebaseFirestore.instance
+                .collection('Users')
+                .doc(user.uid)
+                .update({
+              'Username': user.displayName ?? user.email?.split('@')[0],
+            });
+          }
+        }
       }
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Failed to sign in with Google: $e'),
-        ),
-      );
     }
   }
 
@@ -112,6 +131,62 @@ class MyHomePageState extends State<MyHomePage> {
       context,
       MaterialPageRoute(builder: (context) => const CreateAccountPage()),
     );
+  }
+
+  Future<void> _handleGoogleSignIn() async {
+    try {
+      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+      if (googleUser != null) {
+        final GoogleSignInAuthentication googleAuth =
+            await googleUser.authentication;
+        final credential = GoogleAuthProvider.credential(
+          accessToken: googleAuth.accessToken,
+          idToken: googleAuth.idToken,
+        );
+        final userCredential =
+            await FirebaseAuth.instance.signInWithCredential(credential);
+        final User? user = userCredential.user;
+
+        if (user != null) {
+          final DocumentReference userDocRef =
+              FirebaseFirestore.instance.collection('Users').doc(user.uid);
+          final DocumentSnapshot userDoc = await userDocRef.get();
+
+          if (!userDoc.exists) {
+            String username = user.displayName ?? user.email?.split('@')[0] ?? '';
+            await userDocRef.set({
+              'Email': user.email,
+              'Username': username,
+              'profileImageUrl': null,
+              'bio': "",
+              'UsernameLowerCase': username.toLowerCase(),
+            });
+          } else {
+            Map<String, dynamic> userData =
+                userDoc.data() as Map<String, dynamic>;
+            if (userData['Username'] == null || userData['Username'].isEmpty) {
+              userData['Username'] =
+                  user.displayName ?? user.email?.split('@')[0];
+            }
+            await userDocRef.update(userData);
+          }
+        }
+        Navigator.pushReplacementNamed(context, '/menu');
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Failed to sign in with Google.'),
+          ),
+        );
+      }
+    } catch (e) {
+      _logger.warning('Failed to sign in with Google: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Failed to sign in with Google: $e'),
+        ),
+      );
+    }
   }
 
   @override
@@ -146,27 +221,53 @@ class MyHomePageState extends State<MyHomePage> {
                 const SizedBox(height: 16),
                 TextField(
                   cursorColor: Colors.black,
-                  controller: emailController,
-                  focusNode: emailFocusNode,
+                  controller: _emailController,
+                  focusNode: _emailFocusNode,
                   style: const TextStyle(color: Colors.black),
-                  decoration: TextFieldConfig.buildInputDecoration(
-                    hintText: 'Email',
-                    prefixIcon: const Icon(Icons.person, color: Colors.black45),
-                    focusNode: emailFocusNode,
-                    controller: emailController,
+                  decoration: const InputDecoration(
+                    filled: true,
+                    fillColor: Color.fromARGB(255, 208, 208, 208),
+                    prefixIcon: Icon(Icons.person, color: Colors.black45),
+                    hintText: 'Email', 
+                    hintStyle: TextStyle(color: Colors.black45),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(20)),
+                      borderSide: BorderSide.none,
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(20)),
+                      borderSide: BorderSide.none,
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(20)),
+                      borderSide: BorderSide.none,
+                    ),
                   ),
                 ),
                 const SizedBox(height: 16),
                 TextField(
                   cursorColor: Colors.black,
-                  controller: passwordController,
-                  focusNode: passwordFocusNode,
+                  controller: _passwordController,
+                  focusNode: _passwordFocusNode,
                   style: const TextStyle(color: Colors.black),
-                  decoration: TextFieldConfig.buildInputDecoration(
+                  decoration: const InputDecoration(
+                    filled: true,
+                    fillColor: Color.fromARGB(255, 208, 208, 208),
+                    prefixIcon: Icon(Icons.lock, color: Colors.black45),
                     hintText: 'Password',
-                    prefixIcon: const Icon(Icons.lock, color: Colors.black45),
-                    focusNode: passwordFocusNode,
-                    controller: passwordController,
+                    hintStyle: TextStyle(color: Colors.black45),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(20)),
+                      borderSide: BorderSide.none,
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(20)),
+                      borderSide: BorderSide.none,
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(20)),
+                      borderSide: BorderSide.none,
+                    ),
                   ),
                   obscureText: true,
                 ),
@@ -186,7 +287,7 @@ class MyHomePageState extends State<MyHomePage> {
                 ),
                 const SizedBox(height: 16),
                 ElevatedButton(
-                  onPressed: login,
+                  onPressed: _login,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.lightBlue,
                     foregroundColor: Colors.white,

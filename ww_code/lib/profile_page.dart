@@ -178,13 +178,15 @@ class ProfilePageState extends State<ProfilePage> {
       return;
     }
     try {
+      String? username = _usernameController.text;
       await FirebaseFirestore.instance
           .collection('Users')
           .doc(_user.uid)
           .update({
-        'Username': _usernameController.text,
+        'Username': username,
         'bio': _bioController.text,
         'profileImageUrl': _profileImageUrl,
+        'UsernameLowerCase': username.toLowerCase(),
       });
 
       ScaffoldMessenger.of(context).showSnackBar(

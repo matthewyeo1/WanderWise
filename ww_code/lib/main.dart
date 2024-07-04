@@ -89,7 +89,7 @@ class MyApp extends StatelessWidget {
               '/trips': (context) => const MapItineraryPage(),
               '/socials': (context) => const FriendsPage(),
             },
-            debugShowCheckedModeBanner: false
+            debugShowCheckedModeBanner: false,
           );
       },
     );
