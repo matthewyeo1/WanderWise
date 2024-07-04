@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:ww_code/friends_page.dart';
 import 'map_trips_page.dart';
 import 'manage_flights_bookings_page.dart';
 import 'settings_page.dart';
-import 'socials.dart';
 import 'help_page.dart';
+//import 'friends_page.dart';
+
 
 class MenuPage extends StatefulWidget {
   final String? username;
@@ -13,10 +15,10 @@ class MenuPage extends StatefulWidget {
   const MenuPage({super.key, this.username});
 
   @override
-  _MenuPageState createState() => _MenuPageState();
+  MenuPageState createState() => MenuPageState();
 }
 
-class _MenuPageState extends State<MenuPage> {
+class MenuPageState extends State<MenuPage> {
   final List<String> _images = [
     'images/borealis.png',
     'images/torii_gates.png',
@@ -133,7 +135,7 @@ class _MenuPageState extends State<MenuPage> {
                       _buildExpandedButton(
                           context, 'Settings', _navigateToSettings),
                       _buildExpandedButton(
-                        context, 'Socials', _navigateToWendyAI),
+                        context, 'Socials', _navigateToFriendsPage),
                     ],
                   ),
                 ],
@@ -231,8 +233,8 @@ class _MenuPageState extends State<MenuPage> {
         context, MaterialPageRoute(builder: (context) => const SettingsPage()));
   }
 
-  void _navigateToWendyAI() {
+  void _navigateToFriendsPage() {
     Navigator.push(
-        context, MaterialPageRoute(builder: (context) => const WendyAI()));
+        context, MaterialPageRoute(builder: (context) => const FriendsPage()));
   }
 }
