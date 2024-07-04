@@ -46,6 +46,9 @@ dependencies:
   fake_cloud_firestore: ^3.0.1
   list_country_picker: ^1.0.1
   flutter_gemini: ^2.0.4
+  flutter_local_notifications: ^17.2.1
+  image: ^4.2.0
+  flutter_timezone: ^2.0.0
 
 
   # The following adds the Cupertino Icons font to your application.

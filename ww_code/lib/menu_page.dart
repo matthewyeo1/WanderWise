@@ -233,6 +233,6 @@ class _MenuPageState extends State<MenuPage> {
 
   void _navigateToWendyAI() {
     Navigator.push(
-        context, MaterialPageRoute(builder: (context) => const WendyAI()));
+        context, MaterialPageRoute(builder: (context) => const notifSystem(title: 'Socials')));
   }
 }
