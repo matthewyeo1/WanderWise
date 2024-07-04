@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:ww_code/map_trips_page.dart';
 import 'aesthetics/splashscreen.dart';
 import 'aesthetics/themes.dart';
 import 'login_screen.dart';
@@ -84,6 +85,7 @@ class MyApp extends StatelessWidget {
               '/create_account': (context) => const CreateAccountPage(),
               '/forgot_password': (context) => const ForgotPasswordPage(),
               '/help': (context) => const HelpPage(),
+              '/trips': (context) => const MapItineraryPage(),
             },
             debugShowCheckedModeBanner: false
           );

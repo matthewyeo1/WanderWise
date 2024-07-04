@@ -14,6 +14,7 @@ class GeminiChatPage extends StatefulWidget {
   GeminiChatPageState createState() => GeminiChatPageState();
 }
 
+// AI itinerary generation page
 class GeminiChatPageState extends State<GeminiChatPage> {
   final Gemini gemini = Gemini.instance; // Answer from Gemini
   List<ChatMessage> _messages = []; // List to hold chat messages
@@ -104,6 +105,7 @@ class GeminiChatPageState extends State<GeminiChatPage> {
     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
       content: Text('Saved to trips page!'),
     ));
+    Navigator.pop(context, true);
   }
 
   Future<void> _clearMessages() async {
@@ -122,11 +124,37 @@ class GeminiChatPageState extends State<GeminiChatPage> {
     });
   }
 
+  // Warning dialog
+  void _showDisclaimerDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: Colors.white,
+          title: const Text('WARNING:', style: TextStyle(color: Colors.black)),
+          content: const Text('Please use AI-generated itineraries with discretion; results may vary based on various factors. Consider validating the information before finalizing travel plans.', style: TextStyle(color: Colors.black)),
+          actions: <Widget>[
+            TextButton(
+              child:
+                  const Text('Ok', style: TextStyle(color: Colors.lightBlue)),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar:
-          AppBar(title: const Text('Create Itineraries with Gemini'), actions: [
+      appBar: AppBar(title: const Text('Itinerary Generator'), actions: [
+        IconButton(
+          icon: const Icon(Icons.info),
+          onPressed: _showDisclaimerDialog,
+        ),
         IconButton(
           icon: const Icon(Icons.delete),
           onPressed: _clearMessages,
