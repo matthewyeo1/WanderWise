@@ -76,6 +76,7 @@ class ChangePasswordPageState extends State<ChangePasswordPage> {
                 hintText: 'Current Password',
                  controller: currentPasswordController,
               ),
+              obscureText: true,
             ),
             const SizedBox(height: 10),
              TextField(
@@ -83,9 +84,9 @@ class ChangePasswordPageState extends State<ChangePasswordPage> {
               style: const TextStyle(color: Colors.black),
               decoration: TextFieldConfig.buildInputDecoration(
                 hintText: 'New Password',
-                obscureText: true,
                 controller: newPasswordController,
               ),
+              obscureText: true,
             ),
             const SizedBox(height: 10),
              TextField(
@@ -93,9 +94,9 @@ class ChangePasswordPageState extends State<ChangePasswordPage> {
               style: const TextStyle(color: Colors.black),
               decoration: TextFieldConfig.buildInputDecoration(
                 hintText: 'Confirm New Password',
-                obscureText: true,
                 controller: confirmNewPasswordController,
               ),
+              obscureText: true,
             ),
             const SizedBox(height: 10),
             ElevatedButton(

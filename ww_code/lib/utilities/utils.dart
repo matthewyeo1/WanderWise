@@ -17,9 +17,14 @@ bool isValidBio(String bio) {
 }
 
 bool isValidBudget(int budget) {
-  return budget >= 500; 
+  return budget >= 100; 
+}
+
+bool isValidDestination(String destination) {
+  return !RegExp(r'^[0-9]+$').hasMatch(destination);
 }
 
 bool isValidDuration(int duration) {
   return duration >= 1 && duration <= 30;
 }
+

@@ -7,6 +7,7 @@ class TextFieldConfig {
     FocusNode? focusNode,
     TextEditingController? controller,
     bool? obscureText,
+    
   }) {
     return InputDecoration(
       filled: true,
@@ -26,6 +27,7 @@ class TextFieldConfig {
         borderRadius: BorderRadius.circular(20),
         borderSide: BorderSide.none,
       ),
+      
     );
   }
 }

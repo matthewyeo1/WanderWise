@@ -134,6 +134,7 @@ class ChangeEmailPageState extends State<ChangeEmailPage> {
                 controller: passwordController,
                 prefixIcon: const Icon(Icons.password, color: Colors.black45),
               ),
+              obscureText: true,
             ),
             const SizedBox(height: 10),
             ElevatedButton(

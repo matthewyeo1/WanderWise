@@ -74,8 +74,8 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                   style: const TextStyle(color: Colors.black),
                   decoration: TextFieldConfig.buildInputDecoration(
                     hintText: 'Email',
-                    controller: emailController,
                   ),
+                  controller: emailController,
                 ),
                 const SizedBox(height: 40),
                 ElevatedButton(
