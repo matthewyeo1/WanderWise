@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'map_itinerary_page.dart';
+import 'map_trips_page.dart';
 import 'manage_flights_bookings_page.dart';
 import 'settings_page.dart';
 import 'socials.dart';

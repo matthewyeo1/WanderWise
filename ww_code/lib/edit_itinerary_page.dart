@@ -26,13 +26,13 @@ class EditItineraryPageState extends State<EditItineraryPage> {
   void initState() {
     super.initState();
     titleController = TextEditingController(
-        text: widget.initialItem?['itinerary.title'] ?? '');
+        text: widget.initialItem?['title'] ?? '');
     startDateController = TextEditingController(
-        text: widget.initialItem?['itinerary.startDate'] ?? '');
+        text: widget.initialItem?['startDate'] ?? '');
     endDateController = TextEditingController(
-        text: widget.initialItem?['itinerary.endDate'] ?? '');
+        text: widget.initialItem?['endDate'] ?? '');
     descriptionController = TextEditingController(
-        text: widget.initialItem?['itinerary.description'] ?? '');
+        text: widget.initialItem?['description'] ?? '');
   }
 
   @override
@@ -95,12 +95,12 @@ class EditItineraryPageState extends State<EditItineraryPage> {
           TextButton(
             onPressed: () {
               widget.onSave({
-                'itinerary.id': widget.initialItem?['itinerary.id'] ??
+                'id': widget.initialItem?['id'] ??
                     DateTime.now().toString(),
-                'itinerary.title': titleController.text,
-                'itinerary.description': descriptionController.text,
-                'itinerary.startDate': startDateController.text,
-                'itinerary.endDate': endDateController.text,
+                'title': titleController.text.isEmpty ? '' : titleController.text,
+                'description': descriptionController.text.isEmpty ? '' : descriptionController.text,
+                'startDate': startDateController.text.isEmpty ? '' : startDateController.text,
+                'endDate': endDateController.text.isEmpty ? '' : endDateController.text,
               });
               Navigator.pop(context);
             },

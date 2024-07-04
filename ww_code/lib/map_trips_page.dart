@@ -5,6 +5,7 @@ import 'map_view.dart';
 import 'storage/itinerary_service.dart';
 import 'auth/auth_service.dart';
 import 'ai_itinerary_page.dart';
+import 'aesthetics/themes.dart';
 
 class MapItineraryPage extends StatefulWidget {
   const MapItineraryPage({super.key});
@@ -13,6 +14,7 @@ class MapItineraryPage extends StatefulWidget {
   MapItineraryPageState createState() => MapItineraryPageState();
 }
 
+// Page to hold user's trip plans and map
 class MapItineraryPageState extends State<MapItineraryPage> {
   final ItineraryService _itineraryService = ItineraryService();
   final AuthServiceItinerary _authService = AuthServiceItinerary();
@@ -20,11 +22,23 @@ class MapItineraryPageState extends State<MapItineraryPage> {
   int _selectedIndex = 0;
   List<Map<String, dynamic>> _itineraryItems = [];
   late String userId;
+  bool savedItinerary = false;
+  bool isLoading = true;
 
   @override
   void initState() {
     super.initState();
     _initializeUserId();
+  }
+
+  // Flag to handle navigation when trip plan made by Gemini is saved
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final shouldRefresh = ModalRoute.of(context)?.settings.arguments as bool?;
+    if (shouldRefresh == true) {
+      _loadItineraryItems();
+    }
   }
 
   Future<void> _initializeUserId() async {
@@ -40,10 +54,12 @@ class MapItineraryPageState extends State<MapItineraryPage> {
   }
 
   Future<void> _loadItineraryItems() async {
-    List<Map<String, dynamic>> items = await _itineraryService.loadItineraryItems(userId);
+    List<Map<String, dynamic>> items =
+        await _itineraryService.loadItineraryItems(userId);
     setState(() {
       _itineraryItems = items;
     });
+    isLoading = false;
   }
 
   void _onItemTapped(int index) {
@@ -53,7 +69,7 @@ class MapItineraryPageState extends State<MapItineraryPage> {
   }
 
   Future<void> _addItineraryItem() async {
-    await Navigator.push<Map<String, dynamic>>(
+    final result = await Navigator.push<Map<String, dynamic>>(
       context,
       MaterialPageRoute(
         builder: (context) => EditItineraryPage(
@@ -67,12 +83,15 @@ class MapItineraryPageState extends State<MapItineraryPage> {
         ),
       ),
     );
+    if (result != null) {
+      await _loadItineraryItems();
+    }
   }
 
   Future<void> _removeItineraryItem(int index) async {
     bool confirmDelete = await _showDeleteConfirmationDialog();
     if (confirmDelete) {
-      String docId = _itineraryItems[index]['itinerary.id'];
+      String docId = _itineraryItems[index]['id'];
       await _itineraryService.deleteItinerary(userId, docId);
       setState(() {
         _itineraryItems.removeAt(index);
@@ -84,7 +103,7 @@ class MapItineraryPageState extends State<MapItineraryPage> {
   }
 
   Future<void> _editItineraryItem(int index) async {
-    await Navigator.push<Map<String, dynamic>>(
+    final result = await Navigator.push<Map<String, dynamic>>(
       context,
       MaterialPageRoute(
         builder: (context) => EditItineraryPage(
@@ -93,12 +112,20 @@ class MapItineraryPageState extends State<MapItineraryPage> {
           onSave: (updatedItem) async {
             await _itineraryService.updateItinerary(userId, updatedItem);
             setState(() {
-              _itineraryItems[index] = updatedItem;
+              _itineraryItems[index]['title'] = updatedItem['title'] ?? '';
+              _itineraryItems[index]['startDate'] =
+                  updatedItem['startDate'] ?? '';
+              _itineraryItems[index]['endDate'] = updatedItem['endDate'] ?? '';
+              _itineraryItems[index]['description'] =
+                  updatedItem['description'] ?? '';
             });
           },
         ),
       ),
     );
+    if (result != null) {
+      await _loadItineraryItems();
+    }
   }
 
   Future<bool> _showDeleteConfirmationDialog() {
@@ -107,8 +134,10 @@ class MapItineraryPageState extends State<MapItineraryPage> {
       builder: (context) {
         return AlertDialog(
           backgroundColor: Colors.white,
-          title: const Text('Delete Itinerary', style: TextStyle(color: Colors.black)),
-          content: const Text('Delete this itinerary?', style: TextStyle(color: Colors.black)),
+          title:
+              const Text('Delete Trip', style: TextStyle(color: Colors.black)),
+          content: const Text('Delete this Trip?',
+              style: TextStyle(color: Colors.black)),
           actions: [
             TextButton(
               onPressed: () {
@@ -130,6 +159,7 @@ class MapItineraryPageState extends State<MapItineraryPage> {
     ).then((value) => value ?? false);
   }
 
+  // Create trip plan widgets to be displayed on the trips page
   Widget _buildItineraryList() {
     if (_itineraryItems.isEmpty) {
       return Center(
@@ -143,7 +173,7 @@ class MapItineraryPageState extends State<MapItineraryPage> {
             ),
             const SizedBox(height: 10),
             const Text(
-              'Create itineraries with friends',
+              'Create trip plans with friends!',
               style: TextStyle(fontSize: 18),
             ),
           ],
@@ -159,11 +189,11 @@ class MapItineraryPageState extends State<MapItineraryPage> {
             margin: const EdgeInsets.symmetric(vertical: 8),
             child: ListTile(
               title: Text(
-                _itineraryItems[index]['itinerary.title'],
+                _itineraryItems[index]['title'],
                 style: const TextStyle(color: Colors.black),
               ),
               subtitle: Text(
-                'Start Date: ${_itineraryItems[index]['itinerary.startDate']}\nEnd Date: ${_itineraryItems[index]['itinerary.endDate']}',
+                'Start Date: ${_itineraryItems[index]['startDate']}\nEnd Date: ${_itineraryItems[index]['endDate']}',
                 style: const TextStyle(color: Colors.black54),
               ),
               trailing: Row(
@@ -186,47 +216,68 @@ class MapItineraryPageState extends State<MapItineraryPage> {
     }
   }
 
+  // Function to load user's itineraries when navigating from page to page
   Future<void> _navigateToAIItineraryPage() async {
-  await Navigator.push(
-    context,
-    MaterialPageRoute(
-      builder: (context) => AIItineraryPage(),
-    ),
-  );
-}
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const GeminiChatPage(),
+      ),
+    );
+    if (result == true) {
+      await _loadItineraryItems();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(_selectedIndex == 0 ? 'Map' : 'My Trips'),
-        actions: _selectedIndex == 1
+        title: Text(_selectedIndex == 0 ? 'My Trips' : 'Map'),
+        actions: _selectedIndex == 0
             ? [
                 IconButton(
                   icon: const Icon(Icons.add),
                   onPressed: _addItineraryItem,
                 ),
                 IconButton(
-                icon: const Icon(Icons.lightbulb), 
-                onPressed: _navigateToAIItineraryPage,
+                  icon: Image.asset(
+                    'images/gemini_logo.png',
+                    height: 24.0,
+                    width: 24.0,
+                  ),
+                  onPressed: _navigateToAIItineraryPage,
                 ),
               ]
             : null,
       ),
-      body: Center(
-        child: _selectedIndex == 0
-            ? const GoogleMapWidget()
-            : _buildItineraryList(),
-      ),
+      body: isLoading
+          ? Center(
+              child: CircularProgressIndicator(
+              valueColor: AlwaysStoppedAnimation<Color>(
+                Theme.of(context).brightness == Brightness.light
+                    ? Theme.of(context)
+                        .customColors
+                        .circularProgressIndicatorLight
+                    : Theme.of(context)
+                        .customColors
+                        .circularProgressIndicatorDark,
+              ),
+            ))
+          : Center(
+              child: _selectedIndex == 0
+                  ? _buildItineraryList()
+                  : const GoogleMapWidget(),
+            ),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: Icon(Icons.map),
-            label: 'Map',
-          ),
-          BottomNavigationBarItem(
             icon: Icon(Icons.list),
             label: 'My Trips',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.map),
+            label: 'Map',
           ),
         ],
         currentIndex: _selectedIndex,
@@ -235,4 +286,3 @@ class MapItineraryPageState extends State<MapItineraryPage> {
     );
   }
 }
-
