@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'edit_itinerary_page.dart';
 import 'map_view.dart';
 import 'storage/itinerary_service.dart';
-import 'auth/auth_service.dart';
+import 'user/auth_service.dart';
 import 'ai_itinerary_page.dart';
 import 'aesthetics/themes.dart';
 

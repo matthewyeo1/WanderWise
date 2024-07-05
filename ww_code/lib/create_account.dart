@@ -82,6 +82,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
         'Username': username,
         'UsernameLowerCase': usernameLowerCase,
         'email': email,
+        'friendsCount': 0,
       });
 
       ScaffoldMessenger.of(context).showSnackBar(

@@ -104,6 +104,7 @@ class _MyHomePageState extends State<MyHomePage> {
           'profileImageUrl': null,
           'bio': '',
           'UsernameLowerCase': username.toLowerCase(),
+          'friendsCount': 0,
         });
       } else {
         Map<String, dynamic>? data = userDoc.data() as Map<String, dynamic>?;
@@ -162,6 +163,7 @@ class _MyHomePageState extends State<MyHomePage> {
               'profileImageUrl': null,
               'bio': "",
               'UsernameLowerCase': username.toLowerCase(),
+              'friendsCount': 0,
             });
           } else {
             Map<String, dynamic> userData =

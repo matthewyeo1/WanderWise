@@ -1,13 +1,38 @@
 import 'package:flutter/material.dart';
-import 'package:ww_code/auth/user_class.dart';
+import 'package:ww_code/user/user_class.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
-class FriendProfilePage extends StatelessWidget {
+class FriendProfilePage extends StatefulWidget {
   final UserClass friend;
 
   const FriendProfilePage({Key? key, required this.friend}) : super(key: key);
 
-  // Retrieve friend count of user
+  @override
+  _FriendProfilePageState createState() => _FriendProfilePageState();
+}
+
+class _FriendProfilePageState extends State<FriendProfilePage> {
+  late User? currentUser;
+  bool isFriend = false;
+  bool isRequestSent = false;
+
+  @override
+  void initState() {
+    super.initState();
+    currentUser = FirebaseAuth.instance.currentUser;
+    _checkIfFriend();
+    _checkIfRequestSent();
+  }
+
+  Future<Map<String, dynamic>> _getFriendData(String userId) async {
+    DocumentSnapshot docSnapshot = await FirebaseFirestore.instance
+        .collection('Users')
+        .doc(userId)
+        .get();
+    return docSnapshot.data() as Map<String, dynamic>;
+  }
+
   Future<int> _getFriendsCount(String userId) async {
     QuerySnapshot friendsSnapshot = await FirebaseFirestore.instance
         .collection('Friends')
@@ -16,23 +41,92 @@ class FriendProfilePage extends StatelessWidget {
     return friendsSnapshot.size;
   }
 
-  // Load searched user's credentials
-  Future<Map<String, dynamic>> _getFriendData(String userId) async {
-    DocumentSnapshot snapshot = await FirebaseFirestore.instance
-        .collection('Users')
-        .doc(userId)
-        .get();
-    return snapshot.data() as Map<String, dynamic>;
+ Future<void> _addFriend() async {
+    try {
+      // Check if a friend request already exists
+      QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+          .collection('FriendRequests')
+          .where('senderId', isEqualTo: currentUser!.uid)
+          .where('recipientId', isEqualTo: widget.friend.uid)
+          .get();
+
+      if (querySnapshot.docs.isEmpty) {
+        // If no request exists, send a new friend request
+        await FirebaseFirestore.instance.collection('FriendRequests').add({
+          'senderId': currentUser!.uid,
+        'senderDisplayName': currentUser!.displayName ?? '',
+        'recipientId': widget.friend.uid,
+        'recipientDisplayName': widget.friend.displayName,
+        'status': 'pending', // Status could be 'pending', 'accepted', 'declined'
+        'timestamp': DateTime.now(),
+        });
+        setState(() {
+          isRequestSent = true;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Friend request sent!')),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Friend request already sent!')),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error sending friend request: $e')),
+      );
+    }
   }
+
+  Future<void> _checkIfFriend() async {
+    try {
+      QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+          .collection('Friends')
+          .where('userId', isEqualTo: currentUser!.uid)
+          .where('friendId', isEqualTo: widget.friend.uid)
+          .get();
+      if (querySnapshot.docs.isNotEmpty) {
+      // Check if there's a pending request or accepted friend status
+      bool hasPendingRequest = querySnapshot.docs.any((doc) => doc['status'] == 'pending');
+      setState(() {
+        isFriend = hasPendingRequest; // Update based on pending status
+      });
+    }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error checking friendship status: $e')),
+      );
+    }
+  }
+
+  Future<void> _checkIfRequestSent() async {
+    try {
+      QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+          .collection('FriendRequests')
+          .where('senderId', isEqualTo: currentUser!.uid)
+          .where('recipientId', isEqualTo: widget.friend.uid)
+          .get();
+      if (querySnapshot.docs.isNotEmpty) {
+        setState(() {
+          isRequestSent = true;
+        });
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error checking friend request status: $e')),
+      );
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("${friend.displayName}'s profile"),
+        title: Text("${widget.friend.displayName}'s profile"),
       ),
       body: FutureBuilder<Map<String, dynamic>>(
-        future: _getFriendData(friend.uid),
+        future: _getFriendData(widget.friend.uid),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
@@ -45,7 +139,7 @@ class FriendProfilePage extends StatelessWidget {
             String? profileImageUrl = friendData['profileImageUrl'];
             String? bio = friendData['bio'];
             return FutureBuilder<int>(
-              future: _getFriendsCount(friend.uid),
+              future: _getFriendsCount(widget.friend.uid),
               builder: (context, countSnapshot) {
                 if (countSnapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
@@ -60,17 +154,17 @@ class FriendProfilePage extends StatelessWidget {
                       children: [
                         CircleAvatar(
                           radius: 60,
-                          backgroundColor: Colors.grey,
+                          backgroundColor: Colors.white,
                           backgroundImage: profileImageUrl != null 
                               ? NetworkImage(profileImageUrl) 
                               : null,
                           child: profileImageUrl == null 
-                              ? const Icon(Icons.person, size: 60) 
+                              ? const Icon(Icons.person, size: 60, color: Colors.black45) 
                               : null,
                         ),
                         const SizedBox(height: 16),
                         Text(
-                          friend.displayName,
+                          widget.friend.displayName,
                           style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                         ),
                         const SizedBox(height: 8),
@@ -84,6 +178,17 @@ class FriendProfilePage extends StatelessWidget {
                           'Friends: $friendsCount',
                           style: const TextStyle(fontSize: 16),
                         ),
+                        const SizedBox(height: 16),
+                        if (!isFriend)
+                          ElevatedButton(
+                            onPressed: _addFriend,
+                            child: const Text('Add Friend'),
+                          )
+                        else
+                          const Text(
+                            'Already a friend',
+                            style: TextStyle(color: Colors.green, fontSize: 16),
+                          ),
                       ],
                     ),
                   );

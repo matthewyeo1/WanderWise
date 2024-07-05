@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:ww_code/auth/auth_service.dart';
+import 'package:ww_code/user/auth_service.dart';
 import 'package:logging/logging.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:ww_code/auth/user_class.dart';
+import 'package:ww_code/user/user_class.dart';
 import 'package:ww_code/aesthetics/textfield_style.dart';
 import 'package:ww_code/friend_profile.dart';
+import 'package:ww_code/pending_invites.dart';
 
 class FriendsPage extends StatefulWidget {
   const FriendsPage({super.key});
@@ -129,6 +130,15 @@ class FriendsPageState extends State<FriendsPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Friends"),
+        actions: [
+          IconButton(
+            onPressed: () {
+              Navigator.push(context, MaterialPageRoute(builder: (context) => PendingInvitesPage(userId: currentUser!.uid),
+              ),
+              );
+            },
+            icon: const Icon(Icons.group),)
+        ]
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
