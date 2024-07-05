@@ -1,11 +1,14 @@
+// Class for user info when finding/adding friends
 class UserClass {
   final String uid;
   final String displayName;
-  // Add more fields as needed
+  final String? profileImageUrl;
+  final String? bio;
 
   UserClass({
     required this.uid,
     required this.displayName,
-    // Add more named parameters as needed
+    this.profileImageUrl,
+    this.bio,
   });
 }

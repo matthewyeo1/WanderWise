@@ -17,6 +17,7 @@ class FriendsPage extends StatefulWidget {
 class FriendsPageState extends State<FriendsPage> {
   TextEditingController searchController = TextEditingController();
   List<UserClass> searchResults = [];
+  User? currentUser;
 
   final AuthServiceItinerary _authServiceItinerary =
       AuthServiceItinerary(); // Initialize your AuthServiceItinerary
@@ -56,7 +57,12 @@ class FriendsPageState extends State<FriendsPage> {
   @override
   void initState() {
     super.initState();
+    _loadCurrentUser();
     _loadFriends(); // Load friends when page initializes
+  }
+
+  void _loadCurrentUser() async {
+    currentUser = FirebaseAuth.instance.currentUser;
   }
 
   void _loadFriends() async {
@@ -98,13 +104,17 @@ class FriendsPageState extends State<FriendsPage> {
   }
 
   void _handleTapOnFriend(UserClass friend) {
-    // Example: Navigate to friend's profile page
-    Navigator.push(
+    if (friend.uid != FirebaseAuth.instance.currentUser!.uid) {
+      
+    
+      Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => FriendProfilePage(friend: friend),
       ),
     );
+    }
+    
   }
 
   void _handleSearchButtonPressed() {
@@ -163,8 +173,13 @@ class FriendsPageState extends State<FriendsPage> {
                 itemBuilder: (context, index) {
                   // Replace with your user display logic
                   if (index < searchResults.length) {
+                    String displayName = searchResults[index].displayName;
+
+                    if (searchResults[index].uid == currentUser?.uid) {
+                      displayName += " (you)";
+                    }
                     return ListTile(
-                    title: Text(searchResults[index].displayName),
+                    title: Text(displayName),
                     // Add functionality like adding friend, viewing profile, etc.
                     onTap: () {
                       _handleTapOnFriend(searchResults[index]);

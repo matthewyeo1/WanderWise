@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:ww_code/aesthetics/themes_service.dart';
 import 'forgot_password.dart';
 import 'create_account.dart';
 import 'utilities/utils.dart';
@@ -25,6 +26,7 @@ class _MyHomePageState extends State<MyHomePage> {
   final FocusNode _emailFocusNode = FocusNode();
   final FocusNode _passwordFocusNode = FocusNode();
   final GoogleSignIn _googleSignIn = GoogleSignIn();
+  final ThemeService themeService = ThemeService();
 
   @override
   void dispose() {
@@ -170,6 +172,10 @@ class _MyHomePageState extends State<MyHomePage> {
             }
             await userDocRef.update(userData);
           }
+          await themeService.loadUserThemePreference(
+            user.uid,
+            Provider.of<ThemeNotifier>(context, listen: false),
+          );
         }
         Navigator.pushReplacementNamed(context, '/menu');
       } else {
