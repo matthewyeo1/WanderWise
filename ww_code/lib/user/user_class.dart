@@ -20,9 +20,9 @@ class UserClass {
     Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
     return UserClass(
       uid: snapshot.id,
-      displayName: data['displayName'] ?? '',
+      displayName: data['Username'] ?? '',
       email: data['email'] ?? '',
-      // Map other fields as necessary
+      profileImageUrl: data['profileImageUrl'],
     );
   }
 }

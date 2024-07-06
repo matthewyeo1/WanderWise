@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:ww_code/friends_page.dart';
+import 'package:ww_code/find_users_page.dart';
 import 'map_trips_page.dart';
 import 'manage_flights_bookings_page.dart';
 import 'settings_page.dart';
 import 'help_page.dart';
-//import 'friends_page.dart';
-
 
 class MenuPage extends StatefulWidget {
   final String? username;
@@ -54,7 +52,7 @@ class MenuPageState extends State<MenuPage> {
             },
           ),
           Positioned(
-            top: 50.0,
+            top: 40.0,
             left: 16.0,
             child: Column(
               children: [
@@ -75,7 +73,7 @@ class MenuPageState extends State<MenuPage> {
             ),
           ),
           Positioned(
-            top: 50.0,
+            top: 40.0,
             right: 16.0,
             child: Column(
               children: [

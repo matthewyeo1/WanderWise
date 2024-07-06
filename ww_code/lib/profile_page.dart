@@ -318,6 +318,7 @@ class ProfilePageState extends State<ProfilePage> {
               onPressed: _viewFriendsList,
               child: Text(
                 'Friends: $friendsCount',
+                style: const TextStyle(fontSize: 16.0),
               ),
             ),
             TextField(

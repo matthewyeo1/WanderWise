@@ -10,16 +10,18 @@ class FriendsListPage extends StatefulWidget {
   const FriendsListPage({Key? key, required this.userId}) : super(key: key);
 
   @override
-  _FriendsListPageState createState() => _FriendsListPageState();
+  FriendsListPageState createState() => FriendsListPageState();
 }
 
-class _FriendsListPageState extends State<FriendsListPage> {
+class FriendsListPageState extends State<FriendsListPage> {
   late User currentUser;
+  late Future<List<UserClass>> friendsFuture;
 
   @override
   void initState() {
     super.initState();
     currentUser = FirebaseAuth.instance.currentUser!;
+    friendsFuture = _getFriends();
   }
 
   Future<List<UserClass>> _getFriends() async {
@@ -47,6 +49,12 @@ class _FriendsListPageState extends State<FriendsListPage> {
       print('Error fetching friends: $e');
       return [];
     }
+  }
+
+   Future<void> _refreshFriends() async {
+    setState(() {
+      friendsFuture = _getFriends();
+    });
   }
 
   @override
@@ -80,16 +88,21 @@ class _FriendsListPageState extends State<FriendsListPage> {
                         : null,
                   ),
                   title: Text(friend.displayName),
-                  onTap: () {
-                    Navigator.push(
+                  onTap: () async {
+                    final bool result = await Navigator.push(
                       context,
                       MaterialPageRoute(
                         builder: (context) => ViewFriendPage(
                           friendUid: friend.uid,
-                          friendDisplayName: friend.displayName,
+                          
                         ),
                       ),
                     );
+                    if (result) {
+                      setState(() {
+                        _refreshFriends();
+                      });
+                    }
                   },
                 );
               },
