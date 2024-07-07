@@ -60,7 +60,7 @@ class MenuPageState extends State<MenuPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text(
-                    '       Notifications',
+                    '       Upcoming Events',
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 14,
@@ -75,7 +75,7 @@ class MenuPageState extends State<MenuPage> {
                       child: const Padding(
                           padding: EdgeInsets.all(18.0),
                           child: Center(
-                            child: Text('You have no notifications for now.',
+                            child: Text('You have no upcoming events for now.',
                                 style: TextStyle(
                                     color: Colors.white, fontSize: 14)),
                           ))),
