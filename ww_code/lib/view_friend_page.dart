@@ -251,7 +251,7 @@ class ViewFriendPageState extends State<ViewFriendPage> {
                     ),
                   const SizedBox(height: 16),
                   Text(
-                    'Friends: $_friendsCount',
+                    _friendsCount == 1? '1 Friend' : '$_friendsCount Friends',
                     style: const TextStyle(fontSize: 16),
                   ),
                   const SizedBox(height: 16),

@@ -55,7 +55,7 @@ class SettingsPageState extends State<SettingsPage> {
               label: 'Profile',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.settings),
+              icon: Icon(Icons.display_settings),
               label: 'General',
             ),
           ],

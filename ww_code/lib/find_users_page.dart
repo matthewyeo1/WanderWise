@@ -265,7 +265,7 @@ class FriendsPageState extends State<FriendsPage> {
                                   ),
                                   const SizedBox(height: 5),
                                   const Text(
-                                    'Add other Wanderers as friends \n to invite them to collaborate\n           on your next trip!',
+                                    'Add other Wanderers as friends \n and invite them to collaborate\n           on your next trip!',
                                     style: TextStyle(
                                       fontSize: 18,
                                     ),

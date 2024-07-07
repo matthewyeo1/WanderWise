@@ -10,7 +10,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'aesthetics/themes.dart';
 import 'package:provider/provider.dart';
 
-
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
   final String title;
@@ -44,25 +43,36 @@ class _MyHomePageState extends State<MyHomePage> {
 
     try {
       if (isValidEmail(email) && isValidPassword(password)) {
-        UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
+        UserCredential userCredential =
+            await FirebaseAuth.instance.signInWithEmailAndPassword(
           email: email,
           password: password,
         );
 
         String userId = userCredential.user!.uid;
-      bool isDarkMode = false;
-      try {
-        DocumentSnapshot doc = await FirebaseFirestore.instance.collection('Users').doc(userId).get();
-        if (doc.exists && doc['darkMode'] != null) {
-          isDarkMode = doc['darkMode'];
+        bool isDarkMode = false;
+        String? username;
+
+        try {
+          DocumentSnapshot doc = await FirebaseFirestore.instance
+              .collection('Users')
+              .doc(userId)
+              .get();
+          if (doc.exists) {
+            username = doc['Username'];
+            if (doc['darkMode'] != null) {
+              isDarkMode = doc['darkMode'];
+            }
+          }
+        } catch (e) {
+          print('Error loading theme preference: $e');
         }
-      } catch (e) {
-        print('Error loading theme preference: $e');
-      }
 
-      Provider.of<ThemeNotifier>(context, listen: false).initialize(userId, isDarkMode);
+        Provider.of<ThemeNotifier>(context, listen: false)
+            .initialize(userId, isDarkMode);
 
-        Navigator.pushReplacementNamed(context, '/menu').then((_) {
+        Navigator.pushReplacementNamed(context, '/menu', arguments: username)
+            .then((_) {
           // Once navigated to menu page, clear text fields for email and password
           _emailController.clear();
           _passwordController.clear();
@@ -156,7 +166,8 @@ class _MyHomePageState extends State<MyHomePage> {
           final DocumentSnapshot userDoc = await userDocRef.get();
 
           if (!userDoc.exists) {
-            String username = user.displayName ?? user.email?.split('@')[0] ?? '';
+            String username =
+                user.displayName ?? user.email?.split('@')[0] ?? '';
             await userDocRef.set({
               'Email': user.email,
               'Username': username,
@@ -236,7 +247,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     filled: true,
                     fillColor: Color.fromARGB(255, 208, 208, 208),
                     prefixIcon: Icon(Icons.person, color: Colors.black45),
-                    hintText: 'Email', 
+                    hintText: 'Email',
                     hintStyle: TextStyle(color: Colors.black45),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(20)),

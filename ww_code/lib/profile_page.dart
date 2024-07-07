@@ -317,10 +317,11 @@ class ProfilePageState extends State<ProfilePage> {
             TextButton(
               onPressed: _viewFriendsList,
               child: Text(
-                'Friends: $friendsCount',
+                friendsCount == 1? '1 Friend' : '$friendsCount Friends',
                 style: const TextStyle(fontSize: 16.0),
               ),
             ),
+            const SizedBox(height: 20),
             TextField(
               controller: _usernameController,
               cursorColor: Colors.black,

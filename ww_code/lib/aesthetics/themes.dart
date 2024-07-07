@@ -69,51 +69,52 @@ class ThemeNotifier with ChangeNotifier {
 }
 
 final lightTheme = ThemeData(
-    brightness: Brightness.light,
-    inputDecorationTheme: const InputDecorationTheme(
-      focusedBorder: UnderlineInputBorder(
-        borderSide: BorderSide(color: Colors.lightBlue),
-      ),
+  brightness: Brightness.light,
+  inputDecorationTheme: const InputDecorationTheme(
+    focusedBorder: UnderlineInputBorder(
+      borderSide: BorderSide(color: Colors.lightBlue),
     ),
-    primarySwatch: Colors.blue,
-    scaffoldBackgroundColor: const Color.fromARGB(255, 229, 224, 224),
-    canvasColor: Colors.transparent,
-    appBarTheme: const AppBarTheme(
+  ),
+  primarySwatch: Colors.blue,
+  scaffoldBackgroundColor: const Color.fromARGB(255, 229, 224, 224),
+  canvasColor: Colors.transparent,
+  appBarTheme: const AppBarTheme(
+    backgroundColor: Colors.white,
+    foregroundColor: Color(0xFF00A6DF),
+  ),
+  textTheme: const TextTheme(
+    bodyLarge: TextStyle(color: Colors.black),
+    headlineMedium: TextStyle(color: Colors.black),
+    headlineSmall: TextStyle(color: Colors.black),
+    titleSmall: TextStyle(color: Colors.black),
+    bodySmall: TextStyle(color: Colors.black),
+    labelSmall: TextStyle(color: Colors.black),
+    displaySmall: TextStyle(color: Colors.black),
+  ),
+  bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+    backgroundColor: Colors.white,
+    elevation: 0.0,
+    selectedItemColor: Color(0xFF00A6DF),
+    unselectedItemColor: Colors.grey,
+  ),
+  iconTheme: const IconThemeData(
+    color: Colors.black45,
+  ),
+  elevatedButtonTheme: ElevatedButtonThemeData(
+    style: ElevatedButton.styleFrom(
       backgroundColor: Colors.white,
-      foregroundColor: Color(0xFF00A6DF),
+      foregroundColor: Colors.lightBlue,
     ),
-    textTheme: const TextTheme(
-      bodyLarge: TextStyle(color: Colors.black),
-      headlineMedium: TextStyle(color: Colors.black),
-      headlineSmall: TextStyle(color: Colors.black),
-      titleSmall: TextStyle(color: Colors.black),
-      bodySmall: TextStyle(color: Colors.black),
-      labelSmall: TextStyle(color: Colors.black),
-      displaySmall: TextStyle(color: Colors.black),
-    ),
-    bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-      backgroundColor: Colors.white,
-      elevation: 0.0,
-      selectedItemColor: Color(0xFF00A6DF),
-      unselectedItemColor: Colors.grey,
-    ),
-    iconTheme: const IconThemeData(
-      color: Colors.black45,
-    ),
-    elevatedButtonTheme: ElevatedButtonThemeData(
-      style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.lightBlue,
-      ),
-    ),
-    snackBarTheme: const SnackBarThemeData(
-      backgroundColor: Colors.black54,
-      contentTextStyle: TextStyle(color: Colors.white),
-    ),
-    textButtonTheme: TextButtonThemeData(
-        style: TextButton.styleFrom(
-      foregroundColor: Colors.black,
-    )));
+  ),
+  snackBarTheme: const SnackBarThemeData(
+    backgroundColor: Colors.black54,
+    contentTextStyle: TextStyle(color: Colors.white),
+  ),
+  textButtonTheme: TextButtonThemeData(
+      style: TextButton.styleFrom(
+    foregroundColor: Colors.lightBlue,
+  )),
+);
 
 final darkTheme = ThemeData(
     brightness: Brightness.dark,
@@ -160,4 +161,6 @@ final darkTheme = ThemeData(
     textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
       foregroundColor: Colors.white,
-    )));
+    )),
+    iconButtonTheme: IconButtonThemeData(
+        style: IconButton.styleFrom(foregroundColor: Colors.white)));

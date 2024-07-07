@@ -195,7 +195,7 @@ Future<void> _addFriend() async {
                           ),
                         const SizedBox(height: 16),
                         Text(
-                          'Friends: $friendsCount',
+                          friendsCount == 1? '1 Friend' : '$friendsCount Friends',
                           style: const TextStyle(fontSize: 16),
                         ),
                         const SizedBox(height: 16),
@@ -206,7 +206,7 @@ Future<void> _addFriend() async {
                           )
                         else if (isFriend)
                           const Text(
-                            'Already a friend',
+                            'Friends with you',
                             style: TextStyle(color: Colors.green, fontSize: 16),
                           )
                         else if (isRequestSent)
