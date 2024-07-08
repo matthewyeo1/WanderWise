@@ -1,10 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:logging/logging.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
-// Verify user's credentials upon login
 class AuthServiceLogin {
-  final Logger _logger = Logger('AuthService');
+  final Logger _logger = Logger('AuthServiceLogin');
   final GoogleSignIn googleSignIn = GoogleSignIn();
 
   Future<UserCredential?> login(String email, String password) async {
@@ -39,9 +39,29 @@ class AuthServiceLogin {
   }
 }
 
-// Verify authenticated user in itinerary page
 class AuthServiceItinerary {
   Future<User?> getCurrentUser() async {
     return FirebaseAuth.instance.currentUser;
+  }
+
+  Future<void> updateUserData(User user) async {
+    try {
+      final String? displayName = user.displayName;
+      final String? email = user.email;
+
+      Map<String, dynamic> userData = {
+        'Username': displayName ?? '',
+        'email': email ?? '',
+        'UsernameLowerCase': displayName != null ? displayName.toLowerCase() : '',
+      };
+
+      await FirebaseFirestore.instance
+          .collection('Users')
+          .doc(user.uid)
+          .set(userData, SetOptions(merge: true));
+    } catch (e) {
+      
+      rethrow;
+    }
   }
 }

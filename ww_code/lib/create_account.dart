@@ -35,6 +35,9 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
     String password = _passwordController.text;
     String email = _emailController.text;
 
+    // Convert to lower case
+    String usernameLowerCase = username.toLowerCase();
+
     if (!isValidEmail(email)) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -77,7 +80,9 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
           .doc(userCredential.user?.uid)
           .set({
         'Username': username,
+        'UsernameLowerCase': usernameLowerCase,
         'email': email,
+        'friendsCount': 0,
       });
 
       ScaffoldMessenger.of(context).showSnackBar(

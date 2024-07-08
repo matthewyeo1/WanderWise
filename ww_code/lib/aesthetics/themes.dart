@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-
 class CustomColors {
   final Color circularProgressIndicatorLight;
   final Color circularProgressIndicatorDark;
@@ -26,7 +25,7 @@ class ThemeNotifier with ChangeNotifier {
 
   ThemeNotifier(userId, {required this.isDarkMode});
 
-   void initialize(String userId, bool isDarkMode) {
+  void initialize(String userId, bool isDarkMode) {
     this.userId = userId;
     this.isDarkMode = isDarkMode;
     notifyListeners();
@@ -68,7 +67,6 @@ class ThemeNotifier with ChangeNotifier {
     return isDarkMode ? ThemeMode.dark : ThemeMode.light;
   }
 }
-
 
 final lightTheme = ThemeData(
   brightness: Brightness.light,
@@ -112,50 +110,67 @@ final lightTheme = ThemeData(
     backgroundColor: Colors.black54,
     contentTextStyle: TextStyle(color: Colors.white),
   ),
-  
+  textButtonTheme: TextButtonThemeData(
+      style: TextButton.styleFrom(
+    foregroundColor: Colors.lightBlue,
+  )
+  ),
+  checkboxTheme: CheckboxThemeData(
+    checkColor: WidgetStateProperty.all(Colors.lightBlue),
+    fillColor: WidgetStateProperty.all(Colors.transparent), 
+  ),
 );
 
 final darkTheme = ThemeData(
-  brightness: Brightness.dark,
-  inputDecorationTheme: const InputDecorationTheme(
-    focusedBorder: UnderlineInputBorder(
-      borderSide: BorderSide(color: Colors.white),
+    brightness: Brightness.dark,
+    inputDecorationTheme: const InputDecorationTheme(
+      focusedBorder: UnderlineInputBorder(
+        borderSide: BorderSide(color: Colors.white),
+      ),
     ),
-  ),
-  primarySwatch: Colors.blue,
-  scaffoldBackgroundColor: const Color.fromARGB(255, 9, 9, 63),
-  canvasColor: Colors.transparent,
-  appBarTheme: const AppBarTheme(
-    backgroundColor: Color(0xFF191970),
-    foregroundColor: Colors.white,
-  ),
-  textTheme: const TextTheme(
-    bodyMedium: TextStyle(color: Colors.white),
-    headlineMedium: TextStyle(color: Colors.white),
-    headlineSmall: TextStyle(color: Colors.white),
-    titleSmall: TextStyle(color: Colors.white),
-    bodySmall: TextStyle(color: Colors.white),
-    labelSmall: TextStyle(color: Colors.white),
-    displaySmall: TextStyle(color: Colors.white),
-  ),
-  bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-    backgroundColor: Color(0xFF191970),
-    elevation: 0.0,
-    selectedItemColor: Colors.white,
-    unselectedItemColor: Colors.grey,
-  ),
-  iconTheme: const IconThemeData(
-    color: Colors.white,
-  ),
-  elevatedButtonTheme: ElevatedButtonThemeData(
-    style: ElevatedButton.styleFrom(
-      backgroundColor: const Color(0xFF191970),
+    primarySwatch: Colors.blue,
+    scaffoldBackgroundColor: const Color.fromARGB(255, 9, 9, 63),
+    canvasColor: Colors.transparent,
+    appBarTheme: const AppBarTheme(
+      backgroundColor: Color(0xFF191970),
       foregroundColor: Colors.white,
     ),
-  ),
-  snackBarTheme: const SnackBarThemeData(
-    backgroundColor: Colors.black54,
-    contentTextStyle: TextStyle(color: Colors.white),
-  ),
-  
+    textTheme: const TextTheme(
+      bodyMedium: TextStyle(color: Colors.white),
+      headlineMedium: TextStyle(color: Colors.white),
+      headlineSmall: TextStyle(color: Colors.white),
+      titleSmall: TextStyle(color: Colors.white),
+      bodySmall: TextStyle(color: Colors.white),
+      labelSmall: TextStyle(color: Colors.white),
+      displaySmall: TextStyle(color: Colors.white),
+    ),
+    bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+      backgroundColor: Color(0xFF191970),
+      elevation: 0.0,
+      selectedItemColor: Colors.white,
+      unselectedItemColor: Colors.grey,
+    ),
+    iconTheme: const IconThemeData(
+      color: Colors.white,
+    ),
+    elevatedButtonTheme: ElevatedButtonThemeData(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: const Color(0xFF191970),
+        foregroundColor: Colors.white,
+      ),
+    ),
+    snackBarTheme: const SnackBarThemeData(
+      backgroundColor: Colors.black54,
+      contentTextStyle: TextStyle(color: Colors.white),
+    ),
+    textButtonTheme: TextButtonThemeData(
+        style: TextButton.styleFrom(
+      foregroundColor: Colors.white,
+    )),
+    iconButtonTheme: IconButtonThemeData(
+        style: IconButton.styleFrom(foregroundColor: Colors.white)),
+    checkboxTheme: CheckboxThemeData(
+    checkColor: WidgetStateProperty.all(Colors.white),
+    fillColor: WidgetStateProperty.all(Colors.transparent), 
+  ),        
 );

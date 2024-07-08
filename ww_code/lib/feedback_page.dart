@@ -5,11 +5,11 @@ class FeedbackPage extends StatefulWidget {
   const FeedbackPage({super.key});
 
   @override
-  _FeedbackPageState createState() => _FeedbackPageState();
+  FeedbackPageState createState() => FeedbackPageState();
 }
 
 // Feedback page
-class _FeedbackPageState extends State<FeedbackPage> {
+class FeedbackPageState extends State<FeedbackPage> {
   final TextEditingController feedbackController = TextEditingController();
   final FeedbackService feedbackService = FeedbackService();
 

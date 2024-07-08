@@ -6,6 +6,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'dart:io';
 import 'utilities/utils.dart';
 import 'aesthetics/textfield_style.dart';
+import 'package:ww_code/friends_list.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -20,6 +21,7 @@ class ProfilePageState extends State<ProfilePage> {
   String? _profileImageUrl;
   final ImagePicker _picker = ImagePicker();
   late User _user;
+  int friendsCount = 0;
 
   @override
   void dispose() {
@@ -33,6 +35,7 @@ class ProfilePageState extends State<ProfilePage> {
     super.initState();
     _user = FirebaseAuth.instance.currentUser!;
     _loadUserProfile();
+    _loadFriendsCount();
   }
 
   Future<void> _loadUserProfile() async {
@@ -49,12 +52,52 @@ class ProfilePageState extends State<ProfilePage> {
           _usernameController.text = data?['Username'] ?? '';
           _bioController.text = data?['bio'] ?? '';
           _profileImageUrl = data?['profileImageUrl'];
+          friendsCount = data?['friendsCount'] ?? 0;
         });
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Error loading user profile'),
+        ),
+      );
+    }
+  }
+
+  Future<void> _loadFriendsCount() async {
+    try {
+      QuerySnapshot friendsSnapshot = await FirebaseFirestore.instance
+          .collection('Friends')
+          .where('userId', isEqualTo: _user.uid)
+          .get();
+
+      int numOfFriendsInList = friendsSnapshot.docs.length;
+
+      setState(() {
+        friendsCount = numOfFriendsInList;
+      });
+
+      await _updateFriendsCount(numOfFriendsInList);
+
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Error loading friends count'),
+        ),
+      );
+    }
+  }
+
+  Future<void> _updateFriendsCount(int count) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection('Users')
+          .doc(_user.uid)
+          .update({'friendsCount': count});
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Error updating friends count in Firestore'),
         ),
       );
     }
@@ -178,13 +221,15 @@ class ProfilePageState extends State<ProfilePage> {
       return;
     }
     try {
+      String? username = _usernameController.text;
       await FirebaseFirestore.instance
           .collection('Users')
           .doc(_user.uid)
           .update({
-        'Username': _usernameController.text,
+        'Username': username,
         'bio': _bioController.text,
         'profileImageUrl': _profileImageUrl,
+        'UsernameLowerCase': username.toLowerCase(),
       });
 
       ScaffoldMessenger.of(context).showSnackBar(
@@ -199,6 +244,19 @@ class ProfilePageState extends State<ProfilePage> {
         ),
       );
     }
+  }
+
+  // Navigate to friends list
+  void _viewFriendsList() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => FriendsListPage(userId: _user.uid),
+      ),
+    ).then((_) {
+      // Reload friends count when returning from the friends list page
+      _loadFriendsCount();
+    });
   }
 
   @override
@@ -255,6 +313,15 @@ class ProfilePageState extends State<ProfilePage> {
                 ),
               ],
             ),
+            const SizedBox(height: 10),
+            TextButton(
+              onPressed: _viewFriendsList,
+              child: Text(
+                friendsCount == 1? '1 Friend' : '$friendsCount Friends',
+                style: const TextStyle(fontSize: 16.0),
+              ),
+            ),
+            const SizedBox(height: 20),
             TextField(
               controller: _usernameController,
               cursorColor: Colors.black,
@@ -266,7 +333,7 @@ class ProfilePageState extends State<ProfilePage> {
             ),
             const SizedBox(height: 10),
             TextField(
-                controller: _bioController,
+              controller: _bioController,
               cursorColor: Colors.black,
               style: const TextStyle(color: Colors.black),
               decoration: TextFieldConfig.buildInputDecoration(
@@ -285,3 +352,4 @@ class ProfilePageState extends State<ProfilePage> {
     );
   }
 }
+
