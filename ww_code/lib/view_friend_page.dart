@@ -255,10 +255,7 @@ class ViewFriendPageState extends State<ViewFriendPage> {
                     style: const TextStyle(fontSize: 16),
                   ),
                   const SizedBox(height: 16),
-                  const ElevatedButton(
-                    onPressed: null, 
-                    child: Text('Invite to Collaborate'),
-                  ),
+                 
                   if (_isFriend)
                     ElevatedButton(
                       onPressed: _removeFriend,
@@ -273,5 +270,7 @@ class ViewFriendPageState extends State<ViewFriendPage> {
               ),
             ),
     );
+
+
   }
 }

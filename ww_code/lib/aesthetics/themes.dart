@@ -113,7 +113,12 @@ final lightTheme = ThemeData(
   textButtonTheme: TextButtonThemeData(
       style: TextButton.styleFrom(
     foregroundColor: Colors.lightBlue,
-  )),
+  )
+  ),
+  checkboxTheme: CheckboxThemeData(
+    checkColor: WidgetStateProperty.all(Colors.lightBlue),
+    fillColor: WidgetStateProperty.all(Colors.transparent), 
+  ),
 );
 
 final darkTheme = ThemeData(
@@ -163,4 +168,9 @@ final darkTheme = ThemeData(
       foregroundColor: Colors.white,
     )),
     iconButtonTheme: IconButtonThemeData(
-        style: IconButton.styleFrom(foregroundColor: Colors.white)));
+        style: IconButton.styleFrom(foregroundColor: Colors.white)),
+    checkboxTheme: CheckboxThemeData(
+    checkColor: WidgetStateProperty.all(Colors.white),
+    fillColor: WidgetStateProperty.all(Colors.transparent), 
+  ),        
+);

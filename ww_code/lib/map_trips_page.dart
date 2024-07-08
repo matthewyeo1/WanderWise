@@ -6,6 +6,7 @@ import 'storage/itinerary_service.dart';
 import 'user/auth_service.dart';
 import 'ai_itinerary_page.dart';
 import 'aesthetics/themes.dart';
+import 'package:ww_code/invite_to_collab_page.dart';
 
 class MapItineraryPage extends StatefulWidget {
   const MapItineraryPage({super.key});
@@ -100,6 +101,11 @@ class MapItineraryPageState extends State<MapItineraryPage> {
         const SnackBar(content: Text('Successfully deleted trip')),
       );
     }
+  }
+
+  void _navigateToInviteToCollabPage() {
+    Navigator.push(context, MaterialPageRoute(builder: (context) => InviteToCollabPage(userId: userId,)),
+    );
   }
 
   Future<void> _editItineraryItem(int index) async {
@@ -204,6 +210,10 @@ class MapItineraryPageState extends State<MapItineraryPage> {
                     onPressed: () => _editItineraryItem(index),
                   ),
                   IconButton(
+                    icon: const Icon(Icons.group_add, color: Colors.black45),
+                    onPressed: () => _navigateToInviteToCollabPage(),
+                  ),
+                  IconButton(
                     icon: const Icon(Icons.delete, color: Colors.black45),
                     onPressed: () => _removeItineraryItem(index),
                   ),
@@ -228,6 +238,8 @@ class MapItineraryPageState extends State<MapItineraryPage> {
       await _loadItineraryItems();
     }
   }
+
+  
 
   @override
   Widget build(BuildContext context) {

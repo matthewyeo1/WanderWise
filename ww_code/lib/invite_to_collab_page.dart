@@ -2,21 +2,23 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:ww_code/user/user_class.dart';
-import 'package:ww_code/view_friend_page.dart';
 import 'package:ww_code/aesthetics/themes.dart';
 
-class FriendsListPage extends StatefulWidget {
+
+class InviteToCollabPage extends StatefulWidget {
   final String userId;
 
-  const FriendsListPage({Key? key, required this.userId}) : super(key: key);
+  const InviteToCollabPage ({Key? key, required this.userId}) : super(key: key);
 
   @override
-  FriendsListPageState createState() => FriendsListPageState();
+  InviteToCollabPageState createState() => InviteToCollabPageState();
 }
 
-class FriendsListPageState extends State<FriendsListPage> {
-  late User currentUser;
+class InviteToCollabPageState extends State<InviteToCollabPage> {
   late Future<List<UserClass>> friendsFuture;
+  late User currentUser;
+  List<String> selectedFriends = [];
+
 
   @override
   void initState() {
@@ -29,7 +31,7 @@ class FriendsListPageState extends State<FriendsListPage> {
     try {
       QuerySnapshot friendsSnapshot = await FirebaseFirestore.instance
           .collection('Friends')
-          .where('userId', isEqualTo: widget.userId)
+          .where('userId', isEqualTo: currentUser.uid)
           .get();
 
       List<UserClass> friends = [];
@@ -52,20 +54,22 @@ class FriendsListPageState extends State<FriendsListPage> {
     }
   }
 
-   Future<void> _refreshFriends() async {
-    setState(() {
-      friendsFuture = _getFriends();
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Friends List'),
+        title: const Text('Invite Friends to Collab'),
+        actions: [
+          if (selectedFriends.isNotEmpty)
+            TextButton(
+              onPressed: () {
+
+              },
+              child: Text('Invite'),),
+        ],
       ),
       body: FutureBuilder<List<UserClass>>(
-        future: _getFriends(),
+        future: friendsFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(child: CircularProgressIndicator(
@@ -82,7 +86,7 @@ class FriendsListPageState extends State<FriendsListPage> {
           } else if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return const Center(child: Text('You have no friends yet.'));
+            return const Center(child: Text('You have no friends to invite'));
           } else {
             List<UserClass> friends = snapshot.data!;
             return ListView.builder(
@@ -101,22 +105,18 @@ class FriendsListPageState extends State<FriendsListPage> {
                         : null,
                   ),
                   title: Text(friend.displayName),
-                  onTap: () async {
-                    final bool result = await Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => ViewFriendPage(
-                          friendUid: friend.uid,
-                          
-                        ),
-                      ),
-                    );
-                    if (result) {
+                  trailing: Checkbox(       
+                    value: selectedFriends.contains(friend.uid),
+                    onChanged: (bool? selected) {
                       setState(() {
-                        _refreshFriends();
+                        if (selected == true) {
+                          selectedFriends.add(friend.uid);
+                        } else {
+                          selectedFriends.remove(friend.uid);
+                        }
                       });
-                    }
-                  },
+                    },
+                  ),
                 );
               },
             );
