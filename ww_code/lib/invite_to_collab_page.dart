@@ -65,7 +65,8 @@ class InviteToCollabPageState extends State<InviteToCollabPage> {
               onPressed: () {
 
               },
-              child: Text('Invite'),),
+              child: const Text('Invite'),
+            ),
         ],
       ),
       body: FutureBuilder<List<UserClass>>(
