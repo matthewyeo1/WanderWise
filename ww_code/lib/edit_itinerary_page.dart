@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -24,7 +25,6 @@ class EditItineraryPageState extends State<EditItineraryPage> {
   late TextEditingController descriptionController;
   final User? currentUser = FirebaseAuth.instance.currentUser;
 
-  List<String> members = [];
 
   @override
   void initState() {
@@ -37,11 +37,6 @@ class EditItineraryPageState extends State<EditItineraryPage> {
         text: widget.initialItem?['endDate'] ?? '');
     descriptionController = TextEditingController(
         text: widget.initialItem?['description'] ?? '');
-    members = List<String>.from(widget.initialItem?['members'] ?? []);
-
-    if (currentUser != null && !members.contains(currentUser!.uid)) {
-      members.add(currentUser!.uid);
-    }
   }
 
   @override
@@ -110,7 +105,6 @@ class EditItineraryPageState extends State<EditItineraryPage> {
                 'description': descriptionController.text.isEmpty ? '' : descriptionController.text,
                 'startDate': startDateController.text.isEmpty ? '' : startDateController.text,
                 'endDate': endDateController.text.isEmpty ? '' : endDateController.text,
-                'members': members,
               });
               Navigator.pop(context);
             },

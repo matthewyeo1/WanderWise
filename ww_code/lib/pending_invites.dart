@@ -58,6 +58,20 @@ class PendingInvitesPageState extends State<PendingInvitesPage> {
             .doc(requestId)
             .delete();
 
+        await FirebaseFirestore.instance  
+            .collection('Users')
+            .doc(recipientId)
+            .collection('FriendsOfUser')
+            .doc(senderId)
+            .set({'friendId': senderId});
+
+        await FirebaseFirestore.instance  
+            .collection('Users')
+            .doc(senderId)
+            .collection('FriendsOfUser')
+            .doc(recipientId)
+            .set({'friendId': recipientId});
+
         // Update pending invites count
         fetchPendingInvitesCount();
 

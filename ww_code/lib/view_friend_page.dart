@@ -138,6 +138,23 @@ class ViewFriendPageState extends State<ViewFriendPage> {
             .where('recipientId', isEqualTo: widget.friendUid)
             .get();
 
+        // Delete from FriendsOfUser subcollection
+      QuerySnapshot friendsOfUserSnapshot1 = await FirebaseFirestore.instance
+          .collection('Users')
+          .doc(currentUser.uid)
+          .collection('FriendsOfUser')
+          .where('friendId', isEqualTo: widget.friendUid)
+          .get();
+
+      QuerySnapshot friendsOfUserSnapshot2 = await FirebaseFirestore.instance
+          .collection('Users')
+          .doc(widget.friendUid)
+          .collection('FriendsOfUser')
+          .where('friendId', isEqualTo: currentUser.uid)
+          .get();
+
+        deleteFriendsOfUserDoc(friendsOfUserSnapshot1, batch);
+        deleteFriendsOfUserDoc(friendsOfUserSnapshot2, batch);
         deleteFriendshipDoc(friendsSnapshot1, batch);
         deleteFriendshipDoc(friendsSnapshot2, batch);
         deleteFriendRequest(friendRequestSnapshot1, batch);
@@ -180,6 +197,15 @@ class ViewFriendPageState extends State<ViewFriendPage> {
       });
     }
   }
+
+  Future<void> deleteFriendsOfUserDoc(
+    QuerySnapshot friendsOfUserSnapshot, WriteBatch batch) async {
+  if (friendsOfUserSnapshot.size > 0) {
+      friendsOfUserSnapshot.docs.forEach((doc) {
+        batch.delete(doc.reference);
+      });
+    }
+}
 
   Future<void> _decrementFriendsCount(String userId) async {
     try {
