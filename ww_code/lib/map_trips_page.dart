@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'edit_itinerary_page.dart';
@@ -105,7 +104,11 @@ class MapItineraryPageState extends State<MapItineraryPage> {
   }
 
   void _navigateToInviteToCollabPage(String itineraryId) {
-    Navigator.push(context, MaterialPageRoute(builder: (context) => ShareWithUsersPage(userId: userId, itineraryId: itineraryId)),
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+          builder: (context) =>
+              ShareWithUsersPage(userId: userId, itineraryId: itineraryId)),
     );
   }
 
@@ -207,12 +210,13 @@ class MapItineraryPageState extends State<MapItineraryPage> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   IconButton(
-                    icon: const Icon(Icons.visibility, color: Colors.black45),
-                    onPressed: () => _editItineraryItem(index),
+                    icon: const Icon(Icons.send, color: Colors.black45),
+                    onPressed: () => _navigateToInviteToCollabPage(
+                        _itineraryItems[index]['id']),
                   ),
                   IconButton(
-                    icon: const Icon(Icons.group_add, color: Colors.black45),
-                    onPressed: () => _navigateToInviteToCollabPage(_itineraryItems[index]['id']),
+                    icon: const Icon(Icons.visibility, color: Colors.black45),
+                    onPressed: () => _editItineraryItem(index),
                   ),
                   IconButton(
                     icon: const Icon(Icons.delete, color: Colors.black45),
@@ -239,8 +243,6 @@ class MapItineraryPageState extends State<MapItineraryPage> {
       await _loadItineraryItems();
     }
   }
-
-  
 
   @override
   Widget build(BuildContext context) {

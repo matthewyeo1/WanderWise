@@ -7,6 +7,8 @@ import 'package:flutter_pdfview/flutter_pdfview.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter_cached_pdfview/flutter_cached_pdfview.dart';
+import 'package:ww_code/aesthetics/themes.dart';
 
 class ManageFlightsBookingsPage extends StatefulWidget {
   const ManageFlightsBookingsPage({super.key});
@@ -202,9 +204,17 @@ class ManageFlightsBookingsPageState extends State<ManageFlightsBookingsPage> {
                     return Center(child: Text('Error: ${snapshot.error}'));
                   }
                 } else {
-                  return const Center(
+                  return Center(
                     child: CircularProgressIndicator(
-                      color: Colors.blue,
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        Theme.of(context).brightness == Brightness.light
+                            ? Theme.of(context)
+                                .customColors
+                                .circularProgressIndicatorLight
+                            : Theme.of(context)
+                                .customColors
+                                .circularProgressIndicatorDark,
+                      ),
                     ),
                   );
                 }
@@ -278,9 +288,13 @@ class ManageFlightsBookingsPageState extends State<ManageFlightsBookingsPage> {
 
   Widget buildFileList() {
     if (isLoading) {
-      return const Center(
+      return Center(
         child: CircularProgressIndicator(
-          color: Colors.lightBlue,
+          valueColor: AlwaysStoppedAnimation<Color>(
+            Theme.of(context).brightness == Brightness.light
+                ? Theme.of(context).customColors.circularProgressIndicatorLight
+                : Theme.of(context).customColors.circularProgressIndicatorDark,
+          ),
         ),
       );
     }
@@ -303,16 +317,69 @@ class ManageFlightsBookingsPageState extends State<ManageFlightsBookingsPage> {
             ),
           )
         : ListView.builder(
+            padding: const EdgeInsets.all(16),
             itemCount: files.length,
             itemBuilder: (context, index) {
               DocumentSnapshot fileDoc = files[index];
-              return ListTile(
-                title: Text(fileDoc['fileName']),
-                subtitle: Text(fileDoc['isPDF'] ? 'PDF Document' : 'Document'),
-                onTap: () => viewFile(fileDoc),
-                trailing: IconButton(
-                  icon: const Icon(Icons.delete),
-                  onPressed: () => confirmDelete(fileDoc),
+              return Card(
+                color: Colors.white.withOpacity(0.8),
+                margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+                child: ListTile(
+                  leading: fileDoc['isPDF']
+                      ? Container(
+                          width: 40,
+                          height: 40,
+                          child: PDF(
+                            onViewCreated:
+                                (PDFViewController pdfViewController) async {
+                              await pdfViewController.setPage(0);
+                            },
+                          ).fromUrl(
+                            fileDoc['url'],
+                            placeholder: (double progress) => Center(
+                                child: CircularProgressIndicator(
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                Theme.of(context).brightness == Brightness.light
+                                    ? Theme.of(context)
+                                        .customColors
+                                        .circularProgressIndicatorLight
+                                    : Theme.of(context)
+                                        .customColors
+                                        .circularProgressIndicatorDark,
+                              ),
+                            )),
+                            errorWidget: (dynamic error) =>
+                                Center(child: Text(error.toString())),
+                          ),
+                        )
+                      : const Icon(Icons.insert_drive_file,
+                          color: Colors.blue, size: 40),
+                  title: Text(
+                    fileDoc['fileName'],
+                    style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                        color: Colors.black),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  subtitle: Text(
+                    fileDoc['isPDF'] ? 'PDF Document' : 'Word Document',
+                    style: const TextStyle(color: Colors.black),
+                  ),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                        icon:
+                            const Icon(Icons.visibility, color: Colors.black45),
+                        onPressed: () => viewFile(fileDoc),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.delete, color: Colors.black45),
+                        onPressed: () => confirmDelete(fileDoc),
+                      ),
+                    ],
+                  ),
                 ),
               );
             },
@@ -324,18 +391,30 @@ class ManageFlightsBookingsPageState extends State<ManageFlightsBookingsPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'Upload Documents',
+          'Manage Flights/Bookings',
         ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.add),
-            onPressed: getFile,
-          ),
-        ],
       ),
       body: Column(
         children: [
-          Expanded(child: buildFileList()),
+          Expanded(
+            child: buildFileList(),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(10),
+            child: ElevatedButton.icon(
+              onPressed: getFile,
+              icon: const Icon(Icons.upload_file),
+              label: const Text('Upload File'),
+              style: ElevatedButton.styleFrom(
+                padding:
+                    const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
+                textStyle: const TextStyle(fontSize: 16),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30),
+                ),
+              ),
+            ),
+          ),
         ],
       ),
     );

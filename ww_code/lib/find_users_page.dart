@@ -203,7 +203,7 @@ class FriendsPageState extends State<FriendsPage> {
                     controller: searchController,
                     onChanged: onSearchChanged,
                     decoration: TextFieldConfig.buildInputDecoration(
-                      hintText: 'Search friends...',
+                      hintText: 'Search a username...',
                       prefixIcon: const Icon(
                         Icons.search,
                         color: Colors.black45,
@@ -265,7 +265,7 @@ class FriendsPageState extends State<FriendsPage> {
                                   ),
                                   const SizedBox(height: 5),
                                   const Text(
-                                    'Add other Wanderers as friends \n and invite them to collaborate\n           on your next trip!',
+                                    'Find other Wanderers and add them as friends!',
                                     style: TextStyle(
                                       fontSize: 18,
                                     ),

@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:ww_code/find_users_page.dart';
 import 'map_trips_page.dart';
-import 'manage_flights_bookings_page.dart';
+import 'upload_docs.dart';
 import 'settings_page.dart';
 import 'help_page.dart';
 
@@ -292,7 +292,10 @@ class MenuPageState extends State<MenuPage> {
         context,
         MaterialPageRoute(
             builder: (context) => const ManageFlightsBookingsPage()));
+            //builder: (context) => const UploadDocumentsPage()));
+  
   }
+
 
   void _navigateToSettings() {
     Navigator.push(
