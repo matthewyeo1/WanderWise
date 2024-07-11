@@ -58,23 +58,50 @@ class PendingInvitesPageState extends State<PendingInvitesPage> {
             .doc(requestId)
             .delete();
 
-        await FirebaseFirestore.instance  
+        // Get sender's display name
+        DocumentSnapshot senderSnapshot = await FirebaseFirestore.instance
             .collection('Users')
-            .doc(recipientId)
-            .collection('FriendsOfUser')
             .doc(senderId)
-            .set({'friendId': senderId});
+            .get();
 
-        await FirebaseFirestore.instance  
+        if (senderSnapshot.exists) {
+          String senderDisplayName = senderSnapshot.get('Username') ?? 'Unknown User';
+
+          // Add sender to recipient's FriendsOfUser collection
+          await FirebaseFirestore.instance
+              .collection('Users')
+              .doc(recipientId)
+              .collection('FriendsOfUser')
+              .doc(senderId)
+              .set({
+                'friendId': senderId,
+                'friendDisplayName': senderDisplayName,
+              });
+        }
+
+        // Get recipient's display name
+        DocumentSnapshot recipientSnapshot = await FirebaseFirestore.instance
             .collection('Users')
-            .doc(senderId)
-            .collection('FriendsOfUser')
             .doc(recipientId)
-            .set({'friendId': recipientId});
+            .get();
+
+        if (recipientSnapshot.exists) {
+          String recipientDisplayName = recipientSnapshot.get('Username') ?? 'Unknown User';
+
+          // Add recipient to sender's FriendsOfUser collection
+          await FirebaseFirestore.instance
+              .collection('Users')
+              .doc(senderId)
+              .collection('FriendsOfUser')
+              .doc(recipientId)
+              .set({
+                'friendId': recipientId,
+                'friendDisplayName': recipientDisplayName,
+              });
+        }
 
         // Update pending invites count
         fetchPendingInvitesCount();
-
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -162,9 +189,6 @@ class PendingInvitesPageState extends State<PendingInvitesPage> {
         await userSnapshot.reference.update({
           'friendsCount': currentFriendsCount + 1,
         });
-
-    
-        
       }
     } catch (e) {
       print('Error incrementing friends count for user $userId: $e');
@@ -191,7 +215,7 @@ class PendingInvitesPageState extends State<PendingInvitesPage> {
                 }
 
                 if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                  return  Center(
+                  return Center(
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
@@ -199,12 +223,10 @@ class PendingInvitesPageState extends State<PendingInvitesPage> {
                           'images/empty_pending_invites.png',
                           height: 200,
                         ),
-                        const SizedBox(height: 16), 
-                        const Text('No pending invites',
-                        style: TextStyle(fontSize: 18)
-                        )
+                        const SizedBox(height: 16),
+                        const Text('No pending invites', style: TextStyle(fontSize: 18)),
                       ],
-                    ),                  
+                    ),
                   );
                 }
 
@@ -243,4 +265,3 @@ class PendingInvitesPageState extends State<PendingInvitesPage> {
     );
   }
 }
-

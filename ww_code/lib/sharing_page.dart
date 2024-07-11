@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:ww_code/user/user_class.dart'; // Adjust import based on your actual user class location
+import 'package:ww_code/user/user_class.dart';
 import 'package:ww_code/aesthetics/themes.dart';
 
-class InviteToCollabPage extends StatefulWidget {
-  final String itineraryId; // Added itineraryId to pass from MapItineraryPage
+class ShareWithUsersPage extends StatefulWidget {
+  final String itineraryId; 
   final String userId;
 
-  const InviteToCollabPage({Key? key, required this.itineraryId, required this.userId}) : super(key: key);
+  const ShareWithUsersPage({Key? key, required this.itineraryId, required this.userId}) : super(key: key);
 
   @override
-  InviteToCollabPageState createState() => InviteToCollabPageState();
+  ShareWithUsersPageState createState() => ShareWithUsersPageState();
 }
 
-class InviteToCollabPageState extends State<InviteToCollabPage> {
+class ShareWithUsersPageState extends State<ShareWithUsersPage> {
   late Future<List<UserClass>> friendsFuture;
   late User currentUser;
   List<String> selectedFriends = [];
@@ -36,7 +36,7 @@ class InviteToCollabPageState extends State<InviteToCollabPage> {
 
     List<UserClass> friends = [];
     for (QueryDocumentSnapshot doc in friendsSnapshot.docs) {
-      String friendId = doc.id; // Assuming the friendId is the document ID
+      String friendId = doc.id; 
       DocumentSnapshot friendDoc = await FirebaseFirestore.instance
           .collection('Users')
           .doc(friendId)
@@ -54,13 +54,13 @@ class InviteToCollabPageState extends State<InviteToCollabPage> {
   }
 }
 
-
-  Future<void> _inviteFriends() async {
+Future<void> _inviteFriends() async {
   try {
     WriteBatch batch = FirebaseFirestore.instance.batch();
 
+    List<String> invitedUsernames = []; // List to store usernames of invited friends
+
     for (String friendId in selectedFriends) {
-      // Add friend as collaborator in the itinerary's Collaborators subcollection
       DocumentReference collaboratorRef = FirebaseFirestore.instance
           .collection('Users')
           .doc(widget.userId)
@@ -84,32 +84,51 @@ class InviteToCollabPageState extends State<InviteToCollabPage> {
           .collection('Itineraries')
           .doc(widget.itineraryId);
 
+      // Get the current itinerary details (only if not already set)
+      DocumentSnapshot friendItinerarySnapshot = await friendItineraryRef.get();
+
       // Get the current itinerary details
-      DocumentSnapshot itinerarySnapshot = await FirebaseFirestore.instance
+      if (!friendItinerarySnapshot.exists) {
+        DocumentSnapshot itinerarySnapshot = await FirebaseFirestore.instance
+            .collection('Users')
+            .doc(widget.userId)
+            .collection('Itineraries')
+            .doc(widget.itineraryId)
+            .get();
+
+        // Set the friend's itinerary with the same details
+        batch.set(friendItineraryRef, {
+          'ownerId': widget.userId,
+          'title': itinerarySnapshot['title'],
+          'startDate': itinerarySnapshot['startDate'],
+          'endDate': itinerarySnapshot['endDate'],
+          'description': itinerarySnapshot['description'],
+        });
+      }
+
+      // Retrieve friend's username
+      DocumentSnapshot friendDoc = await FirebaseFirestore.instance
           .collection('Users')
           .doc(widget.userId)
-          .collection('Itineraries')
-          .doc(widget.itineraryId)
+          .collection('FriendsOfUser')
+          .doc(friendId)
           .get();
 
-      // Set the friend's itinerary with the same details
-      batch.set(friendItineraryRef, {
-        'ownerId': widget.userId,
-        'title': itinerarySnapshot['title'],
-        'startDate': itinerarySnapshot['startDate'],
-        'endDate': itinerarySnapshot['endDate'],
-        'description': itinerarySnapshot['description'],
-      });
+      if (friendDoc.exists) {
+        String username = friendDoc['friendDisplayName']; // Assuming username is a field in UserClass
+        invitedUsernames.add(username);
+      }
     }
 
-    // Commit batch write
     await batch.commit();
 
+    String invitedUsersText = invitedUsernames.join(', '); // Join usernames with commas
+    String snackbarMessage = 'Shared with $invitedUsersText!';
+
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Friends invited to collaborate!')),
+      SnackBar(content: Text(snackbarMessage)),
     );
 
-    // Navigate back or perform any other action after inviting friends
     Navigator.pop(context);
   } catch (e) {
     ScaffoldMessenger.of(context).showSnackBar(
@@ -122,12 +141,12 @@ class InviteToCollabPageState extends State<InviteToCollabPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Invite Friends to Collaborate'),
+        title: const Text('Share With Friends'),
         actions: [
           if (selectedFriends.isNotEmpty)
             TextButton(
               onPressed: _inviteFriends,
-              child: const Text('Invite'),
+              child: const Text('Share'),
             ),
         ],
       ),
