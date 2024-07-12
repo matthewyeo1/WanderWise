@@ -4,6 +4,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ww_code/map_trips_page.dart';
+import 'package:ww_code/socials.dart';
 import 'aesthetics/splashscreen.dart';
 import 'aesthetics/themes.dart';
 import 'login_screen.dart';
@@ -14,6 +15,9 @@ import 'help_page.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_gemini/flutter_gemini.dart';
 import 'package:ww_code/utilities/const.dart';
+import 'package:timezone/data/latest.dart' as tz;
+import 'package:ww_code/notif_service.dart';
+
 
 void main() async {
   // Load the .env file
@@ -30,6 +34,10 @@ void main() async {
   );
 
   WidgetsFlutterBinding.ensureInitialized();
+  NotificationService().iniNotification();
+  tz.initializeTimeZones();
+
+ 
 
   // Initialize Firebase and Firebase App Check
   await Firebase.initializeApp();
@@ -46,6 +54,8 @@ void main() async {
   ThemeNotifier themeNotifier =
       ThemeNotifier(user?.uid ?? '', isDarkMode: false);
 
+  
+  
   // Load theme preference if user is authenticated
   if (user != null) {
     try {
@@ -56,6 +66,8 @@ void main() async {
       print('Error loading theme preference: $e');
     }
   }
+
+  //await FirebaseApi().initNotifications;
 
   // Run app and set the theme according to the user's preference
   runApp(
