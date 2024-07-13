@@ -8,7 +8,6 @@ import 'ai_itinerary_page.dart';
 import 'aesthetics/themes.dart';
 import 'package:ww_code/sharing_page.dart';
 
-
 class MapItineraryPage extends StatefulWidget {
   const MapItineraryPage({super.key});
 

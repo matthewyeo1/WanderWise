@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:ww_code/aesthetics/themes.dart';
-import 'package:ww_code/utilities/directions_model.dart';
-import 'package:ww_code/utilities/map_directions.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:ww_code/utilities/directions_model.dart';
+import 'package:ww_code/utilities/map_directions.dart';
+import 'package:ww_code/aesthetics/themes.dart';
+import 'package:ww_code/location_autocomplete.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class MapScreen extends StatefulWidget {
   const MapScreen({super.key});
@@ -52,7 +56,7 @@ class _MapScreenState extends State<MapScreen> {
     }
   }
 
-  Future<void> loadMapCoordinates(String userI) async {
+  Future<void> loadMapCoordinates(String userId) async {
     try {
       DocumentSnapshot documentSnapshot = await _firestore
           .collection('Users')
@@ -66,7 +70,6 @@ class _MapScreenState extends State<MapScreen> {
             documentSnapshot.data() as Map<String, dynamic>;
 
         GeoPoint originPosition = data['origin_position'];
-        //GeoPoint? destinationPosition = data['destination_position'];
 
         setState(() {
           _origin = Marker(
@@ -124,6 +127,33 @@ class _MapScreenState extends State<MapScreen> {
     }
   }
 
+  Future<void> _searchLocation(String countryName) async {
+    try {
+      List<Location> locations = await locationFromAddress(countryName);
+      if (locations.isNotEmpty) {
+        Location location = locations.first;
+        setState(() {
+          _lastOriginPosition = _origin!.position;
+
+          // Center the camera on the searched location
+          mapController?.animateCamera(
+            CameraUpdate.newCameraPosition(
+              CameraPosition(
+                target: LatLng(location.latitude, location.longitude),
+                zoom: 14.5,
+                tilt: 50.0,
+              ),
+            ),
+          );
+        });
+      } else {
+        print('Location not found for $countryName');
+      }
+    } catch (e) {
+      print('Error searching location: $e');
+    }
+  }
+
   @override
   void dispose() {
     mapController?.dispose();
@@ -152,6 +182,7 @@ class _MapScreenState extends State<MapScreen> {
               if (_origin != null) _origin!,
               if (_destination != null) _destination!
             },
+            onTap: (LatLng latLng) {},
             polylines: {
               if (_info != null)
                 Polyline(
@@ -256,21 +287,35 @@ class _MapScreenState extends State<MapScreen> {
                 child: const Text('DEST'),
               ),
             ),
+          Positioned(
+            bottom: 16.0,
+            left: 16.0,
+            child: FloatingActionButton(
+              backgroundColor:
+                  Theme.of(context).floatingActionButtonTheme.backgroundColor,
+              foregroundColor:
+                  Theme.of(context).floatingActionButtonTheme.foregroundColor,
+              onPressed: () => _countrySelector(context),
+              child: const Icon(Icons.search),
+            ),
+          ),
+          if (_origin != null && _destination != null && _info != null)
+            Positioned(
+              bottom: 80.0,
+              left: 16.0,
+              child: FloatingActionButton(
+                onPressed: () {
+                  if (_info != null) {
+                    mapController?.animateCamera(
+                      CameraUpdate.newLatLngBounds(_info!.bounds, 100.0),
+                    );
+                  }
+                },
+                child: const Icon(Icons.center_focus_strong),
+              ),
+            ),
         ],
       ),
-      floatingActionButton:
-          _origin != null && _destination != null && _info != null
-              ? FloatingActionButton(
-                  onPressed: () {
-                    if (_info != null) {
-                      mapController?.animateCamera(
-                        CameraUpdate.newLatLngBounds(_info!.bounds, 100.0),
-                      );
-                    }
-                  },
-                  child: const Icon(Icons.center_focus_strong),
-                )
-              : null,
     );
   }
 
@@ -299,6 +344,8 @@ class _MapScreenState extends State<MapScreen> {
         _lastOriginPosition = pos;
         updateMapCoordinates();
       });
+
+      await _fetchPlaceDetails(pos, 'origin');
     } else {
       setState(() {
         _destination = Marker(
@@ -311,11 +358,87 @@ class _MapScreenState extends State<MapScreen> {
         _showDestinationButton = true;
         updateMapCoordinates();
       });
+
+      await _fetchPlaceDetails(pos, 'destination');
+
       if (_origin != null) {
         final directions = await DirectionsRepository()
             .getDirections(origin: _origin!.position, destination: pos);
         setState(() => _info = directions);
       }
+    }
+  }
+
+  Future<void> _fetchPlaceDetails(LatLng pos, String markerType) async {
+    const String apiKey = "AIzaSyB3dkvAT_hUG51l98FOsmqE0FVS5xwqCcI";
+    final String nearbySearchUrl =
+        "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${pos.latitude},${pos.longitude}&radius=50&key=$apiKey";
+
+    try {
+      final nearbyResponse = await http.get(Uri.parse(nearbySearchUrl));
+      if (nearbyResponse.statusCode == 200) {
+        final nearbyData = json.decode(nearbyResponse.body);
+        if (nearbyData['results'].isNotEmpty) {
+          final place = nearbyData['results'][0];
+          final String placeId = place['place_id'];
+
+          final String detailsUrl =
+              "https://maps.googleapis.com/maps/api/place/details/json?place_id=$placeId&fields=name,formatted_address,photo&key=$apiKey";
+
+          final detailsResponse = await http.get(Uri.parse(detailsUrl));
+
+          if (detailsResponse.statusCode == 200) {
+            final detailsData = json.decode(detailsResponse.body);
+            final String name = detailsData['result']['name'];
+            final String address = detailsData['result']['formatted_address'];
+
+            setState(() {
+              if (markerType == 'origin') {
+                _origin = Marker(
+                  markerId: const MarkerId('origin'),
+                  infoWindow: InfoWindow(
+                    title: name,
+                    snippet: address,
+                    onTap: () {
+                      //_showInfoWindow(context, name, address, photoUrl ?? '');
+                    },
+                  ),
+                  icon: BitmapDescriptor.defaultMarkerWithHue(
+                      BitmapDescriptor.hueRed),
+                  position: pos,
+                );
+              } else {
+                _destination = Marker(
+                  markerId: const MarkerId('destination'),
+                  infoWindow: InfoWindow(
+                    title: name,
+                    snippet: address,
+                    onTap: () {
+                      //_showInfoWindow(context, name, address, photoUrl ?? '');
+                    },
+                  ),
+                  icon: BitmapDescriptor.defaultMarkerWithHue(
+                      BitmapDescriptor.hueGreen),
+                  position: pos,
+                );
+              }
+            });
+          }
+        }
+      }
+    } catch (e) {
+      print('Error fetching place details: $e');
+    }
+  }
+
+  Future<void> _countrySelector(BuildContext context) async {
+    final String? countryName = await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const LocationAutoComplete()),
+    );
+
+    if (countryName != null) {
+      _searchLocation(countryName);
     }
   }
 }
