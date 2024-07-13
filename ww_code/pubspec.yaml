@@ -31,7 +31,7 @@ dependencies:
   flutter:
     sdk: flutter
   logging: ^1.0.2
-  flutter_svg: ^2.0.10+1
+  flutter_svg: ^2.0.9
   shared_preferences: ^2.0.15
   file_picker: ^8.0.3
   firebase_storage: ^12.1.0
@@ -49,7 +49,12 @@ dependencies:
   dash_chat_2: ^0.0.21
   pdf_render: ^1.4.10
   flutter_cached_pdfview: ^0.4.2
-
+  google_maps_flutter: ^2.5.0
+  flutter_polyline_points: ^2.1.0
+  dio: ^5.5.0
+  country_list_pick: ^1.0.1
+  geocoding: ^3.0.0
+  
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -59,10 +64,11 @@ dependencies:
   google_sign_in: ^6.2.1
   cloud_firestore: ^5.0.2
   crypto: ^3.0.0
-  google_maps_flutter: ^2.7.0
   firebase_auth_mocks: ^0.14.0
   google_sign_in_mocks: ^0.3.0
   flutter_dotenv: ^5.0.2
+  flutter_osm_plugin: ^0.70.4
+ 
 
 
 dev_dependencies:

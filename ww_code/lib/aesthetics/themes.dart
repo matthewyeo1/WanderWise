@@ -119,6 +119,10 @@ final lightTheme = ThemeData(
     checkColor: WidgetStateProperty.all(Colors.lightBlue),
     fillColor: WidgetStateProperty.all(Colors.transparent), 
   ),
+  floatingActionButtonTheme: const FloatingActionButtonThemeData(
+    backgroundColor: Colors.white,
+    foregroundColor: Colors.lightBlue,
+  ),
 );
 
 final darkTheme = ThemeData(
@@ -172,5 +176,9 @@ final darkTheme = ThemeData(
     checkboxTheme: CheckboxThemeData(
     checkColor: WidgetStateProperty.all(Colors.white),
     fillColor: WidgetStateProperty.all(Colors.transparent), 
-  ),        
+  ),  
+  floatingActionButtonTheme: const FloatingActionButtonThemeData(
+    backgroundColor: Color(0xFF191970),
+    foregroundColor: Colors.white,
+  ),      
 );
