@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ww_code/notif_page.dart';
 import 'profile_page.dart';
 import 'general.dart';
 
@@ -18,7 +19,7 @@ class SettingsPageState extends State<SettingsPage> {
     });
   }
 
-  final List<String> options = ['Profile', 'General'];
+  final List<String> options = ['Profile', 'General', 'Reminder'];
 
   Widget _getSelectedWidget(int index) {
     switch (index) {
@@ -26,6 +27,8 @@ class SettingsPageState extends State<SettingsPage> {
         return const ProfilePage();
       case 1:
         return const GeneralSettingsPage();
+      case 2:
+        return const notifSystem(title: 'Reminders');
       default:
         return const ProfilePage();
     }
@@ -57,6 +60,10 @@ class SettingsPageState extends State<SettingsPage> {
             BottomNavigationBarItem(
               icon: Icon(Icons.settings),
               label: 'General',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.ring_volume),
+              label: 'Reminders',
             ),
           ],
           currentIndex: selectedIndex,    

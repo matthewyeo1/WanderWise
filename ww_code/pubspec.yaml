@@ -54,7 +54,7 @@ dependencies:
   googleapis: ^13.2.0
   googleapis_auth: ^1.6.0
   timezone: ^0.9.4
-  awesome_notifications: ^0.9.3+1
+ 
 
 
   # The following adds the Cupertino Icons font to your application.
