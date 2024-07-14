@@ -914,6 +914,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.12.4+1"
+  googlemaps_flutter_webservices:
+    dependency: "direct main"
+    description:
+      name: googlemaps_flutter_webservices
+      sha256: f69df5ac00ea5f9312011deb90a5939f4182f3d2953c4344bf1e87a5326b644a
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.2"
   graphs:
     dependency: transitive
     description:

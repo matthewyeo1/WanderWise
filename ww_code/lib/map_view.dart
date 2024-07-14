@@ -7,8 +7,10 @@ import 'package:ww_code/utilities/directions_model.dart';
 import 'package:ww_code/utilities/map_directions.dart';
 import 'package:ww_code/aesthetics/themes.dart';
 import 'package:ww_code/location_autocomplete.dart';
+import 'package:ww_code/favourite_locations_page.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'dart:async';
 
 class MapScreen extends StatefulWidget {
   const MapScreen({super.key});
@@ -17,6 +19,7 @@ class MapScreen extends StatefulWidget {
   State<MapScreen> createState() => _MapScreenState();
 }
 
+// Initialize camera position for new users
 class _MapScreenState extends State<MapScreen> {
   LatLng? _lastOriginPosition;
 
@@ -35,13 +38,16 @@ class _MapScreenState extends State<MapScreen> {
   bool _showOriginButton = false;
   bool _showDestinationButton = false;
   Directions? _info;
+  final Set<Marker> _markers = {};
   late String? userId;
+  late BitmapDescriptor? customPin;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   @override
   void initState() {
     super.initState();
     _initializeUserId();
+    _loadCustomPin();
   }
 
   Future<void> _initializeUserId() async {
@@ -56,20 +62,61 @@ class _MapScreenState extends State<MapScreen> {
     }
   }
 
+  // Arbitrarily-set pin for landmark demarcation
+  Future<void> _loadCustomPin() async {
+    customPin = await BitmapDescriptor.asset(
+      const ImageConfiguration(size: Size(48, 48)),
+      'images/map_pin.png',
+    );
+    setState(() {});  // Reload page when initializing custom pin
+  }
+
   Future<void> loadMapCoordinates(String userId) async {
     try {
-      DocumentSnapshot documentSnapshot = await _firestore
+      DocumentSnapshot documentSnapshotOrigin = await _firestore
           .collection('Users')
           .doc(userId)
           .collection('Map')
           .doc('map_data')
           .get();
 
-      if (documentSnapshot.exists) {
-        Map<String, dynamic> data =
-            documentSnapshot.data() as Map<String, dynamic>;
+      if (documentSnapshotOrigin.exists) {
+        Map<String, dynamic> dataOrigin =
+            documentSnapshotOrigin.data() as Map<String, dynamic>;
 
-        GeoPoint originPosition = data['origin_position'];
+        GeoPoint originPosition = dataOrigin['origin_position'];
+
+        // Retrieve pinned locations from Firestore
+        final querySnapshot = await FirebaseFirestore.instance
+            .collection('Users')
+            .doc(userId)
+            .collection('Pinned_Locations')
+            .get();
+
+        querySnapshot.docs.forEach((doc) {
+          GeoPoint position = doc['location_position'];
+          String locationName = doc['location'];
+
+          setState(() {
+            _markers.add(
+              Marker(
+                markerId: MarkerId(doc.id), // Use document ID as marker ID
+                position: LatLng(position.latitude, position.longitude),
+                infoWindow: InfoWindow(
+                  title: locationName,
+                  snippet: 'Tap to manage this location',
+                  onTap: () {
+                    _showCustomMarkerDialog(
+                        LatLng(position.latitude, position.longitude), userId);
+                  },
+                ),
+                icon: customPin ??
+                    BitmapDescriptor.defaultMarkerWithHue(
+                        BitmapDescriptor.hueRed),
+              ),
+            );
+          });
+        });
 
         setState(() {
           _origin = Marker(
@@ -99,6 +146,46 @@ class _MapScreenState extends State<MapScreen> {
       }
     } catch (e) {
       print('Error getting coordinates: $e');
+    }
+  }
+
+  Future<void> _savePinnedLocation(
+      LatLng pos, String userId, String locationName) async {
+    try {
+      final CollectionReference pinnedLocations = _firestore
+          .collection('Users')
+          .doc(userId)
+          .collection('Pinned_Locations');
+
+      await pinnedLocations.add({
+        'location_position': GeoPoint(pos.latitude, pos.longitude),
+        'location': locationName,
+        'timestamp': FieldValue.serverTimestamp(),
+      });
+
+      print('Location added to pinned locations successfully!');
+    } catch (e) {
+      print('Error adding location to pinned locations: $e');
+    }
+  }
+
+  Future<void> _addToFavourites(
+      LatLng pos, String userId, String locationName) async {
+    try {
+      final CollectionReference pinnedLocations = _firestore
+          .collection('Users')
+          .doc(userId)
+          .collection('Favourite_Locations');
+
+      await pinnedLocations.add({
+        'location_position': GeoPoint(pos.latitude, pos.longitude),
+        'location': locationName,
+        'timestamp': FieldValue.serverTimestamp(),
+      });
+
+      print('Location added to favourites successfully!');
+    } catch (e) {
+      print('Error adding location to favourites: $e');
     }
   }
 
@@ -140,7 +227,7 @@ class _MapScreenState extends State<MapScreen> {
             CameraUpdate.newCameraPosition(
               CameraPosition(
                 target: LatLng(location.latitude, location.longitude),
-                zoom: 14.5,
+                zoom: 19.0,
                 tilt: 50.0,
               ),
             ),
@@ -158,6 +245,28 @@ class _MapScreenState extends State<MapScreen> {
   void dispose() {
     mapController?.dispose();
     super.dispose();
+  }
+
+  Future<void> _navigateToFavouriteLocations() async {
+    LatLng? selectedLocation = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const FavouriteLocationsPage(),
+      ),
+    );
+
+    if (selectedLocation != null) {
+      // Update the camera position on the map
+      mapController?.animateCamera(
+        CameraUpdate.newCameraPosition(
+          CameraPosition(
+            target: selectedLocation,
+            zoom: 14.5,
+            tilt: 50.0,
+          ),
+        ),
+      );
+    }
   }
 
   @override
@@ -180,9 +289,12 @@ class _MapScreenState extends State<MapScreen> {
             },
             markers: {
               if (_origin != null) _origin!,
-              if (_destination != null) _destination!
+              if (_destination != null) _destination!,
+              ..._markers
             },
-            onTap: (LatLng latLng) {},
+            onTap: (LatLng) {
+              _placeCustomMarker(LatLng);
+            },
             polylines: {
               if (_info != null)
                 Polyline(
@@ -299,9 +411,21 @@ class _MapScreenState extends State<MapScreen> {
               child: const Icon(Icons.search),
             ),
           ),
+          Positioned(
+            bottom: 80.0,
+            left: 16.0,
+            child: FloatingActionButton(
+              backgroundColor:
+                  Theme.of(context).floatingActionButtonTheme.backgroundColor,
+              foregroundColor:
+                  Theme.of(context).floatingActionButtonTheme.foregroundColor,
+              onPressed: () => _navigateToFavouriteLocations(),
+              child: const Icon(Icons.favorite),
+            ),
+          ),
           if (_origin != null && _destination != null && _info != null)
             Positioned(
-              bottom: 80.0,
+              bottom: 144.0,
               left: 16.0,
               child: FloatingActionButton(
                 onPressed: () {
@@ -399,28 +523,40 @@ class _MapScreenState extends State<MapScreen> {
                   infoWindow: InfoWindow(
                     title: name,
                     snippet: address,
-                    onTap: () {
-                      //_showInfoWindow(context, name, address, photoUrl ?? '');
-                    },
                   ),
                   icon: BitmapDescriptor.defaultMarkerWithHue(
                       BitmapDescriptor.hueRed),
                   position: pos,
                 );
-              } else {
+              } else if (markerType == 'destination') {
                 _destination = Marker(
                   markerId: const MarkerId('destination'),
                   infoWindow: InfoWindow(
                     title: name,
                     snippet: address,
-                    onTap: () {
-                      //_showInfoWindow(context, name, address, photoUrl ?? '');
-                    },
                   ),
                   icon: BitmapDescriptor.defaultMarkerWithHue(
                       BitmapDescriptor.hueGreen),
                   position: pos,
                 );
+              } else if (markerType == 'custom') {
+                _markers.add(
+                  Marker(
+                    markerId: MarkerId(pos.toString()),
+                    infoWindow: InfoWindow(
+                      title: name,
+                      snippet: address,
+                      onTap: () {
+                        _showCustomMarkerDialog(pos, name);
+                      },
+                    ),
+                    icon: customPin ??
+                        BitmapDescriptor.defaultMarkerWithHue(
+                            BitmapDescriptor.hueRed),
+                    position: pos,
+                  ),
+                );
+                _savePinnedLocation(pos, userId!, name);
               }
             });
           }
@@ -429,6 +565,99 @@ class _MapScreenState extends State<MapScreen> {
     } catch (e) {
       print('Error fetching place details: $e');
     }
+  }
+
+  void _placeCustomMarker(LatLng pos) async {
+    _fetchPlaceDetails(pos, 'custom');
+  }
+
+  void _removeCustomMarker(LatLng pos, String userId) async {
+    String? markerIdToRemove;
+
+    _markers.forEach((marker) {
+      if (marker.position == pos) {
+        markerIdToRemove = marker.infoWindow.title;
+      }
+    });
+
+    if (markerIdToRemove != null) {
+      setState(() {
+        _markers.removeWhere((marker) => marker.position == pos);
+      });
+
+      try {
+        final querySnapshotPinned = await _firestore
+            .collection('Users')
+            .doc(userId)
+            .collection('Pinned_Locations')
+            .where('location', isEqualTo: markerIdToRemove)
+            .get();
+        
+        final querySnapshotFavourite = await _firestore
+            .collection('Users')
+            .doc(userId)
+            .collection('Favourite_Locations')
+            .where('location', isEqualTo: markerIdToRemove)
+            .get();
+
+        for (final doc in querySnapshotPinned.docs) {
+          await doc.reference.delete();
+        }
+
+        for (final doc in querySnapshotFavourite.docs) {
+          await doc.reference.delete();
+        }
+
+        print('Pinned location removed from Firestore!');
+      } catch (e) {
+        print('Error removing marker from Firestore: $e');
+      }
+    }
+  }
+
+  void _showCustomMarkerDialog(LatLng pos, String locationName) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: Colors.white,
+          title: const Text("Remove Marker",
+              style: TextStyle(color: Colors.black)),
+          content: const Text("Do you want to remove this marker?",
+              style: TextStyle(color: Colors.black)),
+          actions: <Widget>[
+            TextButton(
+              child: const Text("Cancel",
+                  style: TextStyle(color: Colors.lightBlue)),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text("Remove",
+                  style: TextStyle(color: Colors.lightBlue)),
+              onPressed: () {
+                _removeCustomMarker(pos, userId!);
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text("Add to Favourites",
+                  style: TextStyle(color: Colors.lightBlue)),
+              onPressed: () {
+                _addToFavourites(pos, userId!, locationName);
+                Navigator.of(context).pop();
+                ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Added to Favourite Locations!.'),
+          ),
+        );
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   Future<void> _countrySelector(BuildContext context) async {
