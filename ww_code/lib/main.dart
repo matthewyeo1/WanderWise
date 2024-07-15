@@ -15,6 +15,9 @@ import 'help_page.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_gemini/flutter_gemini.dart';
 import 'package:ww_code/utilities/const.dart';
+import 'package:timezone/data/latest.dart' as tz;
+import 'package:ww_code/notif_service.dart';
+
 
 void main() async {
   // Load the .env file
@@ -31,6 +34,8 @@ void main() async {
   );
 
   WidgetsFlutterBinding.ensureInitialized();
+  NotificationService().iniNotification();
+  tz.initializeTimeZones();
 
   // Initialize Firebase and Firebase App Check
   await Firebase.initializeApp();

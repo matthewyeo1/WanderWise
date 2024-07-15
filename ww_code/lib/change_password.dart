@@ -69,33 +69,33 @@ class ChangePasswordPageState extends State<ChangePasswordPage> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             const SizedBox(height: 100),
-                 TextFormField(
+            TextFormField(
               cursorColor: Colors.black,
               style: const TextStyle(color: Colors.black),
               decoration: TextFieldConfig.buildInputDecoration(
                 hintText: 'Current Password',
-                 controller: currentPasswordController,
               ),
+              controller: currentPasswordController,
               obscureText: true,
             ),
             const SizedBox(height: 10),
-             TextField(
+            TextField(
               cursorColor: Colors.black,
               style: const TextStyle(color: Colors.black),
               decoration: TextFieldConfig.buildInputDecoration(
                 hintText: 'New Password',
-                controller: newPasswordController,
               ),
+              controller: newPasswordController,
               obscureText: true,
             ),
             const SizedBox(height: 10),
-             TextField(
+            TextField(
               cursorColor: Colors.black,
               style: const TextStyle(color: Colors.black),
               decoration: TextFieldConfig.buildInputDecoration(
                 hintText: 'Confirm New Password',
-                controller: confirmNewPasswordController,
               ),
+              controller: confirmNewPasswordController,
               obscureText: true,
             ),
             const SizedBox(height: 10),
@@ -111,9 +111,12 @@ class ChangePasswordPageState extends State<ChangePasswordPage> {
                   return;
                 }
                 // Check if old and new passwords match
-                if (currentPasswordController.text == newPasswordController.text) {
+                if (currentPasswordController.text ==
+                    newPasswordController.text) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text("New password cannot be the same as the current password")),
+                    const SnackBar(
+                        content: Text(
+                            "New password cannot be the same as the current password")),
                   );
                   return;
                 }

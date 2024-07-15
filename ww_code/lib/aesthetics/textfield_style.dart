@@ -7,7 +7,7 @@ class TextFieldConfig {
     FocusNode? focusNode,
     TextEditingController? controller,
     bool? obscureText,
-    
+    Icon? suffixIcon,
   }) {
     return InputDecoration(
       filled: true,

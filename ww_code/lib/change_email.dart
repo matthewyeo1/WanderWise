@@ -121,9 +121,10 @@ class ChangeEmailPageState extends State<ChangeEmailPage> {
               style: const TextStyle(color: Colors.black),
               decoration: TextFieldConfig.buildInputDecoration(
                 hintText: 'Email',
-                controller: emailController,
+                
                 prefixIcon: const Icon(Icons.email, color: Colors.black45),
               ),
+              controller: emailController,
             ),
             const SizedBox(height: 10),
             TextField(
@@ -134,6 +135,7 @@ class ChangeEmailPageState extends State<ChangeEmailPage> {
                 controller: passwordController,
                 prefixIcon: const Icon(Icons.password, color: Colors.black45),
               ),
+              controller: passwordController,
               obscureText: true,
             ),
             const SizedBox(height: 10),
