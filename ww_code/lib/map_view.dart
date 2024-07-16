@@ -22,20 +22,11 @@ class MapScreen extends StatefulWidget {
 // Initialize camera position for new users
 class _MapScreenState extends State<MapScreen> {
   LatLng? _lastOriginPosition;
-
-  CameraPosition get _initialCameraPosition {
-    return CameraPosition(
-      target: _lastOriginPosition ??
-          const LatLng(1.3521, 103.8198), // Default location: Singapore
-      zoom: 11.5,
-    );
-  }
-
   bool isLoading = true;
   GoogleMapController? mapController;
   Marker? _origin;
   Marker? _destination;
-  bool _showOriginButton = false;
+  bool _showOriginButton = true;
   bool _showDestinationButton = false;
   Directions? _info;
   final Set<Marker> _markers = {};
@@ -68,7 +59,7 @@ class _MapScreenState extends State<MapScreen> {
       const ImageConfiguration(size: Size(48, 48)),
       'images/map_pin.png',
     );
-    setState(() {});  // Reload page when initializing custom pin
+    setState(() {}); // Reload page when initializing custom pin
   }
 
   Future<void> loadMapCoordinates(String userId) async {
@@ -139,6 +130,31 @@ class _MapScreenState extends State<MapScreen> {
                     LatLng(originPosition.latitude, originPosition.longitude),
                 zoom: 14.5,
                 tilt: 50.0,
+              ),
+            ),
+          );
+        }
+      } else {
+        setState(() {
+          _origin = Marker(
+            markerId: const MarkerId('origin'),
+            infoWindow: const InfoWindow(title: 'Origin'),
+            icon:
+                BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
+            position:
+                const LatLng(1.3521, 103.8198), // Default location: Singapore
+          );
+
+          _lastOriginPosition = _origin!.position;
+        });
+
+        // Center the camera on the default origin marker
+        if (mapController != null) {
+          mapController!.animateCamera(
+            CameraUpdate.newCameraPosition(
+              const CameraPosition(
+                target: LatLng(1.3521, 103.8198), // Singapore coordinates
+                zoom: 11.5,
               ),
             ),
           );
@@ -271,13 +287,29 @@ class _MapScreenState extends State<MapScreen> {
 
   @override
   Widget build(BuildContext context) {
+    CameraPosition? initialCameraPosition;
+
+    if (isLoading) {
+      initialCameraPosition = const CameraPosition(
+        target: LatLng(1.3521, 103.8198), // Default to Singapore
+        zoom: 11.5,
+      );
+    } else {
+      initialCameraPosition = CameraPosition(
+        target: _lastOriginPosition ??
+            const LatLng(1.3521,
+                103.8198), // Use last origin position or default to Singapore
+        zoom: 14.5,
+        tilt: 50.0,
+      );
+    }
     return Scaffold(
       body: Stack(
         children: [
           GoogleMap(
             myLocationButtonEnabled: false,
             zoomControlsEnabled: false,
-            initialCameraPosition: _initialCameraPosition,
+            initialCameraPosition: initialCameraPosition,
             onMapCreated: (controller) {
               mapController = controller;
               setState(() {
@@ -547,7 +579,7 @@ class _MapScreenState extends State<MapScreen> {
                       title: name,
                       snippet: address,
                       onTap: () {
-                        _showCustomMarkerDialog(pos, name);
+                        _showCustomMarkerDialog(pos, address);
                       },
                     ),
                     icon: customPin ??
@@ -592,7 +624,7 @@ class _MapScreenState extends State<MapScreen> {
             .collection('Pinned_Locations')
             .where('location', isEqualTo: markerIdToRemove)
             .get();
-        
+
         final querySnapshotFavourite = await _firestore
             .collection('Users')
             .doc(userId)
@@ -648,10 +680,10 @@ class _MapScreenState extends State<MapScreen> {
                 _addToFavourites(pos, userId!, locationName);
                 Navigator.of(context).pop();
                 ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Added to Favourite Locations!.'),
-          ),
-        );
+                  const SnackBar(
+                    content: Text('Added to Favourite Locations!.'),
+                  ),
+                );
               },
             ),
           ],

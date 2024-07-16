@@ -63,17 +63,25 @@ Future<UserCredential> _authenticate(String email, String password) async {
       bool isDarkMode = false;
       String? username;
 
-      FirebaseFirestore.instance
-          .collection('Users')
-          .doc(userId)
-          .get()
-          .then((DocumentSnapshot doc) {
-        if (doc.exists) {
-          username = doc['Username'];
-          if (doc['darkMode'] != null) {
-            isDarkMode = doc['darkMode'];
-          }
-        }
+     FirebaseFirestore.instance
+    .collection('Users')
+    .doc(userId)
+    .get()
+    .then((DocumentSnapshot doc) {
+  if (doc.exists) {
+    var data = doc.data() as Map<String, dynamic>;
+    username = data['Username'];
+
+    if (data.containsKey('darkMode')) {
+      isDarkMode = data['darkMode'];
+    } else {
+      isDarkMode = false;
+      // Update the document to add the darkMode field with the default value
+      FirebaseFirestore.instance.collection('Users').doc(userId).update({
+        'darkMode': isDarkMode,
+      });
+    }
+  }
 
         Provider.of<ThemeNotifier>(context, listen: false)
             .initialize(userId, isDarkMode);
