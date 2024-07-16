@@ -86,7 +86,7 @@ class MyApp extends StatelessWidget {
             themeMode: themeNotifier.getThemeMode(),
             home: const SplashScreen(),
             routes: {
-              '/login': (context) => const MyHomePage(title: 'Login'),
+              '/login': (context) => const MyHomePage(),
               '/menu': (context) => const MenuPage(),
               '/create_account': (context) => const CreateAccountPage(),
               '/forgot_password': (context) => const ForgotPasswordPage(),

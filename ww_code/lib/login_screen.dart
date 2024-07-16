@@ -10,9 +10,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'aesthetics/themes.dart';
 import 'package:provider/provider.dart';
 
+typedef LoginCallback = void Function(String? errorMessage);
+
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-  final String title;
+  const MyHomePage({super.key, 
+  
+  });
+  
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
@@ -35,37 +39,40 @@ class _MyHomePageState extends State<MyHomePage> {
     _passwordFocusNode.dispose();
     super.dispose();
   }
+Future<UserCredential> _authenticate(String email, String password) async {
+  UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
+    email: email,
+    password: password,
+  );
+  return userCredential;
+}
 
-  Future<void> _login() async {
+
+ Future<void> _login(BuildContext context, LoginCallback callback) async {
     String email = _emailController.text;
     String password = _passwordController.text;
-    _logger.info('Attempting login with email: $email and password: $password');
+    print('Attempting login with email: $email and $password');
 
-    try {
-      if (isValidEmail(email) && isValidPassword(password)) {
-        UserCredential userCredential =
-            await FirebaseAuth.instance.signInWithEmailAndPassword(
-          email: email,
-          password: password,
-        );
+    if (!isValidEmail(email) || !isValidPassword(password)) {
+      callback('Invalid email or password.');
+      return;
+    }
 
-        String userId = userCredential.user!.uid;
-        bool isDarkMode = false;
-        String? username;
+    await _authenticate(email, password).then((UserCredential userCredential) {
+      String userId = userCredential.user!.uid;
+      bool isDarkMode = false;
+      String? username;
 
-        try {
-          DocumentSnapshot doc = await FirebaseFirestore.instance
-              .collection('Users')
-              .doc(userId)
-              .get();
-          if (doc.exists) {
-            username = doc['Username'];
-            if (doc['darkMode'] != null) {
-              isDarkMode = doc['darkMode'];
-            }
+      FirebaseFirestore.instance
+          .collection('Users')
+          .doc(userId)
+          .get()
+          .then((DocumentSnapshot doc) {
+        if (doc.exists) {
+          username = doc['Username'];
+          if (doc['darkMode'] != null) {
+            isDarkMode = doc['darkMode'];
           }
-        } catch (e) {
-          print('Error loading theme preference: $e');
         }
 
         Provider.of<ThemeNotifier>(context, listen: false)
@@ -73,25 +80,16 @@ class _MyHomePageState extends State<MyHomePage> {
 
         Navigator.pushReplacementNamed(context, '/menu', arguments: username)
             .then((_) {
-          // Once navigated to menu page, clear text fields for email and password
           _emailController.clear();
           _passwordController.clear();
         });
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Invalid email or password.'),
-          ),
-        );
-      }
-    } catch (e) {
+      }).catchError((e) {
+        callback('Error loading theme preference: $e');
+      });
+    }).catchError((e) {
       _logger.warning('Failed to sign in: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Failed to sign in: $e'),
-        ),
-      );
-    }
+      callback('Failed to sign in: $e');
+    });
   }
 
   Future<void> loadUserProfile() async {
@@ -306,7 +304,13 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
                 const SizedBox(height: 16),
                 ElevatedButton(
-                  onPressed: _login,
+                  onPressed: () => _login(context, (errorMessage) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                          content:
+                              Text(errorMessage ?? 'Unknown error occurred')),
+                    );
+                  }),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.lightBlue,
                     foregroundColor: Colors.white,

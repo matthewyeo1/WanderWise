@@ -15,18 +15,26 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
-  final FocusNode _usernameFocusNode = FocusNode();
-  final FocusNode _passwordFocusNode = FocusNode();
-  final FocusNode _emailFocusNode = FocusNode();
+  late FocusNode usernameFocusNode; 
+  late FocusNode passwordFocusNode; 
+  late FocusNode emailFocusNode; 
+
+  @override
+  void initState() {
+    super.initState();
+    usernameFocusNode = FocusNode(); 
+    passwordFocusNode = FocusNode(); 
+    emailFocusNode = FocusNode();
+  }
 
   @override
   void dispose() {
     _usernameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
-    _usernameFocusNode.dispose();
-    _usernameFocusNode.dispose();
-    _usernameFocusNode.dispose();
+    usernameFocusNode.dispose();
+    passwordFocusNode.dispose();
+    emailFocusNode.dispose();
     super.dispose();
   }
 
@@ -133,7 +141,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                   style: const TextStyle(color: Colors.black),
                   decoration: TextFieldConfig.buildInputDecoration(
                     hintText: 'Username',
-                    focusNode: _usernameFocusNode,
+                    focusNode: usernameFocusNode,
                   ),
                   controller: _usernameController,
                 ),
@@ -143,7 +151,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                   style: const TextStyle(color: Colors.black),
                   decoration: TextFieldConfig.buildInputDecoration(
                     hintText: 'Email',
-                    focusNode: _emailFocusNode,
+                    focusNode: emailFocusNode,
                   ),
                   controller: _emailController,
                 ),
@@ -153,7 +161,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                   style: const TextStyle(color: Colors.black),
                   decoration: TextFieldConfig.buildInputDecoration(
                     hintText: 'Password',
-                    focusNode: _passwordFocusNode,
+                    focusNode: passwordFocusNode,
                   ),
                   controller: _passwordController,
                 ),

@@ -79,7 +79,7 @@ dependencies:
   flutter_dotenv: ^5.0.2
   flutter_osm_plugin: ^0.70.4
   firebase_messaging: ^15.0.2
-
+  
 
 dev_dependencies:
   flutter_test:

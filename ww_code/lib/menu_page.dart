@@ -29,7 +29,7 @@ class MenuPageState extends State<MenuPage> {
     'images/santorini.jpg',
   ];
 
-  final GoogleSignIn _googleSignIn = GoogleSignIn();
+  
 
   // Menu page UI
   @override
@@ -297,7 +297,7 @@ class MenuPageState extends State<MenuPage> {
                   onPressed: () async {
                     bool? confirmed = await _showLogoutConfirmationDialog();
                     if (confirmed != null && confirmed) {
-                      await _logout();
+                      await _logout(context);
                     }
                   },
                 ),
@@ -439,25 +439,31 @@ class MenuPageState extends State<MenuPage> {
     );
   }
 
-  Future<void> _logout() async {
-    try {
-      await FirebaseAuth.instance.signOut();
-      await _googleSignIn.signOut();
-      Navigator.pushReplacementNamed(context, '/');
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Logout successful!'),
-        ),
-      );
-    } catch (e) {
-      print("Logout error: $e");
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Logout error'),
-        ),
-      );
-    }
+
+Future<void> _logout(BuildContext context) async {
+  try {
+    await FirebaseAuth.instance.signOut();
+    
+    // Simulate sign out for GoogleSignIn (if applicable)
+    final GoogleSignIn _googleSignIn = GoogleSignIn();
+    await _googleSignIn.signOut();
+
+    Navigator.pushReplacementNamed(context, '/');
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Logout successful!'),
+      ),
+    );
+  } catch (e) {
+    print("Logout error: $e");
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Logout error'),
+      ),
+    );
   }
+}
+
 
   Future<bool?> _showLogoutConfirmationDialog() async {
     return showDialog<bool>(
@@ -478,7 +484,7 @@ class MenuPageState extends State<MenuPage> {
           TextButton(
             onPressed: () async {
               Navigator.of(context).pop(true);
-              await _logout();
+              await _logout(context);
             },
             style: TextButton.styleFrom(foregroundColor: Colors.blue),
             child: const Text('Yes'),
