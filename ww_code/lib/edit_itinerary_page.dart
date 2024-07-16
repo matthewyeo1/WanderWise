@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:ww_code/select_favourite_locations.dart';
 
 class EditItineraryPage extends StatefulWidget {
   final Map<String, dynamic>? initialItem;
@@ -24,18 +25,17 @@ class EditItineraryPageState extends State<EditItineraryPage> {
   late TextEditingController descriptionController;
   final User? currentUser = FirebaseAuth.instance.currentUser;
 
-
   @override
   void initState() {
     super.initState();
-    titleController = TextEditingController(
-        text: widget.initialItem?['title'] ?? '');
-    startDateController = TextEditingController(
-        text: widget.initialItem?['startDate'] ?? '');
-    endDateController = TextEditingController(
-        text: widget.initialItem?['endDate'] ?? '');
-    descriptionController = TextEditingController(
-        text: widget.initialItem?['description'] ?? '');
+    titleController =
+        TextEditingController(text: widget.initialItem?['title'] ?? '');
+    startDateController =
+        TextEditingController(text: widget.initialItem?['startDate'] ?? '');
+    endDateController =
+        TextEditingController(text: widget.initialItem?['endDate'] ?? '');
+    descriptionController =
+        TextEditingController(text: widget.initialItem?['description'] ?? '');
   }
 
   @override
@@ -80,6 +80,15 @@ class EditItineraryPageState extends State<EditItineraryPage> {
     }
   }
 
+  void _navigateToSelectFavouritesPage(BuildContext context) {
+  Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (context) => const SelectFavouriteLocations(), ),
+  );
+}
+
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -95,22 +104,33 @@ class EditItineraryPageState extends State<EditItineraryPage> {
       appBar: AppBar(
         title: Text(widget.title),
         actions: [
-          TextButton(
+          IconButton(
+            onPressed: () => _navigateToSelectFavouritesPage(context),
+              
+            
+            icon: const Icon(Icons.favorite),
+            
+          ),
+          IconButton(
             onPressed: () {
               widget.onSave({
-                'id': widget.initialItem?['id'] ??
-                    DateTime.now().toString(),
-                'title': titleController.text.isEmpty ? '' : titleController.text,
-                'description': descriptionController.text.isEmpty ? '' : descriptionController.text,
-                'startDate': startDateController.text.isEmpty ? '' : startDateController.text,
-                'endDate': endDateController.text.isEmpty ? '' : endDateController.text,
+                'id': widget.initialItem?['id'] ?? DateTime.now().toString(),
+                'title':
+                    titleController.text.isEmpty ? '' : titleController.text,
+                'description': descriptionController.text.isEmpty
+                    ? ''
+                    : descriptionController.text,
+                'startDate': startDateController.text.isEmpty
+                    ? ''
+                    : startDateController.text,
+                'endDate': endDateController.text.isEmpty
+                    ? ''
+                    : endDateController.text,
               });
               Navigator.pop(context);
             },
-            child: Text(
-              'Save',
-              style: TextStyle(color: saveButtonTextColor),
-            ),
+            icon: Icon(Icons.save, color: saveButtonTextColor),
+            tooltip: 'Save',
           ),
         ],
       ),

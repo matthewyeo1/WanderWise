@@ -393,27 +393,17 @@ class ManageFlightsBookingsPageState extends State<ManageFlightsBookingsPage> {
         title: const Text(
           'Manage Flights/Bookings',
         ),
+        actions: [
+          IconButton(
+            onPressed: getFile, 
+            icon: const Icon(Icons.upload_file),
+          )
+        ],
       ),
       body: Column(
         children: [
           Expanded(
             child: buildFileList(),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(10),
-            child: ElevatedButton.icon(
-              onPressed: getFile,
-              icon: const Icon(Icons.upload_file),
-              label: const Text('Upload File'),
-              style: ElevatedButton.styleFrom(
-                padding:
-                    const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
-                textStyle: const TextStyle(fontSize: 16),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30),
-                ),
-              ),
-            ),
           ),
         ],
       ),

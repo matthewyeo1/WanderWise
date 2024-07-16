@@ -244,13 +244,15 @@ class PendingInvitesPageState extends State<PendingInvitesPage> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           IconButton(
-                            icon: const Icon(Icons.check),
+                            icon: const Icon(Icons.check,
+                            color: Colors.green),
                             onPressed: () {
                               _acceptFriendRequest(context, requestId);
                             },
                           ),
                           IconButton(
-                            icon: const Icon(Icons.close),
+                            icon: const Icon(Icons.close,
+                            color: Colors.red),
                             onPressed: () {
                               _rejectFriendRequest(context, requestId);
                             },

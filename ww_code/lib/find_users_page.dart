@@ -51,6 +51,7 @@ class FriendsPageState extends State<FriendsPage> {
             UserClass user = UserClass(
               uid: doc.id,
               displayName: data['Username'],
+              profileImageUrl: data['profileImageUrl'],
             );
 
             searchResults.add(user);
@@ -283,7 +284,20 @@ class FriendsPageState extends State<FriendsPage> {
                                       currentUser?.uid) {
                                     displayName += " (you)";
                                   }
+                                  String? profileImageUrl =
+                                      searchResults[index].profileImageUrl;
+
                                   return ListTile(
+                                    leading: profileImageUrl != null
+                                        ? CircleAvatar(
+                                            backgroundImage:
+                                                NetworkImage(profileImageUrl),
+                                          )
+                                        : const CircleAvatar(
+                                            backgroundColor: Colors.white,
+                                            foregroundColor: Colors.black45,
+                                            child: Icon(Icons.person),
+                                          ),
                                     title: Text(displayName),
                                     onTap: () {
                                       _handleTapOnFriend(searchResults[index]);

@@ -78,7 +78,6 @@ class ProfilePageState extends State<ProfilePage> {
       });
 
       await _updateFriendsCount(numOfFriendsInList);
-
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -317,8 +316,13 @@ class ProfilePageState extends State<ProfilePage> {
             TextButton(
               onPressed: _viewFriendsList,
               child: Text(
-                friendsCount == 1? '1 Friend' : '$friendsCount Friends',
-                style: const TextStyle(fontSize: 16.0),
+                friendsCount == 1 ? '1 Friend' : '$friendsCount Friends',
+                style: TextStyle(
+                  fontSize: 16.0,
+                  color: Theme.of(context).brightness == Brightness.dark
+                      ? Colors.white
+                      : Colors.black,
+                ),
               ),
             ),
             const SizedBox(height: 20),
@@ -327,7 +331,7 @@ class ProfilePageState extends State<ProfilePage> {
               cursorColor: Colors.black,
               style: const TextStyle(color: Colors.black),
               decoration: TextFieldConfig.buildInputDecoration(
-                hintText: 'Username',          
+                hintText: 'Username',
                 prefixIcon: const Icon(Icons.person, color: Colors.black45),
               ),
             ),
@@ -352,4 +356,3 @@ class ProfilePageState extends State<ProfilePage> {
     );
   }
 }
-

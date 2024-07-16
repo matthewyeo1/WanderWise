@@ -29,8 +29,6 @@ class MenuPageState extends State<MenuPage> {
     'images/santorini.jpg',
   ];
 
-  
-
   // Menu page UI
   @override
   Widget build(BuildContext context) {
@@ -54,7 +52,7 @@ class MenuPageState extends State<MenuPage> {
             },
           ),
           Positioned(
-            top: 300.0,
+            top: 250.0,
             left: 16.0,
             right: 16.0,
             child: Column(
@@ -113,7 +111,7 @@ class MenuPageState extends State<MenuPage> {
                             padding: EdgeInsets.all(16.0),
                             child: Center(
                               child: Text(
-                                'No actions to be taken now.',
+                                'No actions to be taken',
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontSize: 14,
@@ -140,7 +138,7 @@ class MenuPageState extends State<MenuPage> {
                               'Friend Requests: ${snapshot.data}',
                               style: const TextStyle(
                                 color: Colors.white,
-                                fontSize: 14,
+                                fontSize: 16,
                               ),
                             ),
                           ),
@@ -153,7 +151,7 @@ class MenuPageState extends State<MenuPage> {
             ),
           ),
           Positioned(
-            top: 450.0,
+            top: 400.0,
             left: 16.0,
             right: 16.0,
             child: Column(
@@ -172,7 +170,7 @@ class MenuPageState extends State<MenuPage> {
                   child: Container(
                     constraints: const BoxConstraints(
                       maxWidth: 400.0,
-                      maxHeight: 300.0,
+                      maxHeight: 150.0,
                     ),
                     decoration: BoxDecoration(
                       color: Colors.black.withOpacity(0.5),
@@ -225,31 +223,20 @@ class MenuPageState extends State<MenuPage> {
                                 return Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text(
-                                      'Scheduled for: $formattedTime',
-                                      style: TextStyle(
-                                        color: isTriggered
-                                            ? Colors.red
-                                            : Colors
-                                                .white, // Change color to red if triggered
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    ListTile(
-                                      title: Text(
-                                        reminder['title'],
-                                        style: const TextStyle(
-                                            color: Colors.white),
-                                      ),
-                                      subtitle: Text(
-                                        reminder['description'],
-                                        style: const TextStyle(
-                                            color: Colors.white),
-                                      ),
-                                    ),
                                     Row(
-                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
                                       children: [
+                                        Text(
+                                          'Scheduled for: $formattedTime',
+                                          style: TextStyle(
+                                            color: isTriggered
+                                                ? Colors.red
+                                                : Colors
+                                                    .white, // Change color to red if triggered
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
                                         TextButton(
                                           onPressed: () {
                                             FirebaseFirestore.instance
@@ -272,8 +259,18 @@ class MenuPageState extends State<MenuPage> {
                                         ),
                                       ],
                                     ),
-                                    if (index < snapshot.data!.docs.length - 1)
-                                      const Divider(color: Colors.white),
+                                    ListTile(
+                                      title: Text(
+                                        reminder['title'],
+                                        style: const TextStyle(
+                                            color: Colors.white),
+                                      ),
+                                      subtitle: Text(
+                                        reminder['description'],
+                                        style: const TextStyle(
+                                            color: Colors.white),
+                                      ),
+                                    ),
                                   ],
                                 );
                               }),
@@ -330,12 +327,12 @@ class MenuPageState extends State<MenuPage> {
             ),
           ),
           const Positioned(
-              top: 220.0,
+              top: 170.0,
               left: 0,
               right: 0,
               child: Center(
                 child: Text('Where will you go next?',
-                    style: const TextStyle(
+                    style: TextStyle(
                       color: Colors.white,
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
@@ -439,31 +436,19 @@ class MenuPageState extends State<MenuPage> {
     );
   }
 
+  Future<void> _logout(BuildContext context) async {
+    try {
+      await FirebaseAuth.instance.signOut();
 
-Future<void> _logout(BuildContext context) async {
-  try {
-    await FirebaseAuth.instance.signOut();
-    
-    // Simulate sign out for GoogleSignIn (if applicable)
-    final GoogleSignIn _googleSignIn = GoogleSignIn();
-    await _googleSignIn.signOut();
+      // Simulate sign out for GoogleSignIn (if applicable)
+      final GoogleSignIn _googleSignIn = GoogleSignIn();
+      await _googleSignIn.signOut();
 
-    Navigator.pushReplacementNamed(context, '/');
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Logout successful!'),
-      ),
-    );
-  } catch (e) {
-    print("Logout error: $e");
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Logout error'),
-      ),
-    );
+      Navigator.pushReplacementNamed(context, '/');
+    } catch (e) {
+      print("Logout error: $e");
+    }
   }
-}
-
 
   Future<bool?> _showLogoutConfirmationDialog() async {
     return showDialog<bool>(

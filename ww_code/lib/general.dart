@@ -1,52 +1,134 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'change_email.dart';
 import 'change_password.dart';
-import 'dark_mode.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'aesthetics/themes.dart';
 
-class GeneralSettingsPage extends StatelessWidget {
+class GeneralSettingsPage extends StatefulWidget {
   const GeneralSettingsPage({super.key});
+
+  @override
+  _GeneralSettingsPageState createState() => _GeneralSettingsPageState();
+}
+
+class _GeneralSettingsPageState extends State<GeneralSettingsPage> {
+  late String? userId;
+  bool isLoading = true;
+  bool userDarkModePreference = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _initializeUserId();
+  }
+
+  Future<void> _initializeUserId() async {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      setState(() {
+        userId = user.uid;
+      });
+      await _getUserDarkModePreference();
+    } else {
+      Navigator.pushReplacementNamed(context, '/login');
+    }
+  }
+
+  Future<void> _getUserDarkModePreference() async {
+    try {
+      final DocumentSnapshot doc = await FirebaseFirestore.instance
+          .collection('Users')
+          .doc(userId)
+          .get();
+      if (doc.exists) {
+        setState(() {
+          userDarkModePreference = doc.get('darkMode') ?? false;
+          isLoading = false;
+        });
+      }
+    } catch (e) {
+      print('Error getting user preference: $e');
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
+  Future<void> _saveUserDarkModePreference(bool darkMode) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection('Users')
+          .doc(userId)
+          .set({'darkMode': darkMode}, SetOptions(merge: true));
+    } catch (e) {
+      print('Error saving user preference: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
     return Scaffold(
-      body: ListView(
-        children: [
-          const SizedBox(height: 50),
-          _buildSectionHeader('Security', theme),
-          _buildListTile(
-            context,
-            'Change Email',
-            const ChangeEmailPage(),
-            theme,
-          ),
-          _buildListTile(
-            context,
-            'Change Password',
-            const ChangePasswordPage(),
-            theme,
-          ),
-          const SizedBox(height: 50),
-          _buildSectionHeader('Display', theme),
-          _buildListTile(
-            context,
-            'Dark Mode',
-            const DarkModeSettingsPage(),
-            theme,
-          ),
-          const SizedBox(height: 50),
-          _buildSectionHeader('Account', theme),
-          _buildListTile(
-            context,
-            'Delete Account',
-            null,
-            theme,
-            isDestructive: true,
-          ),
-        ],
-      ),
+      body: isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : Consumer<ThemeNotifier>(
+              builder: (context, themeNotifier, _) {
+                return ListView(
+                  children: [
+                    const SizedBox(height: 50),
+                    _buildSectionHeader('Security', theme),
+                    _buildListTile(
+                      context,
+                      'Change Email',
+                      const ChangeEmailPage(),
+                      theme,
+                    ),
+                    _buildListTile(
+                      context,
+                      'Change Password',
+                      const ChangePasswordPage(),
+                      theme,
+                    ),
+                    const SizedBox(height: 50),
+                    _buildSectionHeader('Display', theme),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      child: SwitchListTile(
+                        title: Text(
+                          'Enable Dark Mode',
+                          style: Theme.of(context).textTheme.titleLarge,
+                        ),
+                        value: userDarkModePreference,
+                        onChanged: (value) {
+                          setState(() {
+                            themeNotifier.toggleTheme();
+                            userDarkModePreference = value;
+                          });
+                          _saveUserDarkModePreference(value);
+                        },
+                        activeTrackColor:
+                            const Color.fromARGB(255, 54, 54, 114),
+                        activeColor: userDarkModePreference
+                            ? Colors.white
+                            : Colors.black45,
+                      ),
+                    ),
+                    const SizedBox(height: 50),
+                    _buildSectionHeader('Account', theme),
+                    _buildListTile(
+                      context,
+                      'Delete Account',
+                      null,
+                      theme,
+                      isDestructive: true,
+                    ),
+                  ],
+                );
+              },
+            ),
     );
   }
 
@@ -118,7 +200,6 @@ class GeneralSettingsPage extends StatelessWidget {
                   ),
                   TextField(
                     cursorColor: Colors.lightBlue,
-                    
                     onChanged: (value) {
                       setState(() {
                         password = value;
@@ -167,9 +248,10 @@ class GeneralSettingsPage extends StatelessWidget {
                                     '/login', (route) => false);
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
-                                    content: Text('Account deleted successfully!'),
-                                ),
-                              );
+                                    content:
+                                        Text('Account deleted successfully!'),
+                                  ),
+                                );
                               }
                             } else {
                               ScaffoldMessenger.of(context).showSnackBar(
