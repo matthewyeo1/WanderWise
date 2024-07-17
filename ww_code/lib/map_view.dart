@@ -432,7 +432,7 @@ class _MapScreenState extends State<MapScreen> {
               ),
             ),
           Positioned(
-            bottom: 16.0,
+            bottom: 30.0,
             left: 16.0,
             child: FloatingActionButton(
               backgroundColor:
@@ -444,7 +444,7 @@ class _MapScreenState extends State<MapScreen> {
             ),
           ),
           Positioned(
-            bottom: 80.0,
+            bottom: 100.0,
             left: 16.0,
             child: FloatingActionButton(
               backgroundColor:
@@ -457,7 +457,7 @@ class _MapScreenState extends State<MapScreen> {
           ),
           if (_origin != null && _destination != null && _info != null)
             Positioned(
-              bottom: 144.0,
+              bottom: 170.0,
               left: 16.0,
               child: FloatingActionButton(
                 onPressed: () {

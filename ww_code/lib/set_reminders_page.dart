@@ -100,15 +100,15 @@ class NotifSystemState extends State<NotifSystem> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: Padding(
+      body: 
+         Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Image.asset(
                 'images/reminders.png',
-                height: 200,
+                height: 150,
               ),
               const SizedBox(height: 10),
               const Text(
@@ -197,7 +197,7 @@ class NotifSystemState extends State<NotifSystem> {
             ],
           ),
         ),
-      ),
+      
     );
   }
 }
