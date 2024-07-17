@@ -76,7 +76,8 @@ final lightTheme = ThemeData(
     ),
   ),
   primarySwatch: Colors.blue,
-  scaffoldBackgroundColor: const Color.fromARGB(255, 229, 224, 224),
+  scaffoldBackgroundColor: const Color.fromARGB(255, 240, 236, 236),
+  //scaffoldBackgroundColor: const Color.fromARGB(255, 229, 224, 224),
   canvasColor: Colors.transparent,
   appBarTheme: const AppBarTheme(
     backgroundColor: Colors.white,

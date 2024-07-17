@@ -25,10 +25,10 @@ class MenuPageState extends State<MenuPage> {
     'images/torii_gates.png',
     'images/rome.jpg',
     'images/taj_mahal.jpg',
-    'images/zhongguo.jpg',
-    'images/santorini.jpg',
+    'images/eiffel_tower.jpg',
+    'images/maldives.jpg',
   ];
-
+  
   // Menu page UI
   @override
   Widget build(BuildContext context) {
@@ -58,7 +58,7 @@ class MenuPageState extends State<MenuPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
+                 const Text(
                   '        Activity',
                   style: TextStyle(
                     color: Colors.white,

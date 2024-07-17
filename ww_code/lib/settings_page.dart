@@ -1,76 +1,59 @@
 import 'package:flutter/material.dart';
+import 'package:ww_code/profile_page.dart';
+import 'package:ww_code/general.dart';
 import 'package:ww_code/set_reminders_page.dart';
-import 'profile_page.dart';
-import 'general.dart';
 
 class SettingsPage extends StatefulWidget {
-  const SettingsPage({super.key});
+  const SettingsPage({Key? key}) : super(key: key);
 
   @override
-  SettingsPageState createState() => SettingsPageState();
+  _SettingsPageState createState() => _SettingsPageState();
 }
 
-class SettingsPageState extends State<SettingsPage> {
-  int selectedIndex = 0;
+class _SettingsPageState extends State<SettingsPage> {
+  int _selectedIndex = 0;
+
+  final List<Widget> _pages = [
+    const ProfilePage(),
+    const GeneralSettingsPage(),
+    const NotifSystem(title: 'Set Reminders'),
+  ];
 
   void _onItemTapped(int index) {
     setState(() {
-      selectedIndex = index;
+      _selectedIndex = index;
     });
-  }
-
-  final List<String> options = ['Personal Profile', 'General Settings', 'Set Reminders'];
-
-  Widget _getSelectedWidget(int index) {
-    switch (index) {
-      case 0:
-        return const ProfilePage();
-      case 1:
-        return const GeneralSettingsPage();
-      case 2:
-        return const NotifSystem(title: 'Set Reminders');
-      default:
-        return const ProfilePage();
-    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        
-        title: Text(options[selectedIndex]),
+        title: Text(_selectedIndex == 0
+            ? 'Personal Profile'
+            : _selectedIndex == 1
+                ? 'General Settings'
+                : 'Set Reminders'),
       ),
-      body: 
-        
-        Center(
-          child: _getSelectedWidget(selectedIndex),
-        ),
-      
-      bottomNavigationBar: Container(
-        decoration: const BoxDecoration(
-        ),
-        child: BottomNavigationBar(
-          type: BottomNavigationBarType.fixed,
-          items: const <BottomNavigationBarItem>[
-            BottomNavigationBarItem(
-              icon: Icon(Icons.person),
-              label: 'Profile',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.settings),
-              label: 'General',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.alarm),
-              label: 'Reminders',
-            ),
-          ],
-          currentIndex: selectedIndex,    
-          onTap: _onItemTapped,
-          selectedLabelStyle: const TextStyle(fontSize: 12),
-          unselectedLabelStyle: const TextStyle(fontSize: 10),
-        ),
+      body: _pages[_selectedIndex],
+      bottomNavigationBar: BottomNavigationBar(
+        type: BottomNavigationBarType.fixed,
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person),
+            label: 'Profile',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.settings),
+            label: 'General',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.alarm),
+            label: 'Reminders',
+          ),
+        ],
+        currentIndex: _selectedIndex,
+        onTap: _onItemTapped,
       ),
     );
   }

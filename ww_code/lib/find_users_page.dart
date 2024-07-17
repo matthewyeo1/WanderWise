@@ -204,18 +204,13 @@ class FriendsPageState extends State<FriendsPage> {
                     controller: searchController,
                     onChanged: onSearchChanged,
                     decoration: TextFieldConfig.buildInputDecoration(
-                      hintText: 'Search a username...',
+                      hintText: 'Search user',
                       prefixIcon: const Icon(
                         Icons.search,
                         color: Colors.black45,
                       ),
                     ),
                   ),
-                ),
-                const SizedBox(width: 16),
-                ElevatedButton(
-                  onPressed: _handleSearchButtonPressed,
-                  child: const Text('Search'),
                 ),
               ],
             ),

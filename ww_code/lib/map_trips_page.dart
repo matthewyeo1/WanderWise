@@ -7,6 +7,8 @@ import 'user/auth_service.dart';
 import 'ai_itinerary_page.dart';
 import 'aesthetics/themes.dart';
 import 'package:ww_code/sharing_page.dart';
+import 'package:ww_code/map_info_page.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class MapItineraryPage extends StatefulWidget {
   const MapItineraryPage({super.key});
@@ -57,6 +59,7 @@ class MapItineraryPageState extends State<MapItineraryPage> {
   Future<void> _loadItineraryItems() async {
     List<Map<String, dynamic>> items =
         await _itineraryService.loadItineraryItems(userId);
+    items.sort((a, b) => a['order'].compareTo(b['order']));
     setState(() {
       _itineraryItems = items;
     });
@@ -169,32 +172,56 @@ class MapItineraryPageState extends State<MapItineraryPage> {
     ).then((value) => value ?? false);
   }
 
-  // Create trip plan widgets to be displayed on the trips page
+  Future<void> _updateItineraryOrderInFirestore() async {
+  for (int index = 0; index < _itineraryItems.length; index++) {
+    var itineraryItem = _itineraryItems[index];
+    await FirebaseFirestore.instance
+        .collection('Users')
+        .doc(userId)
+        .collection('Itineraries')
+        .doc(itineraryItem['id'])
+        .update({'order': index});
+  }
+}
+
+
   Widget _buildItineraryList() {
-    if (_itineraryItems.isEmpty) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Image.asset(
-              'images/itinerary2.png',
-              width: 250,
-              height: 250,
-            ),
-            const SizedBox(height: 10),
-            const Text(
-              'Create trip plans with friends!',
-              style: TextStyle(fontSize: 18),
-            ),
-          ],
-        ),
-      );
-    } else {
-      return ListView.builder(
-        padding: const EdgeInsets.all(16),
-        itemCount: _itineraryItems.length,
-        itemBuilder: (context, index) {
-          return Card(
+  if (_itineraryItems.isEmpty) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Image.asset(
+            'images/itinerary2.png',
+            width: 250,
+            height: 250,
+          ),
+          const SizedBox(height: 10),
+          const Text(
+            'Create trip plans with friends!',
+            style: TextStyle(fontSize: 18),
+          ),
+        ],
+      ),
+    );
+  } else {
+    return ReorderableListView(
+      padding: const EdgeInsets.all(16),
+      onReorder: (int oldIndex, int newIndex) {
+        setState(() {
+          if (newIndex > oldIndex) {
+            newIndex -= 1;
+          }
+          final item = _itineraryItems.removeAt(oldIndex);
+          _itineraryItems.insert(newIndex, item);
+        });
+
+        _updateItineraryOrderInFirestore();
+      },
+      children: [
+        for (int index = 0; index < _itineraryItems.length; index++)
+          Card(
+            key: ValueKey(_itineraryItems[index]['id']),
             color: Colors.white.withOpacity(0.8),
             margin: const EdgeInsets.symmetric(vertical: 8),
             child: ListTile(
@@ -225,11 +252,12 @@ class MapItineraryPageState extends State<MapItineraryPage> {
                 ],
               ),
             ),
-          );
-        },
-      );
-    }
+          ),
+      ],
+    );
   }
+}
+
 
   // Function to load user's itineraries when navigating from page to page
   Future<void> _navigateToAIItineraryPage() async {
@@ -244,6 +272,18 @@ class MapItineraryPageState extends State<MapItineraryPage> {
     }
   }
 
+  // Function to display help page
+  Future<void> _navigateToMapInfoPage() async {
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const MapInfoPage(),
+      ),
+    );
+   
+  }
+
+  
   
 
   @override
@@ -266,7 +306,12 @@ class MapItineraryPageState extends State<MapItineraryPage> {
                   onPressed: _navigateToAIItineraryPage,
                 ),
               ]
-            : null,
+            : [
+                IconButton(
+                  icon: const Icon(Icons.info),
+                  onPressed: _navigateToMapInfoPage,
+                ),
+              ],
       ),
       body: isLoading
           ? Center(

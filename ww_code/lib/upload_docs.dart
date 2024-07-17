@@ -54,6 +54,7 @@ class ManageFlightsBookingsPageState extends State<ManageFlightsBookingsPage> {
           .collection("Users")
           .doc(userId)
           .collection('Documents')
+          .orderBy('order')
           .get();
       setState(() {
         files = snapshot.docs;
@@ -73,7 +74,7 @@ class ManageFlightsBookingsPageState extends State<ManageFlightsBookingsPage> {
 
   Future<void> getFile() async {
     FilePickerResult? result = await FilePicker.platform
-        .pickFiles(type: FileType.custom, allowedExtensions: ['pdf', 'doc']);
+        .pickFiles(type: FileType.custom, allowedExtensions: ['pdf']);
     if (result != null) {
       File selectedFile = File(result.files.single.path!);
       setState(() {
@@ -106,6 +107,7 @@ class ManageFlightsBookingsPageState extends State<ManageFlightsBookingsPage> {
           "url": downloadUrl,
           "fileName": fileName,
           "isPDF": isPDF,
+          "order": files.length,
         });
 
         setState(() {
@@ -286,20 +288,38 @@ class ManageFlightsBookingsPageState extends State<ManageFlightsBookingsPage> {
     );
   }
 
-  Widget buildFileList() {
-    if (isLoading) {
-      return Center(
-        child: CircularProgressIndicator(
-          valueColor: AlwaysStoppedAnimation<Color>(
-            Theme.of(context).brightness == Brightness.light
-                ? Theme.of(context).customColors.circularProgressIndicatorLight
-                : Theme.of(context).customColors.circularProgressIndicatorDark,
-          ),
-        ),
-      );
+  void onReorder(int oldIndex, int newIndex) {
+    if (oldIndex < newIndex) {
+      newIndex -= 1;
     }
-    return files.isEmpty
-        ? Center(
+    DocumentSnapshot item = files.removeAt(oldIndex);
+    files.insert(newIndex, item);
+    for (int i = 0; i < files.length; i++) {
+      FirebaseFirestore.instance
+          .collection('Users')
+          .doc(userId)
+          .collection('Documents')
+          .doc(files[i].id)
+          .update({'order': i});
+    }
+    setState(() {});
+  }
+
+  Widget buildFileList() {
+    return isLoading
+        ? Center(child: CircularProgressIndicator(
+          valueColor: AlwaysStoppedAnimation<Color>(
+                Theme.of(context).brightness == Brightness.light
+                    ? Theme.of(context)
+                        .customColors
+                        .circularProgressIndicatorLight
+                    : Theme.of(context)
+                        .customColors
+                        .circularProgressIndicatorDark,
+              ),
+        ))
+        : files.isEmpty
+             ? Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -316,74 +336,98 @@ class ManageFlightsBookingsPageState extends State<ManageFlightsBookingsPage> {
               ],
             ),
           )
-        : ListView.builder(
-            padding: const EdgeInsets.all(16),
-            itemCount: files.length,
-            itemBuilder: (context, index) {
-              DocumentSnapshot fileDoc = files[index];
-              return Card(
-                color: Colors.white.withOpacity(0.8),
-                margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
-                child: ListTile(
-                  leading: fileDoc['isPDF']
-                      ? Container(
-                          width: 40,
-                          height: 40,
-                          child: PDF(
-                            onViewCreated:
-                                (PDFViewController pdfViewController) async {
-                              await pdfViewController.setPage(0);
-                            },
-                          ).fromUrl(
-                            fileDoc['url'],
-                            placeholder: (double progress) => Center(
-                                child: CircularProgressIndicator(
-                              valueColor: AlwaysStoppedAnimation<Color>(
-                                Theme.of(context).brightness == Brightness.light
-                                    ? Theme.of(context)
-                                        .customColors
-                                        .circularProgressIndicatorLight
-                                    : Theme.of(context)
-                                        .customColors
-                                        .circularProgressIndicatorDark,
-                              ),
-                            )),
-                            errorWidget: (dynamic error) =>
-                                Center(child: Text(error.toString())),
-                          ),
-                        )
-                      : const Icon(Icons.insert_drive_file,
-                          color: Colors.blue, size: 40),
-                  title: Text(
-                    fileDoc['fileName'],
-                    style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                        color: Colors.black),
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  subtitle: Text(
-                    fileDoc['isPDF'] ? 'PDF Document' : 'Word Document',
-                    style: const TextStyle(color: Colors.black),
-                  ),
-                  trailing: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      IconButton(
-                        icon:
-                            const Icon(Icons.visibility, color: Colors.black45),
-                        onPressed: () => viewFile(fileDoc),
+            : ReorderableListView(
+                padding: const EdgeInsets.all(16),
+                onReorder: (int oldIndex, int newIndex) {
+                  setState(() {
+                    if (oldIndex < newIndex) {
+                      newIndex -= 1;
+                    }
+                    final DocumentSnapshot item = files.removeAt(oldIndex);
+                    files.insert(newIndex, item);
+                    for (int i = 0; i < files.length; i++) {
+                      FirebaseFirestore.instance
+                          .collection('Users')
+                          .doc(userId)
+                          .collection('Documents')
+                          .doc(files[i].id)
+                          .update({'order': i + 1});
+                    }
+                  });
+                },
+                children: List.generate(
+                  files.length,
+                  (index) {
+                    DocumentSnapshot fileDoc = files[index];
+                    return Card(
+                      key: Key(fileDoc.id),
+                      color: Colors.white.withOpacity(0.8),
+                      margin: const EdgeInsets.symmetric(
+                          vertical: 8, horizontal: 4),
+                      child: ListTile(
+                        leading: fileDoc['isPDF']
+                            ? Container(
+                                width: 40,
+                                height: 40,
+                                child: PDF(
+                                  onViewCreated: (PDFViewController
+                                      pdfViewController) async {
+                                    await pdfViewController.setPage(0);
+                                  },
+                                ).fromUrl(
+                                  fileDoc['url'],
+                                  placeholder: (double progress) => Center(
+                                    child: CircularProgressIndicator(
+                                      valueColor: AlwaysStoppedAnimation<Color>(
+                                        Theme.of(context).brightness ==
+                                                Brightness.light
+                                            ? Theme.of(context)
+                                                .customColors
+                                                .circularProgressIndicatorLight
+                                            : Theme.of(context)
+                                                .customColors
+                                                .circularProgressIndicatorDark,
+                                      ),
+                                    ),
+                                  ),
+                                  errorWidget: (dynamic error) =>
+                                      Center(child: Text(error.toString())),
+                                ),
+                              )
+                            : const Icon(Icons.insert_drive_file,
+                                color: Colors.blue, size: 40),
+                        title: Text(
+                          fileDoc['fileName'],
+                          style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                              color: Colors.black),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        subtitle: Text(
+                          fileDoc['isPDF'] ? 'PDF Document' : 'Word Document',
+                          style: const TextStyle(color: Colors.black),
+                        ),
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            IconButton(
+                              icon: const Icon(Icons.visibility,
+                                  color: Colors.black45),
+                              onPressed: () => viewFile(fileDoc),
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons.delete,
+                                  color: Colors.black45),
+                              onPressed: () => confirmDelete(fileDoc),
+                            ),
+                          ],
+                        ),
                       ),
-                      IconButton(
-                        icon: const Icon(Icons.delete, color: Colors.black45),
-                        onPressed: () => confirmDelete(fileDoc),
-                      ),
-                    ],
-                  ),
+                    );
+                  },
                 ),
               );
-            },
-          );
   }
 
   @override
@@ -395,7 +439,7 @@ class ManageFlightsBookingsPageState extends State<ManageFlightsBookingsPage> {
         ),
         actions: [
           IconButton(
-            onPressed: getFile, 
+            onPressed: getFile,
             icon: const Icon(Icons.upload_file),
           )
         ],
