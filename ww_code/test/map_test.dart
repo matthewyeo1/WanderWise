@@ -32,7 +32,7 @@ void main() {
       expect(directions.polylinePoints.length, 2);
     });
   });
-
+  
  testWidgets('MapScreen has a search button', (WidgetTester tester) async {
     await tester.pumpWidget(
       MaterialApp(

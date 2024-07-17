@@ -97,9 +97,9 @@ class _GeneralSettingsPageState extends State<GeneralSettingsPage> {
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16.0),
                       child: SwitchListTile(
-                        title: Text(
+                        title: const Text(
                           'Enable Dark Mode',
-                          style: Theme.of(context).textTheme.titleLarge,
+                          style: TextStyle(fontSize: 20),
                         ),
                         value: userDarkModePreference,
                         onChanged: (value) {
