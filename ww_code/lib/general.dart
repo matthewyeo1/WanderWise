@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'change_email.dart';
 import 'change_password.dart';
 import 'aesthetics/themes.dart';
+import 'package:ww_code/language_selector.dart';
 
 class GeneralSettingsPage extends StatefulWidget {
   const GeneralSettingsPage({super.key});
@@ -98,7 +99,7 @@ class _GeneralSettingsPageState extends State<GeneralSettingsPage> {
                       padding: const EdgeInsets.symmetric(horizontal: 16.0),
                       child: SwitchListTile(
                         title: const Text(
-                          'Enable Dark Mode',
+                          'Dark Mode',
                           style: TextStyle(fontSize: 20),
                         ),
                         value: userDarkModePreference,
@@ -115,6 +116,14 @@ class _GeneralSettingsPageState extends State<GeneralSettingsPage> {
                             ? Colors.white
                             : Colors.black45,
                       ),
+                    ),
+                    const SizedBox(height: 50),
+                    _buildSectionHeader('Language', theme),
+                    _buildListTile(
+                      context,
+                      'Current Language                          English',
+                      const LanguageSelector(),
+                      theme,
                     ),
                     const SizedBox(height: 50),
                     _buildSectionHeader('Account', theme),

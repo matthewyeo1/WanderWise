@@ -65,6 +65,7 @@ dependencies:
   googleapis: ^13.2.0
   googleapis_auth: ^1.6.0
   timezone: ^0.9.4
+  intl: ^0.19.0
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -79,9 +80,7 @@ dependencies:
   flutter_dotenv: ^5.0.2
   flutter_osm_plugin: ^0.70.4
   firebase_messaging: ^15.0.2
-  flutter_localizations:
-    sdk: flutter
-  intl: any
+  flutter_localization: ^0.2.0
 
 dev_dependencies:
   flutter_test:
@@ -107,7 +106,7 @@ dev_dependencies:
 
 # The following section is specific to Flutter packages.
 flutter:
-
+  generate: true
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.
@@ -117,7 +116,6 @@ flutter:
   assets:
    - images/
   #   - images/a_dot_ham.jpeg
-
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
 
@@ -143,3 +141,5 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
+
+  

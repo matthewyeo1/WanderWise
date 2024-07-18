@@ -202,7 +202,7 @@ Future<void> _addFriend() async {
                         if (!isFriend && !isRequestSent)
                           ElevatedButton(
                             onPressed: _addFriend,
-                            child: const Text('Add Friend'),
+                            child: const Text('Send Friend Request'),
                           )
                         else if (isFriend)
                           const Text(

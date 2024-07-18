@@ -19,6 +19,7 @@ import 'package:timezone/data/latest.dart' as tz;
 import 'package:ww_code/notif_service.dart';
 
 
+
 void main() async {
   // Load the .env file
   try {
@@ -75,11 +76,13 @@ void main() async {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
+  
   @override
   Widget build(BuildContext context) {
     return Consumer<ThemeNotifier>(
       builder: (context, themeNotifier, child) {
         return MaterialApp(
+           // localizationsDelegates: AppLocalizations.localizationsDelegates,
             title: 'WanderWise App',
             theme: lightTheme,
             darkTheme: darkTheme,

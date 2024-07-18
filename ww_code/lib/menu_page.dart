@@ -7,6 +7,8 @@ import 'upload_docs.dart';
 import 'settings_page.dart';
 import 'help_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:intl/intl.dart';
+import 'dart:async';
 
 class MenuPage extends StatefulWidget {
   final String? username;
@@ -19,6 +21,9 @@ class MenuPage extends StatefulWidget {
 
 class MenuPageState extends State<MenuPage> {
   final PageController pageController = PageController();
+  late Timer _timer;
+  DateTime _currentTime = DateTime.now().toLocal();
+
   int currentIndex = 0;
   final List<String> _images = [
     'images/borealis.png',
@@ -28,13 +33,63 @@ class MenuPageState extends State<MenuPage> {
     'images/eiffel_tower.jpg',
     'images/maldives.jpg',
   ];
-  
+
+  late String _selectedImage = 'images/borealis.png'; // Default wallpaper
+
+  @override
+  void initState() {
+    super.initState();
+    _loadSelectedImage();
+    _currentTime = DateTime.now().toLocal();
+    _timer = Timer.periodic(Duration(minutes: 1), (Timer t) {
+      setState(() {
+        _currentTime = DateTime.now().toLocal();
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer.cancel();
+    super.dispose();
+  }
+
+  Future<void> _loadSelectedImage() async {
+    final userId = FirebaseAuth.instance.currentUser!.uid;
+    final userDoc = FirebaseFirestore.instance.collection('Users').doc(userId);
+    final docSnapshot = await userDoc.get();
+    if (docSnapshot.exists && docSnapshot.data() != null) {
+      final data = docSnapshot.data();
+      if (data != null && data.containsKey('backgroundImage')) {
+        setState(() {
+          _selectedImage = data['backgroundImage'];
+        });
+      }
+    }
+  }
+
+  Future<void> _updateBackgroundImage(String imageUrl) async {
+    final userId = FirebaseAuth.instance.currentUser!.uid;
+    await FirebaseFirestore.instance.collection('Users').doc(userId).update({
+      'backgroundImage': imageUrl,
+    });
+    setState(() {
+      _selectedImage = imageUrl;
+    });
+  }
+
   // Menu page UI
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Stack(
         children: [
+          Image.asset(
+            _selectedImage,
+            fit: BoxFit.cover,
+            width: double.infinity,
+            height: double.infinity,
+          ),
           PageView.builder(
             itemCount: _images.length,
             onPageChanged: (index) {
@@ -43,22 +98,68 @@ class MenuPageState extends State<MenuPage> {
               });
             },
             itemBuilder: (context, index) {
-              return Image.asset(
-                _images[index],
-                fit: BoxFit.cover,
-                width: double.infinity,
-                height: double.infinity,
+              return GestureDetector(
+                onTap: () {
+                  _updateBackgroundImage(_images[index]);
+                },
+                child: Image.asset(
+                  _images[index],
+                  fit: BoxFit.cover,
+                  width: double.infinity,
+                  height: double.infinity,
+                ),
               );
             },
           ),
           Positioned(
-            top: 250.0,
+            top: 60.0,
+            left: 16.0,
+            right: 16.0,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Container(
+                constraints: const BoxConstraints(
+                  maxWidth: 400.0,
+                  maxHeight: 50.0,
+                ),
+                
+                child: Center(
+                  child: StreamBuilder<DateTime>(
+                    stream: Stream.periodic(
+                        const Duration(minutes: 1), (_) => DateTime.now().toLocal()),
+                    initialData: _currentTime,
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        _currentTime = snapshot.data!;
+                        String formattedTime =
+                            DateFormat('EEE, HH:mm').format(_currentTime);
+                        return Text(
+                          formattedTime,
+                          style: const TextStyle(
+                            fontSize: 24.0,
+                           
+                            color: Colors.white,
+                          ),
+                        );
+                      } else {
+                        return const CircularProgressIndicator(
+                          color: Colors.white,
+                        );
+                      }
+                    },
+                  ),
+                ),
+              ),
+            ),
+          ),
+          Positioned(
+            top: 280.0,
             left: 16.0,
             right: 16.0,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                 const Text(
+                const Text(
                   '        Activity',
                   style: TextStyle(
                     color: Colors.white,
@@ -80,7 +181,7 @@ class MenuPageState extends State<MenuPage> {
                         return Container(
                           constraints: const BoxConstraints(
                             maxWidth: 400.0,
-                            maxHeight: 100.0,
+                            maxHeight: 50.0,
                           ),
                           decoration: BoxDecoration(
                             color: Colors.black.withOpacity(0.5),
@@ -101,7 +202,7 @@ class MenuPageState extends State<MenuPage> {
                         return Container(
                           constraints: const BoxConstraints(
                             maxWidth: 400.0,
-                            maxHeight: 100.0,
+                            maxHeight: 50.0,
                           ),
                           decoration: BoxDecoration(
                             color: Colors.black.withOpacity(0.5),
@@ -125,7 +226,7 @@ class MenuPageState extends State<MenuPage> {
                       return Container(
                         constraints: const BoxConstraints(
                           maxWidth: 400.0,
-                          maxHeight: 100.0,
+                          maxHeight: 50.0,
                         ),
                         decoration: BoxDecoration(
                           color: Colors.black.withOpacity(0.5),
@@ -138,7 +239,7 @@ class MenuPageState extends State<MenuPage> {
                               'Friend Requests: ${snapshot.data}',
                               style: const TextStyle(
                                 color: Colors.white,
-                                fontSize: 16,
+                                fontSize: 14,
                               ),
                             ),
                           ),
@@ -199,7 +300,7 @@ class MenuPageState extends State<MenuPage> {
                                 snapshot.data!.docs.isEmpty) {
                               return const Center(
                                 child: Text(
-                                  'You have no upcoming events for now.',
+                                  'No upcoming events',
                                   style: TextStyle(
                                       color: Colors.white, fontSize: 14),
                                 ),
@@ -327,7 +428,7 @@ class MenuPageState extends State<MenuPage> {
             ),
           ),
           const Positioned(
-              top: 170.0,
+              top: 180.0,
               left: 0,
               right: 0,
               child: Center(

@@ -20,12 +20,11 @@ class NotifSystemState extends State<NotifSystem> {
   final TextEditingController titleController = TextEditingController();
   final TextEditingController bodyController = TextEditingController();
 
-  // Function to show a Snackbar
   void showSnackbar(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message),
-        duration: const Duration(seconds: 5), // Adjust duration as needed
+        duration: const Duration(seconds: 5),
       ),
     );
   }
@@ -217,8 +216,18 @@ class _DatePickerTxtState extends State<DatePickerTxt> {
         DatePicker.showDateTimePicker(
           context,
           showTitleActions: true,
-          onChanged: (date) => scheduleTime = date,
-          onConfirm: (date) {},
+          onChanged: (date) {
+            setState(() {
+              scheduleTime = date;
+            });
+          },
+          onConfirm: (date) {
+            setState(() {
+              scheduleTime = date;
+            });
+          },
+          currentTime: scheduleTime,
+          locale: LocaleType.en,
         );
       },
       child: const Text('Select Date and Time'),
