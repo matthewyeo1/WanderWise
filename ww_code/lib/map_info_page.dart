@@ -70,6 +70,7 @@ class MapInfoPage extends StatelessWidget {
               height: 500,
               width: 500,
             ),
+            const SizedBox(height: 50),
           ],
         ),
       ),

@@ -36,13 +36,14 @@ class MapItineraryPageState extends State<MapItineraryPage> {
 
   // Flag to handle navigation when trip plan made by Gemini is saved
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    final shouldRefresh = ModalRoute.of(context)?.settings.arguments as bool?;
-    if (shouldRefresh == true) {
-      _loadItineraryItems();
-    }
+void didChangeDependencies() {
+  super.didChangeDependencies();
+  final shouldRefresh = ModalRoute.of(context)?.settings.arguments as bool?;
+  if (shouldRefresh == true) {
+    print('Refreshing itinerary items...');
+    _loadItineraryItems();
   }
+}
 
   Future<void> _initializeUserId() async {
     User? user = await _authService.getCurrentUser();
@@ -56,15 +57,32 @@ class MapItineraryPageState extends State<MapItineraryPage> {
     }
   }
 
-  Future<void> _loadItineraryItems() async {
+ Future<void> _loadItineraryItems() async {
+  try {
+    print('Loading itinerary items for user: $userId');
     List<Map<String, dynamic>> items =
         await _itineraryService.loadItineraryItems(userId);
-    items.sort((a, b) => a['order'].compareTo(b['order']));
+
+    // Handle null values in 'order' field
+    items.sort((a, b) {
+      final aOrder = a['order'] ?? double.maxFinite; // Place items with null 'order' at the end
+      final bOrder = b['order'] ?? double.maxFinite;
+      return aOrder.compareTo(bOrder);
+    });
+
     setState(() {
       _itineraryItems = items;
+      isLoading = false;
     });
-    isLoading = false;
+    print('Itinerary items loaded: $_itineraryItems');
+  } catch (e) {
+    print('Error loading itinerary items: $e');
+    setState(() {
+      isLoading = false;
+    });
   }
+}
+
 
   void _onItemTapped(int index) {
     setState(() {
@@ -205,7 +223,7 @@ class MapItineraryPageState extends State<MapItineraryPage> {
       ),
     );
   } else {
-    return ReorderableListView(
+    return ReorderableListView (
       padding: const EdgeInsets.all(16),
       onReorder: (int oldIndex, int newIndex) {
         setState(() {

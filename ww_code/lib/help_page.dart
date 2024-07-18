@@ -49,7 +49,7 @@ class HelpPage extends StatelessWidget {
             'WanderWise only allows for .pdf type documents to be uploaded under "Upload Docs".'),
         _buildFAQItem('Am I able to view my itineraries and documents offline?',
             'Unfortunately, the current version of the app does not support offline sync. Stay tuned for future updates!'),
-        _buildFAQItem('How can I sort my trips/documents?',
+        _buildFAQItem('Can I sort my trips/documents?',
             'To sort them to your liking, press & drag your trips/documents!'),
       
       ],
