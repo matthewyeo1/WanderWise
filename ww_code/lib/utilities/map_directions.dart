@@ -19,7 +19,7 @@ class DirectionsRepository {
       queryParameters: {
         'origin': '${origin.latitude},${origin.longitude}',
         'destination': '${destination.latitude},${destination.longitude}',
-        'key': "AIzaSyB3dkvAT_hUG51l98FOsmqE0FVS5xwqCcI",
+        'key': "GOOGLE_API_KEY",
       },
     );
 

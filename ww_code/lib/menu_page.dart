@@ -122,11 +122,10 @@ class MenuPageState extends State<MenuPage> {
                   maxWidth: 400.0,
                   maxHeight: 50.0,
                 ),
-                
                 child: Center(
                   child: StreamBuilder<DateTime>(
-                    stream: Stream.periodic(
-                        const Duration(minutes: 1), (_) => DateTime.now().toLocal()),
+                    stream: Stream.periodic(const Duration(minutes: 1),
+                        (_) => DateTime.now().toLocal()),
                     initialData: _currentTime,
                     builder: (context, snapshot) {
                       if (snapshot.hasData) {
@@ -137,7 +136,6 @@ class MenuPageState extends State<MenuPage> {
                           formattedTime,
                           style: const TextStyle(
                             fontSize: 24.0,
-                           
                             color: Colors.white,
                           ),
                         );
@@ -542,8 +540,8 @@ class MenuPageState extends State<MenuPage> {
       await FirebaseAuth.instance.signOut();
 
       // Simulate sign out for GoogleSignIn (if applicable)
-      final GoogleSignIn _googleSignIn = GoogleSignIn();
-      await _googleSignIn.signOut();
+      final GoogleSignIn googleSignIn = GoogleSignIn();
+      await googleSignIn.signOut();
 
       Navigator.pushReplacementNamed(context, '/');
     } catch (e) {
