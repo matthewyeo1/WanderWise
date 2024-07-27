@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localization/flutter_localization.dart';
 import 'package:ww_code/feedback_page.dart';
+import 'localization/locales.dart';
 
 // Contains FAQ, email and contact no. widgets and feedback section 
 class HelpPage extends StatelessWidget {
@@ -9,28 +11,28 @@ class HelpPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Help'),
+        title: Text(LocaleData.help.getString(context)),
       ),
       body: ListView(
         padding: const EdgeInsets.all(16.0),
         children: [
-          const Text(
-            'Frequently Asked Questions',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          Text(
+            LocaleData.faq.getString(context),
+            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 16),
-          _buildFAQSection(),
+          _buildFAQSection(context),
           const SizedBox(height: 32), 
-          const Text(
-            'Need More Assistance?',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          Text(
+            LocaleData.moreAssistance.getString(context),
+            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 8),
           _buildContactSection(context),
           const SizedBox(height: 32), 
-          const Text(
-            'Send Feedback',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          Text(
+            LocaleData.sendFeedback.getString(context),
+            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 8),
           _buildFeedbackSection(context),
@@ -39,18 +41,18 @@ class HelpPage extends StatelessWidget {
     );
   }
 
-  Widget _buildFAQSection() {
+  Widget _buildFAQSection(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildFAQItem('How do I reset my password?',
-            'To reset your password, go to the settings page and click on "Change Password". Follow the instructions provided.'),
-        _buildFAQItem('What type of documents can be uploaded?',
-            'WanderWise only allows for .pdf type documents to be uploaded under "Upload Docs".'),
-        _buildFAQItem('Am I able to view my itineraries and documents offline?',
-            'Unfortunately, the current version of the app does not support offline sync. Stay tuned for future updates!'),
-        _buildFAQItem('Can I sort my trips/documents?',
-            'To sort them to your liking, press & drag your trips/documents!'),
+        _buildFAQItem(LocaleData.q1.getString(context),
+            LocaleData.a1.getString(context)),
+        _buildFAQItem(LocaleData.q2.getString(context),
+            LocaleData.a2.getString(context)),
+        _buildFAQItem(LocaleData.q3.getString(context),
+            LocaleData.a3.getString(context)),
+        _buildFAQItem(LocaleData.q4.getString(context),
+            LocaleData.a4.getString(context)),
       
       ],
     );
@@ -70,29 +72,29 @@ class HelpPage extends StatelessWidget {
   }
 
   Widget _buildContactSection(BuildContext context) {
-    return const Column(
+    return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Email Us',
-          style: TextStyle(fontWeight: FontWeight.bold),
+          LocaleData.emailUs.getString(context),
+          style: const TextStyle(fontWeight: FontWeight.bold),
         ),
-        SizedBox(height: 8),
-        Text(
+        const SizedBox(height: 8),
+        const Text(
           'support@example.com',
           
         ),
-        SizedBox(height: 16),
+        const SizedBox(height: 16),
         Text(
-          'Call Us',
-          style: TextStyle(fontWeight: FontWeight.bold),
+          LocaleData.callUs.getString(context),
+          style: const TextStyle(fontWeight: FontWeight.bold),
         ),
-        SizedBox(height: 8),
-        Text(
+        const SizedBox(height: 8),
+        const Text(
           '(123) 456-7890',
           
         ),
-        SizedBox(height: 16),
+        const SizedBox(height: 16),
       ],
     );
   }
@@ -101,14 +103,14 @@ class HelpPage extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'Have feedback or suggestions?',
-          style: TextStyle(fontWeight: FontWeight.bold),
+        Text(
+          LocaleData.feedbackQuestion.getString(context),
+          style: const TextStyle(fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 16),
         ListTile(
           leading: const Icon(Icons.feedback),
-          title: const Text('Send Feedback'),
+          title: Text(LocaleData.sendFeedback.getString(context)),
           onTap: () {
             Navigator.push(
               context,

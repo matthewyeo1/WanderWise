@@ -1,1 +1,2 @@
 String GEMINI_API_KEY = "AIzaSyBHWshnJ2j57S1StKStMZqUEf2TpCds-Zk";
+String GOOGLE_API_KEY = "AIzaSyB3dkvAT_hUG51l98FOsmqE0FVS5xwqCcI";

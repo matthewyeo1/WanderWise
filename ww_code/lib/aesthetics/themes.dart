@@ -114,72 +114,90 @@ final lightTheme = ThemeData(
   textButtonTheme: TextButtonThemeData(
       style: TextButton.styleFrom(
     foregroundColor: Colors.lightBlue,
-  )
-  ),
+  )),
   checkboxTheme: CheckboxThemeData(
     checkColor: WidgetStateProperty.all(Colors.lightBlue),
-    fillColor: WidgetStateProperty.all(Colors.transparent), 
+    fillColor: WidgetStateProperty.all(Colors.transparent),
   ),
   floatingActionButtonTheme: const FloatingActionButtonThemeData(
     backgroundColor: Colors.white,
     foregroundColor: Colors.lightBlue,
   ),
+  dropdownMenuTheme: const DropdownMenuThemeData(
+    inputDecorationTheme: InputDecorationTheme(
+      filled: true,
+      fillColor: Colors.white,
+    ),
+    textStyle: TextStyle(
+      color: Colors.lightBlue,
+    ),
+  ),
 );
 
 final darkTheme = ThemeData(
-    brightness: Brightness.dark,
-    inputDecorationTheme: const InputDecorationTheme(
-      focusedBorder: UnderlineInputBorder(
-        borderSide: BorderSide(color: Colors.white),
-      ),
+  brightness: Brightness.dark,
+  inputDecorationTheme: const InputDecorationTheme(
+    focusedBorder: UnderlineInputBorder(
+      borderSide: BorderSide(color: Colors.white),
     ),
-    primarySwatch: Colors.blue,
-    scaffoldBackgroundColor: const Color.fromARGB(255, 9, 9, 63),
-    canvasColor: Colors.transparent,
-    appBarTheme: const AppBarTheme(
-      backgroundColor: Color(0xFF191970),
+  ),
+  primarySwatch: Colors.blue,
+  scaffoldBackgroundColor: const Color.fromARGB(255, 9, 9, 63),
+  canvasColor: Colors.transparent,
+  appBarTheme: const AppBarTheme(
+    backgroundColor: Color(0xFF191970),
+    foregroundColor: Colors.white,
+  ),
+  textTheme: const TextTheme(
+    bodyMedium: TextStyle(color: Colors.white),
+    headlineMedium: TextStyle(color: Colors.white),
+    headlineSmall: TextStyle(color: Colors.white),
+    titleSmall: TextStyle(color: Colors.white),
+    bodySmall: TextStyle(color: Colors.white),
+    labelSmall: TextStyle(color: Colors.white),
+    displaySmall: TextStyle(color: Colors.white),
+  ),
+  bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+    backgroundColor: Color(0xFF191970),
+    elevation: 0.0,
+    selectedItemColor: Colors.white,
+    unselectedItemColor: Colors.grey,
+  ),
+  iconTheme: const IconThemeData(
+    color: Colors.white,
+  ),
+  elevatedButtonTheme: ElevatedButtonThemeData(
+    style: ElevatedButton.styleFrom(
+      backgroundColor: const Color(0xFF191970),
       foregroundColor: Colors.white,
     ),
-    textTheme: const TextTheme(
-      bodyMedium: TextStyle(color: Colors.white),
-      headlineMedium: TextStyle(color: Colors.white),
-      headlineSmall: TextStyle(color: Colors.white),
-      titleSmall: TextStyle(color: Colors.white),
-      bodySmall: TextStyle(color: Colors.white),
-      labelSmall: TextStyle(color: Colors.white),
-      displaySmall: TextStyle(color: Colors.white),
-    ),
-    bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-      backgroundColor: Color(0xFF191970),
-      elevation: 0.0,
-      selectedItemColor: Colors.white,
-      unselectedItemColor: Colors.grey,
-    ),
-    iconTheme: const IconThemeData(
-      color: Colors.white,
-    ),
-    elevatedButtonTheme: ElevatedButtonThemeData(
-      style: ElevatedButton.styleFrom(
-        backgroundColor: const Color(0xFF191970),
-        foregroundColor: Colors.white,
-      ),
-    ),
-    snackBarTheme: const SnackBarThemeData(
-      backgroundColor: Colors.black54,
-      contentTextStyle: TextStyle(color: Colors.white),
-    ),
-    textButtonTheme: TextButtonThemeData(
-        style: TextButton.styleFrom(
-      foregroundColor: Colors.white,
-    )),
-    iconButtonTheme: IconButtonThemeData(
-        style: IconButton.styleFrom(foregroundColor: Colors.white)),
-    checkboxTheme: CheckboxThemeData(
+  ),
+  snackBarTheme: const SnackBarThemeData(
+    backgroundColor: Colors.black54,
+    contentTextStyle: TextStyle(color: Colors.white),
+  ),
+  textButtonTheme: TextButtonThemeData(
+      style: TextButton.styleFrom(
+    foregroundColor: Colors.white,
+  )),
+  iconButtonTheme: IconButtonThemeData(
+      style: IconButton.styleFrom(foregroundColor: Colors.white)),
+  checkboxTheme: CheckboxThemeData(
     checkColor: WidgetStateProperty.all(Colors.white),
-    fillColor: WidgetStateProperty.all(Colors.transparent), 
-  ),  
+    fillColor: WidgetStateProperty.all(Colors.transparent),
+  ),
   floatingActionButtonTheme: const FloatingActionButtonThemeData(
     backgroundColor: Color(0xFF191970),
     foregroundColor: Colors.white,
-  ),      
+  ),
+  dropdownMenuTheme: const DropdownMenuThemeData(
+    inputDecorationTheme: InputDecorationTheme(
+      filled: true,
+      fillColor: Color(0xFF191970),
+    ),
+    textStyle: TextStyle(
+      color: Colors.white,
+    ),
+  ),
+  
 );

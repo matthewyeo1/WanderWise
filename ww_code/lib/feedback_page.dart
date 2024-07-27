@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_localization/flutter_localization.dart';
+import 'localization/locales.dart';
 
 class FeedbackPage extends StatefulWidget {
   const FeedbackPage({super.key});
@@ -23,17 +25,17 @@ class FeedbackPageState extends State<FeedbackPage> {
     final feedback = feedbackController.text;
 
     if (feedback.isEmpty) {
-      showSnackBar("Please enter your feedback");
+      showSnackBar(LocaleData.feedback.getString(context));
       return;
     }
 
     final success = await feedbackService.submitFeedback(feedback);
 
     if (success) {
-      showSnackBar("Thank you for your feedback!");
+      showSnackBar(LocaleData.thankFeedback.getString(context));
       feedbackController.clear();
     } else {
-      showSnackBar("Error submitting feedback");
+      showSnackBar(LocaleData.errorFeedback.getString(context));
     }
   }
 
@@ -50,15 +52,15 @@ class FeedbackPageState extends State<FeedbackPage> {
         theme.brightness == Brightness.dark ? Colors.white : Colors.black;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Feedback'),
+        title: Text(LocaleData.feedbackWord.getString(context)),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'We value your feedback. Please let us know what you think!',
+            Text(
+              LocaleData.feedbackSentence.getString(context),
               style: TextStyle(fontSize: 16),
             ),
             const SizedBox(height: 20),
@@ -66,15 +68,15 @@ class FeedbackPageState extends State<FeedbackPage> {
               cursorColor: textColor,
               controller: feedbackController,
               maxLines: 5,
-              decoration: const InputDecoration(
-                hintText: 'Enter your feedback here',
-                border: OutlineInputBorder(),
+              decoration:  InputDecoration(
+                hintText: LocaleData.feedbackEnter.getString(context),
+                border: const OutlineInputBorder(),
               ),
             ),
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: submitFeedback,
-              child: const Text('Submit'),
+              child: Text(LocaleData.submitButton.getString(context)),
             ),
           ],
         ),

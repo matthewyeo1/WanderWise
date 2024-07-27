@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:ww_code/utilities/directions_model.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:ww_code/utilities/const.dart';
 
 class DirectionsRepository {
   static const String _baseUrl =
@@ -19,7 +20,7 @@ class DirectionsRepository {
       queryParameters: {
         'origin': '${origin.latitude},${origin.longitude}',
         'destination': '${destination.latitude},${destination.longitude}',
-        'key': "GOOGLE_API_KEY",
+        'key': GOOGLE_API_KEY,
       },
     );
 

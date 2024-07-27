@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localization/flutter_localization.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -8,6 +9,7 @@ import 'package:ww_code/utilities/map_directions.dart';
 import 'package:ww_code/aesthetics/themes.dart';
 import 'package:ww_code/location_autocomplete.dart';
 import 'package:ww_code/favourite_locations_page.dart';
+import 'localization/locales.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:async';
@@ -95,7 +97,7 @@ class _MapScreenState extends State<MapScreen> {
                 position: LatLng(position.latitude, position.longitude),
                 infoWindow: InfoWindow(
                   title: locationName,
-                  snippet: 'Tap to manage this location',
+                  snippet: LocaleData.manageLocation.getString(context),
                   onTap: () {
                     _showCustomMarkerDialog(
                         LatLng(position.latitude, position.longitude), userId);
@@ -112,7 +114,7 @@ class _MapScreenState extends State<MapScreen> {
         setState(() {
           _origin = Marker(
             markerId: const MarkerId('origin'),
-            infoWindow: const InfoWindow(title: 'Origin'),
+            infoWindow: InfoWindow(title: LocaleData.origin.getString(context)),
             icon:
                 BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
             position: LatLng(originPosition.latitude, originPosition.longitude),
@@ -138,7 +140,7 @@ class _MapScreenState extends State<MapScreen> {
         setState(() {
           _origin = Marker(
             markerId: const MarkerId('origin'),
-            infoWindow: const InfoWindow(title: 'Origin'),
+            infoWindow: InfoWindow(title: LocaleData.origin.getString(context)),
             icon:
                 BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
             position:
@@ -407,7 +409,7 @@ class _MapScreenState extends State<MapScreen> {
                     ),
                   ),
                 ),
-                child: const Text('ORIGIN'),
+                child: Text(LocaleData.origin.getString(context)),
               ),
             ),
           if (_showDestinationButton)
@@ -428,7 +430,7 @@ class _MapScreenState extends State<MapScreen> {
                     ),
                   ),
                 ),
-                child: const Text('DEST'),
+                child: Text(LocaleData.dest.getString(context)),
               ),
             ),
           Positioned(
@@ -480,7 +482,7 @@ class _MapScreenState extends State<MapScreen> {
       setState(() {
         _origin = Marker(
           markerId: const MarkerId('origin'),
-          infoWindow: const InfoWindow(title: 'Origin'),
+          infoWindow: InfoWindow(title: LocaleData.origin.getString(context)),
           icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
           position: pos,
         );
@@ -506,7 +508,7 @@ class _MapScreenState extends State<MapScreen> {
       setState(() {
         _destination = Marker(
           markerId: const MarkerId('destination'),
-          infoWindow: const InfoWindow(title: 'Destination'),
+          infoWindow: InfoWindow(title: LocaleData.dest.getString(context)),
           icon:
               BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen),
           position: pos,
@@ -653,35 +655,35 @@ class _MapScreenState extends State<MapScreen> {
       builder: (BuildContext context) {
         return AlertDialog(
           backgroundColor: Colors.white,
-          title: const Text("Remove Marker",
-              style: TextStyle(color: Colors.black)),
-          content: const Text("Do you want to remove this marker?",
-              style: TextStyle(color: Colors.black)),
+          title: Text(LocaleData.removeMarkerText.getString(context),
+              style: const TextStyle(color: Colors.black)),
+          content: Text(LocaleData.removeMarkerTitle.getString(context),
+              style: const TextStyle(color: Colors.black)),
           actions: <Widget>[
             TextButton(
-              child: const Text("Cancel",
-                  style: TextStyle(color: Colors.lightBlue)),
+              child: Text(LocaleData.cancel.getString(context),
+                  style: const TextStyle(color: Colors.lightBlue)),
               onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
             TextButton(
-              child: const Text("Remove",
-                  style: TextStyle(color: Colors.lightBlue)),
+              child: Text(LocaleData.removeButton.getString(context),
+                  style: const TextStyle(color: Colors.lightBlue)),
               onPressed: () {
                 _removeCustomMarker(pos, userId!);
                 Navigator.of(context).pop();
               },
             ),
             TextButton(
-              child: const Text("Add to Favourites",
-                  style: TextStyle(color: Colors.lightBlue)),
+              child: Text(LocaleData.addToFavouritesButton.getString(context),
+                  style: const TextStyle(color: Colors.lightBlue)),
               onPressed: () {
                 _addToFavourites(pos, userId!, locationName);
                 Navigator.of(context).pop();
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Added to Favourite Locations!.'),
+                  SnackBar(
+                    content: Text(LocaleData.addedToFavouritesSnackBar.getString(context)),
                   ),
                 );
               },

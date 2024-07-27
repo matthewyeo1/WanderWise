@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_localization/flutter_localization.dart';
 import 'package:ww_code/select_favourite_locations.dart';
+import 'localization/locales.dart';
 
 class EditItineraryPage extends StatefulWidget {
   final Map<String, dynamic>? initialItem;
@@ -142,9 +144,9 @@ class EditItineraryPageState extends State<EditItineraryPage> {
               cursorColor: cursorColor,
               controller: titleController,
               style: TextStyle(color: inputTextColor),
-              decoration: const InputDecoration(
-                labelText: 'Title',
-                labelStyle: TextStyle(color: Colors.grey),
+              decoration: InputDecoration(
+                labelText: LocaleData.title.getString(context),
+                labelStyle: const TextStyle(color: Colors.grey),
                 border: InputBorder.none,
                 focusedBorder: InputBorder.none,
               ),
@@ -153,10 +155,10 @@ class EditItineraryPageState extends State<EditItineraryPage> {
               cursorColor: cursorColor,
               controller: startDateController,
               style: TextStyle(color: inputTextColor),
-              decoration: const InputDecoration(
-                labelText: 'Start Date',
-                labelStyle: TextStyle(color: Colors.grey),
-                suffixIcon: Icon(Icons.calendar_today, color: Colors.grey),
+              decoration: InputDecoration(
+                labelText: LocaleData.startDate.getString(context),
+                labelStyle: const TextStyle(color: Colors.grey),
+                suffixIcon: const Icon(Icons.calendar_today, color: Colors.grey),
                 border: InputBorder.none,
                 focusedBorder: InputBorder.none,
               ),
@@ -166,10 +168,10 @@ class EditItineraryPageState extends State<EditItineraryPage> {
               cursorColor: cursorColor,
               controller: endDateController,
               style: TextStyle(color: inputTextColor),
-              decoration: const InputDecoration(
-                labelText: 'End Date',
-                labelStyle: TextStyle(color: Colors.grey),
-                suffixIcon: Icon(Icons.calendar_today, color: Colors.grey),
+              decoration: InputDecoration(
+                labelText: LocaleData.endDate.getString(context),
+                labelStyle: const TextStyle(color: Colors.grey),
+                suffixIcon: const Icon(Icons.calendar_today, color: Colors.grey),
                 border: InputBorder.none,
                 focusedBorder: InputBorder.none,
               ),
@@ -186,9 +188,9 @@ class EditItineraryPageState extends State<EditItineraryPage> {
                       keyboardType: TextInputType.multiline,
                       maxLines: null,
                       style: TextStyle(color: inputTextColor),
-                      decoration: const InputDecoration(
-                        labelText: 'Itinerary',
-                        labelStyle: TextStyle(color: Colors.grey),
+                      decoration: InputDecoration(
+                        labelText: LocaleData.description.getString(context),
+                        labelStyle: const TextStyle(color: Colors.grey),
                         border: InputBorder.none,
                         focusedBorder: InputBorder.none,
                       ),

@@ -9,6 +9,8 @@ import 'help_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
 import 'dart:async';
+import 'localization/locales.dart';
+import 'package:flutter_localization/flutter_localization.dart';
 
 class MenuPage extends StatefulWidget {
   final String? username;
@@ -157,9 +159,9 @@ class MenuPageState extends State<MenuPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  '        Activity',
-                  style: TextStyle(
+                 Text(
+                  LocaleData.activity.getString(context),
+                  style: const TextStyle(
                     color: Colors.white,
                     fontSize: 14,
                   ),
@@ -206,12 +208,12 @@ class MenuPageState extends State<MenuPage> {
                             color: Colors.black.withOpacity(0.5),
                             borderRadius: BorderRadius.circular(20.0),
                           ),
-                          child: const Padding(
-                            padding: EdgeInsets.all(16.0),
+                          child: Padding(
+                            padding: const EdgeInsets.all(16.0),
                             child: Center(
                               child: Text(
-                                'No actions to be taken',
-                                style: TextStyle(
+                                LocaleData.activityTextNothing.getString(context),
+                                style: const TextStyle(
                                   color: Colors.white,
                                   fontSize: 14,
                                 ),
@@ -234,7 +236,7 @@ class MenuPageState extends State<MenuPage> {
                           padding: const EdgeInsets.all(16.0),
                           child: Center(
                             child: Text(
-                              'Friend Requests: ${snapshot.data}',
+                              context.formatString(LocaleData.activityTextSomething, [snapshot.data]),
                               style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 14,
@@ -256,9 +258,9 @@ class MenuPageState extends State<MenuPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  '       Upcoming Events',
-                  style: TextStyle(
+                 Text(
+                  LocaleData.upcomingEvents.getString(context),
+                  style: const TextStyle(
                     color: Colors.white,
                     fontSize: 14,
                   ),
@@ -296,10 +298,10 @@ class MenuPageState extends State<MenuPage> {
                             }
                             if (!snapshot.hasData ||
                                 snapshot.data!.docs.isEmpty) {
-                              return const Center(
+                              return Center(
                                 child: Text(
-                                  'No upcoming events',
-                                  style: TextStyle(
+                                  LocaleData.upcomingEventsNothing.getString(context),
+                                  style: const TextStyle(
                                       color: Colors.white, fontSize: 14),
                                 ),
                               );
@@ -327,7 +329,7 @@ class MenuPageState extends State<MenuPage> {
                                           MainAxisAlignment.spaceBetween,
                                       children: [
                                         Text(
-                                          'Scheduled for: $formattedTime',
+                                          context.formatString(LocaleData.upcomingEventsSomething, [formattedTime]),
                                           style: TextStyle(
                                             color: isTriggered
                                                 ? Colors.red
@@ -350,10 +352,10 @@ class MenuPageState extends State<MenuPage> {
                                                 .catchError((error) => print(
                                                     'Failed to delete reminder: $error'));
                                           },
-                                          child: const Text(
-                                            'Dismiss',
+                                          child: Text(
+                                            LocaleData.dismiss.getString(context),
                                             style:
-                                                TextStyle(color: Colors.white),
+                                                const TextStyle(color: Colors.white),
                                           ),
                                         ),
                                       ],
@@ -397,9 +399,9 @@ class MenuPageState extends State<MenuPage> {
                     }
                   },
                 ),
-                const Text(
-                  'Logout',
-                  style: TextStyle(color: Colors.white, fontSize: 14),
+                Text(
+                  LocaleData.logOut.getString(context),
+                  style: const TextStyle(color: Colors.white, fontSize: 14),
                 ),
               ],
             ),
@@ -418,20 +420,20 @@ class MenuPageState extends State<MenuPage> {
                     );
                   },
                 ),
-                const Text(
-                  'Help',
-                  style: TextStyle(color: Colors.white, fontSize: 14),
+                Text(
+                  LocaleData.help.getString(context),
+                  style: const TextStyle(color: Colors.white, fontSize: 14),
                 ),
               ],
             ),
           ),
-          const Positioned(
+           Positioned(
               top: 180.0,
               left: 0,
               right: 0,
               child: Center(
-                child: Text('Where will you go next?',
-                    style: TextStyle(
+                child: Text(LocaleData.menuText.getString(context),
+                    style: const TextStyle(
                       color: Colors.white,
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
@@ -465,9 +467,9 @@ class MenuPageState extends State<MenuPage> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      _buildExpandedButton(context, 'Trip Planner',
+                      _buildExpandedButton(context, LocaleData.tripPlanner.getString(context),
                           Icons.pin_drop, _navigateToMapItinerary),
-                      _buildExpandedButton(context, 'Upload Docs',
+                      _buildExpandedButton(context, LocaleData.uploadDocs.getString(context),
                           Icons.upload_file, _navigateToManageFlightsBookings),
                     ],
                   ),
@@ -475,9 +477,9 @@ class MenuPageState extends State<MenuPage> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      _buildExpandedButton(context, 'Settings', Icons.settings,
+                      _buildExpandedButton(context, LocaleData.settings.getString(context), Icons.settings,
                           _navigateToSettings),
-                      _buildExpandedButton(context, 'Socials', Icons.group,
+                      _buildExpandedButton(context, LocaleData.socials.getString(context), Icons.group,
                           _navigateToFriendsPage),
                     ],
                   ),
@@ -554,16 +556,16 @@ class MenuPageState extends State<MenuPage> {
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: Colors.white,
-        title: const Text('Logout', style: TextStyle(color: Colors.black)),
-        content: const Text('Are you sure you want to log out?',
-            style: TextStyle(color: Colors.black)),
+        title: Text(LocaleData.logOut.getString(context), style: TextStyle(color: Colors.black)),
+        content: Text(LocaleData.logOutText.getString(context),
+            style: const TextStyle(color: Colors.black)),
         actions: <Widget>[
           TextButton(
             onPressed: () {
               Navigator.of(context).pop(false);
             },
             style: TextButton.styleFrom(foregroundColor: Colors.blue),
-            child: const Text('No'),
+            child: Text(LocaleData.no.getString(context)),
           ),
           TextButton(
             onPressed: () async {
@@ -571,7 +573,7 @@ class MenuPageState extends State<MenuPage> {
               await _logout(context);
             },
             style: TextButton.styleFrom(foregroundColor: Colors.blue),
-            child: const Text('Yes'),
+            child: Text(LocaleData.yes.getString(context)),
           ),
         ],
       ),

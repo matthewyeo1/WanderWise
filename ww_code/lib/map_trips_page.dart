@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_localization/flutter_localization.dart';
 import 'edit_itinerary_page.dart';
 import 'map_view.dart';
 import 'storage/itinerary_service.dart';
@@ -9,6 +10,8 @@ import 'aesthetics/themes.dart';
 import 'package:ww_code/sharing_page.dart';
 import 'package:ww_code/map_info_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'localization/locales.dart';
+
 
 class MapItineraryPage extends StatefulWidget {
   const MapItineraryPage({super.key});
@@ -95,7 +98,7 @@ void didChangeDependencies() {
       context,
       MaterialPageRoute(
         builder: (context) => EditItineraryPage(
-          title: 'Add New Trip',
+          title: LocaleData.addTrip.getString(context),
           onSave: (newItem) async {
             await _itineraryService.saveItinerary(userId, newItem);
             setState(() {
@@ -118,9 +121,8 @@ void didChangeDependencies() {
       setState(() {
         _itineraryItems.removeAt(index);
       });
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Successfully deleted trip')),
-      );
+      print('Successfully deleted trip');
+      
     }
   }
 
@@ -138,7 +140,7 @@ void didChangeDependencies() {
       context,
       MaterialPageRoute(
         builder: (context) => EditItineraryPage(
-          title: 'View/Edit Trip',
+          title: LocaleData.viewEditTrip.getString(context),
           initialItem: _itineraryItems[index],
           onSave: (updatedItem) async {
             await _itineraryService.updateItinerary(userId, updatedItem);
@@ -166,23 +168,23 @@ void didChangeDependencies() {
         return AlertDialog(
           backgroundColor: Colors.white,
           title:
-              const Text('Delete Trip', style: TextStyle(color: Colors.black)),
-          content: const Text('Delete this Trip?',
-              style: TextStyle(color: Colors.black)),
+              Text(LocaleData.deleteTrip.getString(context), style: TextStyle(color: Colors.black)),
+          content: Text(LocaleData.deleteThisTrip.getString(context),
+              style: const TextStyle(color: Colors.black)),
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.pop(context, false);
               },
               style: TextButton.styleFrom(foregroundColor: Colors.blue),
-              child: const Text('Cancel'),
+              child: Text(LocaleData.no.getString(context)),
             ),
             TextButton(
               onPressed: () {
                 Navigator.pop(context, true);
               },
               style: TextButton.styleFrom(foregroundColor: Colors.blue),
-              child: const Text('Delete'),
+              child: Text(LocaleData.yes.getString(context)),
             ),
           ],
         );
@@ -204,6 +206,7 @@ void didChangeDependencies() {
 
 
   Widget _buildItineraryList() {
+    
   if (_itineraryItems.isEmpty) {
     return Center(
       child: Column(
@@ -215,9 +218,9 @@ void didChangeDependencies() {
             height: 250,
           ),
           const SizedBox(height: 10),
-          const Text(
-            'Create trip plans with friends!',
-            style: TextStyle(fontSize: 18),
+          Text(
+            LocaleData.bodyText1.getString(context),
+            style: const TextStyle(fontSize: 18),
           ),
         ],
       ),
@@ -247,8 +250,9 @@ void didChangeDependencies() {
                 _itineraryItems[index]['title'],
                 style: const TextStyle(color: Colors.black),
               ),
+              
               subtitle: Text(
-                'Start Date: ${_itineraryItems[index]['startDate']}\nEnd Date: ${_itineraryItems[index]['endDate']}',
+                context.formatString(LocaleData.datesTrip, [_itineraryItems[index]['startDate'], _itineraryItems[index]['endDate']]),
                 style: const TextStyle(color: Colors.black54),
               ),
               trailing: Row(
@@ -308,7 +312,7 @@ void didChangeDependencies() {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(_selectedIndex == 0 ? 'My Trips' : 'Map'),
+        title: Text(_selectedIndex == 0 ? LocaleData.trips.getString(context) : LocaleData.mapAppBar.getString(context)),
         actions: _selectedIndex == 0
             ? [
                 IconButton(
@@ -350,14 +354,14 @@ void didChangeDependencies() {
                   : const MapScreen(),
             ),
       bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
+        items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: Icon(Icons.list),
-            label: 'My Trips',
+            icon: const Icon(Icons.list),
+            label: LocaleData.trips.getString(context),
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.map),
-            label: 'Map',
+            icon: const Icon(Icons.map),
+            label: LocaleData.mapAppBar.getString(context),
           ),
         ],
         currentIndex: _selectedIndex,

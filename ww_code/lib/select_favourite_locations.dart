@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_localization/flutter_localization.dart';
 import 'package:ww_code/aesthetics/themes.dart';
 import 'dart:async';
 import 'package:flutter/services.dart'; // Add this import for clipboard functionality
+import 'localization/locales.dart';
 
 class SelectFavouriteLocations extends StatefulWidget {
   const SelectFavouriteLocations({super.key});
@@ -55,7 +57,7 @@ class SelectFavouriteLocationsState extends State<SelectFavouriteLocations> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Choose from Favourite Locations'),
+        title: Text(LocaleData.selectFavLocations.getString(context)),
       ),
       body: _locationsStream == null
           ? Center(
@@ -108,9 +110,9 @@ class SelectFavouriteLocationsState extends State<SelectFavouriteLocations> {
                           height: 250,
                         ), 
                         const SizedBox(height: 20),
-                        const Text(
-                          'Copy & paste your favourite places to your itinerary!',
-                          style: TextStyle(fontSize: 18),
+                        Text(
+                          LocaleData.selectFavLocationsText.getString(context),
+                          style: const TextStyle(fontSize: 18),
                         ),
                       ],
                     ),
@@ -122,7 +124,7 @@ class SelectFavouriteLocationsState extends State<SelectFavouriteLocations> {
                   itemBuilder: (context, index) {
                     DocumentSnapshot location = locations[index];
                     String locationName = location[
-                        'location']; // Assuming 'location' field exists
+                        'location']; 
 
                     return ListTile(
                       title: Text(locationName),
@@ -130,8 +132,8 @@ class SelectFavouriteLocationsState extends State<SelectFavouriteLocations> {
                         icon: const Icon(Icons.copy),
                         onPressed: () {
                           ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Location copied to clipboard!'),
+                            SnackBar(
+                              content: Text(LocaleData.selectFavLocationsCopy.getString(context)),
                             ),
                           );
                           _copyLocation(location);

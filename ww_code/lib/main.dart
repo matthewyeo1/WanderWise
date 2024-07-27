@@ -17,13 +17,15 @@ import 'package:flutter_gemini/flutter_gemini.dart';
 import 'package:ww_code/utilities/const.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:ww_code/notif_service.dart';
+import 'package:flutter_localization/flutter_localization.dart';
+import 'package:ww_code/localization/locales.dart';
 
 
 
 void main() async {
   // Load the .env file
   try {
-    await dotenv.load();
+    await dotenv.load(fileName: ".env");
     String apiKey = dotenv.env['API_KEY']!;
     print('API Key: $apiKey');
   } catch (e) {
@@ -68,21 +70,44 @@ void main() async {
   runApp(
     ChangeNotifierProvider(
       create: (context) => themeNotifier,
-      child: const MyApp(),
+      child: MyApp(),
     ),
   );
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class MyApp extends StatefulWidget {
 
+  @override
+  State<MyApp> createState() => MyAppState();
+
+}
+
+class MyAppState extends State<MyApp> {
+ 
+  late FlutterLocalization localization = FlutterLocalization.instance;
   
+  @override
+  void initState() {
+    configureLocalization();
+    super.initState();
+  }
+
+  void configureLocalization() {
+    localization.init(mapLocales: LOCALES, initLanguageCode: "en");
+    localization.onTranslatedLanguage = onTranslatedLanguage;
+  }
+
+  void onTranslatedLanguage(Locale? locale) {
+    setState(() {
+      
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Consumer<ThemeNotifier>(
       builder: (context, themeNotifier, child) {
         return MaterialApp(
-           // localizationsDelegates: AppLocalizations.localizationsDelegates,
             title: 'WanderWise App',
             theme: lightTheme,
             darkTheme: darkTheme,
@@ -98,6 +123,9 @@ class MyApp extends StatelessWidget {
               '/socials': (context) => const FriendsPage(),
             },
             debugShowCheckedModeBanner: false,
+            supportedLocales: localization.supportedLocales,
+            localizationsDelegates: localization.localizationsDelegates,
+
           );
       },
     );

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class l10n {
-  static const locals = [
+  static final all = [
     Locale('en'),
     Locale('es'),
   ];

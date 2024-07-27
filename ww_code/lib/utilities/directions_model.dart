@@ -57,11 +57,11 @@ class Directions {
       final minutes = walkingDurationDuration.inMinutes.remainder(60);
 
       if (hours > 0 && minutes > 0) {
-        timeToWalk = '$hours hours $minutes minutes';
+        timeToWalk = '$hours h $minutes min';
       } else if (hours > 0) {
-        timeToWalk = '$hours hours';
+        timeToWalk = '$hours h';
       } else {
-        timeToWalk = '$minutes minutes';
+        timeToWalk = '$minutes min';
       }
     }
 

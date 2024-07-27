@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_localization/flutter_localization.dart';
 import 'package:ww_code/user/user_class.dart';
 import 'package:ww_code/aesthetics/themes.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'localization/locales.dart';
 
 class ShareWithUsersPage extends StatefulWidget {
   final String itineraryId;
@@ -154,7 +156,7 @@ class ShareWithUsersPageState extends State<ShareWithUsersPage> {
 
       String invitedUsersText =
           invitedUsernames.join(', '); // Join usernames with commas
-      String snackbarMessage = 'Shared with $invitedUsersText!';
+      String snackbarMessage = context.formatString(LocaleData.shared, [invitedUsersText]);
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(snackbarMessage)),
@@ -162,9 +164,8 @@ class ShareWithUsersPageState extends State<ShareWithUsersPage> {
 
       Navigator.pop(context);
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error inviting friends: $e')),
-      );
+      print('Error inviting friends: $e');
+      
     }
   }
 
@@ -190,10 +191,10 @@ class ShareWithUsersPageState extends State<ShareWithUsersPage> {
 
     await flutterLocalNotificationsPlugin.show(
       0,
-      'Itinerary Shared',
-      '$recipientName has shared an itinerary with you!',
+      LocaleData.sharedTitle.getString(context),
+      context.formatString(LocaleData.sharedMessage, [recipientName]),
       platformChannelSpecifics,
-      payload: 'itinerary_id:${widget.itineraryId}',
+      payload: 'ID:${widget.itineraryId}',
     );
   }
 
@@ -201,12 +202,12 @@ class ShareWithUsersPageState extends State<ShareWithUsersPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Share With Friends'),
+        title: Text(LocaleData.shareWithFriends.getString(context)),
         actions: [
           if (selectedFriends.isNotEmpty)
             TextButton(
               onPressed: _inviteFriends,
-              child: const Text('Share'),
+              child: Text(LocaleData.shareButton.getString(context)),
             ),
         ],
       ),
@@ -229,7 +230,7 @@ class ShareWithUsersPageState extends State<ShareWithUsersPage> {
           } else if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return const Center(child: Text('You have no friends to invite'));
+            return Center(child: Text(LocaleData.noFriends.getString(context)));
           } else {
             List<UserClass> friends = snapshot.data!;
             return ListView.builder(

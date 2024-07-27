@@ -121,8 +121,8 @@ class _GeneralSettingsPageState extends State<GeneralSettingsPage> {
                     _buildSectionHeader('Language', theme),
                     _buildListTile(
                       context,
-                      'Current Language                          English',
-                      const LanguageSelector(),
+                      'Select Language',
+                       LanguageSelector(),
                       theme,
                     ),
                     const SizedBox(height: 50),
