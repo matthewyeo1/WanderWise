@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localization/flutter_localization.dart';
 import 'package:logging/logging.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -13,10 +14,9 @@ import 'package:provider/provider.dart';
 typedef LoginCallback = void Function(String? errorMessage);
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, 
-  
+  const MyHomePage({
+    super.key,
   });
-  
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
@@ -30,6 +30,7 @@ class _MyHomePageState extends State<MyHomePage> {
   final FocusNode _passwordFocusNode = FocusNode();
   final GoogleSignIn _googleSignIn = GoogleSignIn();
   final ThemeService themeService = ThemeService();
+  final FlutterLocalization _localization = FlutterLocalization.instance;
 
   @override
   void dispose() {
@@ -39,16 +40,35 @@ class _MyHomePageState extends State<MyHomePage> {
     _passwordFocusNode.dispose();
     super.dispose();
   }
-Future<UserCredential> _authenticate(String email, String password) async {
-  UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
-    email: email,
-    password: password,
-  );
-  return userCredential;
-}
+  
 
+  Future<UserCredential> _authenticate(String email, String password) async {
+    UserCredential userCredential =
+        await FirebaseAuth.instance.signInWithEmailAndPassword(
+      email: email,
+      password: password,
+    );
+    return userCredential;
+  }
 
- Future<void> _login(BuildContext context, LoginCallback callback) async {
+// Add this method to load user locale preference
+  Future<void> _loadUserLocale(String userId) async {
+    try {
+      DocumentSnapshot userDoc = await FirebaseFirestore.instance
+          .collection('Users')
+          .doc(userId)
+          .get();
+      if (userDoc.exists && userDoc['locale'] != null) {
+        _localization.translate(userDoc['locale']);
+      } else {
+        _localization.translate("en"); // Default to English if no locale found
+      }
+    } catch (e) {
+      _localization.translate("en"); // Default to English in case of error
+    }
+  }
+
+  Future<void> _login(BuildContext context, LoginCallback callback) async {
     String email = _emailController.text;
     String password = _passwordController.text;
     print('Attempting login with email: $email and $password');
@@ -62,26 +82,43 @@ Future<UserCredential> _authenticate(String email, String password) async {
       String userId = userCredential.user!.uid;
       bool isDarkMode = false;
       String? username;
+      String locale = 'en';
 
-     FirebaseFirestore.instance
-    .collection('Users')
-    .doc(userId)
-    .get()
-    .then((DocumentSnapshot doc) {
-  if (doc.exists) {
-    var data = doc.data() as Map<String, dynamic>;
-    username = data['Username'];
+      FirebaseFirestore.instance
+          .collection('Users')
+          .doc(userId)
+          .get()
+          .then((DocumentSnapshot doc) async {
+        if (doc.exists) {
+          var data = doc.data() as Map<String, dynamic>;
+          username = data['Username'];
 
-    if (data.containsKey('darkMode')) {
-      isDarkMode = data['darkMode'];
-    } else {
-      isDarkMode = false;
-      // Update the document to add the darkMode field with the default value
-      FirebaseFirestore.instance.collection('Users').doc(userId).update({
-        'darkMode': isDarkMode,
-      });
-    }
-  }
+          if (data.containsKey('darkMode')) {
+            isDarkMode = data['darkMode'];
+          } else {
+            isDarkMode = false;
+            // Update the document to add the darkMode field with the default value
+            FirebaseFirestore.instance.collection('Users').doc(userId).update({
+              'darkMode': isDarkMode,
+            });
+          }
+
+          // Load user's locale
+          if (data.containsKey('locale')) {
+            locale = data['locale'];
+            FlutterLocalization.instance.translate(locale);
+          } else {
+            // Default to English if locale is not set
+            locale = 'en';
+            await FirebaseFirestore.instance
+                .collection('Users')
+                .doc(userId)
+                .update({
+              'locale': locale,
+            });
+            FlutterLocalization.instance.translate(locale);
+          }
+        }
 
         Provider.of<ThemeNotifier>(context, listen: false)
             .initialize(userId, isDarkMode);

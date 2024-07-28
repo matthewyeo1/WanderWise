@@ -1,5 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localization/flutter_localization.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class LanguageSelector extends StatefulWidget {
   @override
@@ -9,12 +11,20 @@ class LanguageSelector extends StatefulWidget {
 class LanguageSelectorState extends State<LanguageSelector> {
   late FlutterLocalization _flutterLocalization;
   late String _currentLocale;
+  late FirebaseAuth _auth;
+  late FirebaseFirestore _firestore;
+  User? _user;
 
   @override
   void initState() {
     super.initState();
     _flutterLocalization = FlutterLocalization.instance;
+    _auth = FirebaseAuth.instance;
+    _firestore = FirebaseFirestore.instance;
+    _user = _auth.currentUser;
     _currentLocale = _flutterLocalization.currentLocale!.languageCode;
+
+    
   }
 
   @override
@@ -26,9 +36,7 @@ class LanguageSelectorState extends State<LanguageSelector> {
         title: const Text('Language Selector'),
         actions: [
           DropdownButton<String>(
-             dropdownColor: isDarkMode
-              ? const Color(0xFF191970) 
-              : Colors.white,
+            dropdownColor: isDarkMode ? const Color(0xFF191970) : Colors.white,
             value: _currentLocale,
             items: const [
               DropdownMenuItem<String>(
@@ -69,20 +77,17 @@ class LanguageSelectorState extends State<LanguageSelector> {
       ),
     );
   }
-  void _setLocale(String? value) {
+
+  void _setLocale(String? value) async {
     if (value == null) {
       return;
     }
-    if (value == "en") {
-      _flutterLocalization.translate("en");
-    } else if (value == 'zh') {
-      _flutterLocalization.translate("zh");
-    } else if (value == 'es') {
-      _flutterLocalization.translate("es");
+    _flutterLocalization.translate(value);
+    if (_user != null) {
+      await _firestore.collection('Users').doc(_user!.uid).update({'locale': value});
     }
     setState(() {
       _currentLocale = value;
-      _flutterLocalization.translate(value);
     });
   }
 }
