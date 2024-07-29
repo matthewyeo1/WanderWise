@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_localization/flutter_localization.dart';
+import 'localization/locales.dart';
 
 class PendingInvitesPage extends StatefulWidget {
   final String userId;
@@ -40,7 +42,7 @@ class PendingInvitesPageState extends State<PendingInvitesPage> {
         String recipientId = requestData['recipientId'];
 
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Friend request accepted!')),
+          SnackBar(content: Text(LocaleData.acceptRequest.getString(context))),
         );
 
         await _addFriendToCollection(senderId, recipientId);
@@ -151,7 +153,7 @@ class PendingInvitesPageState extends State<PendingInvitesPage> {
       fetchPendingInvitesCount();
 
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Friend request rejected')),
+        SnackBar(content: Text(LocaleData.rejectRequest.getString(context))),
       );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -173,7 +175,7 @@ class PendingInvitesPageState extends State<PendingInvitesPage> {
       });
     } catch (e) {
       print('Error fetching pending invites count: $e');
-      // Handle error as needed
+      
     }
   }
 
@@ -199,7 +201,7 @@ class PendingInvitesPageState extends State<PendingInvitesPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Pending Invites'),
+        title: Text(LocaleData.pendingInvitesTitle.getString(context)),
       ),
       body: widget.userId.isEmpty
           ? const Center(child: Text('User ID is empty'))
@@ -224,7 +226,7 @@ class PendingInvitesPageState extends State<PendingInvitesPage> {
                           height: 200,
                         ),
                         const SizedBox(height: 16),
-                        const Text('No pending invites', style: TextStyle(fontSize: 18)),
+                        Text(LocaleData.backgroundText7.getString(context), style: const TextStyle(fontSize: 18)),
                       ],
                     ),
                   );
@@ -239,7 +241,7 @@ class PendingInvitesPageState extends State<PendingInvitesPage> {
                     String requestId = doc.id;
                     return ListTile(
                       title:
-                          Text('$senderDisplayName sent you a friend request'),
+                          Text(context.formatString(LocaleData.pendingRequest.getString(context), [senderDisplayName])),
                       trailing: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [

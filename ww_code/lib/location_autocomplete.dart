@@ -1,9 +1,11 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localization/flutter_localization.dart';
 import 'package:uuid/uuid.dart';
 import 'package:http/http.dart' as http;
 import 'package:ww_code/aesthetics/textfield_style.dart';
+import 'localization/locales.dart';
 
 class LocationAutoComplete extends StatefulWidget {
   const LocationAutoComplete({super.key});
@@ -58,7 +60,7 @@ class LocationAutoCompleteState extends State<LocationAutoComplete> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Search Location"),
+        title: Text(LocaleData.searchLocationTitle.getString(context)),
       ),
       body: Padding(
         padding: const EdgeInsets.all(15),
@@ -69,7 +71,7 @@ class LocationAutoCompleteState extends State<LocationAutoComplete> {
               controller: searchController,
               cursorColor: Colors.black,
               decoration: TextFieldConfig.buildInputDecoration(
-                hintText: 'Search a location...',
+                hintText: LocaleData.hintTextSearchLocation.getString(context),
                 prefixIcon: const Icon(
                         Icons.search,
                         color: Colors.black45,
@@ -105,9 +107,9 @@ class LocationAutoCompleteState extends State<LocationAutoComplete> {
                       height: 200,
                     ),
                     const SizedBox(height: 20),
-                    const Text(
-                      'Search for a location and \nnavigate to it on the map!',
-                      style: TextStyle(
+                    Text(
+                      LocaleData.backgroundText5.getString(context),
+                      style: const TextStyle(
                         fontSize: 18,
                        
                       ),

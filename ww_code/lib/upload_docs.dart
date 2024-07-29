@@ -3,12 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'dart:io';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter_localization/flutter_localization.dart';
 import 'package:flutter_pdfview/flutter_pdfview.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_cached_pdfview/flutter_cached_pdfview.dart';
 import 'package:ww_code/aesthetics/themes.dart';
+import 'localization/locales.dart';
 
 class ManageFlightsBookingsPage extends StatefulWidget {
   const ManageFlightsBookingsPage({super.key});
@@ -65,8 +67,8 @@ class ManageFlightsBookingsPageState extends State<ManageFlightsBookingsPage> {
         isLoading = false;
       });
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("Error loading document"),
+        SnackBar(
+          content: Text(LocaleData.errorUploadingDocs.getString(context)),
         ),
       );
     }
@@ -117,8 +119,8 @@ class ManageFlightsBookingsPageState extends State<ManageFlightsBookingsPage> {
         loadFileUrl();
 
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Upload successful!'),
+          SnackBar(
+            content: Text(LocaleData.uploadSuccessful.getString(context)),
           ),
         );
       } else {
@@ -162,9 +164,9 @@ class ManageFlightsBookingsPageState extends State<ManageFlightsBookingsPage> {
                   if (snapshot.hasData) {
                     return Scaffold(
                       appBar: AppBar(
-                        title: const Text(
-                          'View PDF',
-                          style: TextStyle(color: Color(0xFF00A6DF)),
+                        title: Text(
+                          LocaleData.viewPDF.getString(context),
+                          style: const TextStyle(color: Color(0xFF00A6DF)),
                         ),
                         backgroundColor: Colors.white,
                         iconTheme:
@@ -227,8 +229,8 @@ class ManageFlightsBookingsPageState extends State<ManageFlightsBookingsPage> {
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Document type not supported for viewing'),
+        SnackBar(
+          content: Text(LocaleData.invalidType.getString(context)),
         ),
       );
     }
@@ -247,8 +249,8 @@ class ManageFlightsBookingsPageState extends State<ManageFlightsBookingsPage> {
       await FirebaseStorage.instance.refFromURL(fileUrl).delete();
       loadFileUrl();
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Delete successful!'),
+        SnackBar(
+          content: Text(LocaleData.deleteSuccessful.getString(context)),
         ),
       );
     } catch (e) {
@@ -265,23 +267,23 @@ class ManageFlightsBookingsPageState extends State<ManageFlightsBookingsPage> {
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: Colors.white,
-        title: const Text('Delete Document',
-            style: TextStyle(color: Colors.black)),
-        content: const Text('Delete this document?',
-            style: TextStyle(color: Colors.black)),
+        title: Text(LocaleData.deleteDialog.getString(context),
+            style: const TextStyle(color: Colors.black)),
+        content: Text(LocaleData.deleteDialogText.getString(context),
+            style: const TextStyle(color: Colors.black)),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Cancel',
-                style: TextStyle(color: Color(0xFF00A6DF))),
+            child: Text(LocaleData.cancel.getString(context),
+                style: const TextStyle(color: Color(0xFF00A6DF))),
           ),
           TextButton(
             onPressed: () {
               deleteFile(fileDoc);
               Navigator.of(context).pop();
             },
-            child: const Text('Delete',
-                style: TextStyle(color: Color(0xFF00A6DF))),
+            child: Text(LocaleData.yes.getString(context),
+                style: const TextStyle(color: Color(0xFF00A6DF))),
           ),
         ],
       ),
@@ -329,8 +331,8 @@ class ManageFlightsBookingsPageState extends State<ManageFlightsBookingsPage> {
                   height: 250,
                 ),
                 const SizedBox(height: 10),
-                const Text('Upload flights/bookings documents here',
-                    style: TextStyle(
+                Text(LocaleData.backgroundText3.getString(context),
+                    style: const TextStyle(
                       fontSize: 18,
                     )),
               ],
@@ -405,7 +407,7 @@ class ManageFlightsBookingsPageState extends State<ManageFlightsBookingsPage> {
                           overflow: TextOverflow.ellipsis,
                         ),
                         subtitle: Text(
-                          fileDoc['isPDF'] ? 'PDF Document' : 'Word Document',
+                          fileDoc['isPDF'] ? 'PDF' : 'Word',
                           style: const TextStyle(color: Colors.black),
                         ),
                         trailing: Row(
@@ -434,8 +436,8 @@ class ManageFlightsBookingsPageState extends State<ManageFlightsBookingsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'Upload Docs',
+        title: Text(
+          LocaleData.uploadDocs.getString(context),
         ),
         actions: [
           IconButton(

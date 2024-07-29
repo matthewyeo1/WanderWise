@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localization/flutter_localization.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:ww_code/aesthetics/themes.dart';
+import 'localization/locales.dart';
 import 'dart:async';
 
 class FavouriteLocationsPage extends StatefulWidget {
@@ -61,7 +63,7 @@ class FavouriteLocationsPageState extends State<FavouriteLocationsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Favourite Locations'),
+        title:  Text(LocaleData.favLocations.getString(context)),
       ),
       body: _locationsStream == null
           ? Center(
@@ -104,9 +106,9 @@ class FavouriteLocationsPageState extends State<FavouriteLocationsPage> {
                         Image.asset('images/favourite_locations.png',
                         height: 250,), // Your placeholder image
                         const SizedBox(height: 20),
-                        const Text(
-                          'Store & navigate to your favourite places here!',
-                          style: TextStyle(fontSize: 18),
+                        Text(
+                          LocaleData.backgroundText4.getString(context),
+                          style: const TextStyle(fontSize: 18),
                         ),
                       ],
                     ),
@@ -117,7 +119,7 @@ class FavouriteLocationsPageState extends State<FavouriteLocationsPage> {
                   itemCount: locations.length,
                   itemBuilder: (context, index) {
                     DocumentSnapshot location = locations[index];
-                    String locationName = location['location']; // Assuming 'location' field exists
+                    String locationName = location['location']; 
 
                     return ListTile(
                       title: Text(locationName),

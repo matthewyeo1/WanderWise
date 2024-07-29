@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_localization/flutter_localization.dart';
 import 'package:logging/logging.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ww_code/user/user_class.dart';
@@ -7,6 +8,7 @@ import 'package:ww_code/aesthetics/textfield_style.dart';
 import 'package:ww_code/friend_profile.dart';
 import 'package:ww_code/pending_invites.dart';
 import 'package:ww_code/aesthetics/themes.dart';
+import 'localization/locales.dart';
 
 class FriendsPage extends StatefulWidget {
   const FriendsPage({super.key});
@@ -141,7 +143,7 @@ class FriendsPageState extends State<FriendsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Find Other Wanderers"),
+        title: Text(LocaleData.friendsPageTitle.getString(context)),
         actions: [
           Stack(
             alignment: Alignment.topRight,
@@ -204,7 +206,7 @@ class FriendsPageState extends State<FriendsPage> {
                     controller: searchController,
                     onChanged: onSearchChanged,
                     decoration: TextFieldConfig.buildInputDecoration(
-                      hintText: 'Search user',
+                      hintText: LocaleData.hintTextSearchUsers.getString(context),
                       prefixIcon: const Icon(
                         Icons.search,
                         color: Colors.black45,
@@ -240,9 +242,9 @@ class FriendsPageState extends State<FriendsPage> {
                                 width: 100,
                               ),
                               const SizedBox(height: 20),
-                              const Text(
-                                'No users found with that name',
-                                style: TextStyle(
+                              Text(
+                                LocaleData.noUsersFound.getString(context),
+                                style: const TextStyle(
                                   fontSize: 16,
                                 ),
                               ),
@@ -260,9 +262,9 @@ class FriendsPageState extends State<FriendsPage> {
                                     width: 250,
                                   ),
                                   const SizedBox(height: 5),
-                                  const Text(
-                                    'Find other Wanderers and add them as friends!',
-                                    style: TextStyle(
+                                  Text(
+                                    LocaleData.backgroundText6.getString(context),
+                                    style: const TextStyle(
                                       fontSize: 18,
                                     ),
                                   ),
@@ -277,7 +279,7 @@ class FriendsPageState extends State<FriendsPage> {
                                       searchResults[index].displayName;
                                   if (searchResults[index].uid ==
                                       currentUser?.uid) {
-                                    displayName += " (you)";
+                                    displayName += LocaleData.userIndicator.getString(context);
                                   }
                                   String? profileImageUrl =
                                       searchResults[index].profileImageUrl;

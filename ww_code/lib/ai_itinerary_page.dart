@@ -3,10 +3,13 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_gemini/flutter_gemini.dart';
 import 'package:dash_chat_2/dash_chat_2.dart';
+import 'package:flutter_localization/flutter_localization.dart';
 import 'package:ww_code/aesthetics/themes.dart';
 import 'aesthetics/textfield_style.dart';
 import 'utilities/utils.dart';
 import 'storage/itinerary_service.dart';
+import 'localization/locales.dart';
+
 
 class GeminiChatPage extends StatefulWidget {
   const GeminiChatPage({super.key});
@@ -102,8 +105,8 @@ class GeminiChatPageState extends State<GeminiChatPage> {
       'id': message.createdAt.toIso8601String(),
     };
     await _itineraryService.saveItinerary(userId, newItem);
-    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-      content: Text('Saved to trips page!'),
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text(LocaleData.saveToTripsPageSnackBar.getString(context)),
     ));
     Navigator.pop(context, true);
   }
@@ -131,12 +134,12 @@ class GeminiChatPageState extends State<GeminiChatPage> {
       builder: (BuildContext context) {
         return AlertDialog(
           backgroundColor: Colors.white,
-          title: const Text('WARNING:', style: TextStyle(color: Colors.black)),
-          content: const Text('Please use AI-generated itineraries with discretion; results may vary based on various factors. Consider validating the information before finalizing travel plans.', style: TextStyle(color: Colors.black)),
+          title: Text(LocaleData.warningTitle.getString(context), style: const TextStyle(color: Colors.black)),
+          content: Text(LocaleData.warningText.getString(context), style: const TextStyle(color: Colors.black)),
           actions: <Widget>[
             TextButton(
               child:
-                  const Text('Ok', style: TextStyle(color: Colors.lightBlue)),
+                 Text(LocaleData.ok.getString(context), style: const TextStyle(color: Colors.lightBlue)),
               onPressed: () {
                 Navigator.of(context).pop();
               },
@@ -150,7 +153,7 @@ class GeminiChatPageState extends State<GeminiChatPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Itinerary Generator'), actions: [
+      appBar: AppBar(title: Text(LocaleData.itineraryGenerator.getString(context)), actions: [
         IconButton(
           icon: const Icon(Icons.info),
           onPressed: _showDisclaimerDialog,
@@ -187,14 +190,14 @@ class GeminiChatPageState extends State<GeminiChatPage> {
                                 height: 200,
                               ),
                               const SizedBox(height: 5),
-                              const Text(
-                                'Generate itineraries with Gemini AI!',
-                                style: TextStyle(fontSize: 14),
+                              Text(
+                                LocaleData.backgroundText1.getString(context),
+                                style: const TextStyle(fontSize: 14),
                                 textAlign: TextAlign.center,
                               ),
-                              const Text(
-                                'Enter your desired budget, destination \n and duration of stay below. Save generated \n itineraries by clicking on the text generated!',
-                                style: TextStyle(fontSize: 14),
+                              Text(
+                                LocaleData.backgroundText2.getString(context),
+                                style: const TextStyle(fontSize: 14),
                                 textAlign: TextAlign.center,
                               ),
                             ],
@@ -246,24 +249,24 @@ class GeminiChatPageState extends State<GeminiChatPage> {
                                   builder: (BuildContext context) {
                                     return AlertDialog(
                                       backgroundColor: Colors.white,
-                                      title: const Text('Save to Trips Page',
+                                      title: Text(LocaleData.saveToTripsPageDialogTitle.getString(context),
                                           style:
-                                              TextStyle(color: Colors.black)),
-                                      content: const Text('Save to Trips page?',
+                                              const TextStyle(color: Colors.black)),
+                                      content: Text(LocaleData.saveToTripsPageDialogText.getString(context),
                                           style:
-                                              TextStyle(color: Colors.black)),
+                                              const TextStyle(color: Colors.black)),
                                       actions: <Widget>[
                                         TextButton(
-                                          child: const Text('Cancel',
-                                              style: TextStyle(
+                                          child: Text(LocaleData.cancel.getString(context),
+                                              style: const TextStyle(
                                                   color: Colors.lightBlue)),
                                           onPressed: () {
                                             Navigator.of(context).pop();
                                           },
                                         ),
                                         TextButton(
-                                          child: const Text('Save',
-                                              style: TextStyle(
+                                          child: Text(LocaleData.yes.getString(context),
+                                              style: const TextStyle(
                                                   color: Colors.lightBlue)),
                                           onPressed: () {
                                             _saveToItineraryPage(message);
@@ -286,7 +289,7 @@ class GeminiChatPageState extends State<GeminiChatPage> {
                         cursorColor: Colors.black,
                         controller: budgetController,
                         decoration: TextFieldConfig.buildInputDecoration(
-                          hintText: 'Enter budget',
+                          hintText: LocaleData.hintTextBudget.getString(context),
                           prefixIcon: const Icon(
                             Icons.attach_money,
                             color: Colors.black45,
@@ -300,7 +303,7 @@ class GeminiChatPageState extends State<GeminiChatPage> {
                         cursorColor: Colors.black,
                         controller: destinationController,
                         decoration: TextFieldConfig.buildInputDecoration(
-                          hintText: 'Enter destination',
+                          hintText: LocaleData.hintTextDestination.getString(context),
                           prefixIcon: const Icon(
                             Icons.location_on,
                             color: Colors.black45,
@@ -313,7 +316,7 @@ class GeminiChatPageState extends State<GeminiChatPage> {
                         cursorColor: Colors.black,
                         controller: durationController,
                         decoration: TextFieldConfig.buildInputDecoration(
-                          hintText: 'Enter duration (days)',
+                          hintText: LocaleData.hintTextDuration.getString(context),
                           prefixIcon: const Icon(
                             Icons.calendar_today,
                             color: Colors.black45,
@@ -324,7 +327,7 @@ class GeminiChatPageState extends State<GeminiChatPage> {
                       const SizedBox(height: 10),
                       ElevatedButton(
                         onPressed: _handleSendMessage,
-                        child: const Text('Generate Itinerary'),
+                        child: Text(LocaleData.generateItineraryButton.getString(context)),
                       ),
                     ],
                   ),
@@ -342,9 +345,9 @@ class GeminiChatPageState extends State<GeminiChatPage> {
 
     if (budgetStr.isEmpty || destination.isEmpty || durationStr.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
+        SnackBar(
           content: Text(
-              'Please enter your desired budget, destination and duration of stay'),
+              LocaleData.emptyFieldMessage.getString(context)),
         ),
       );
       return;
@@ -359,8 +362,8 @@ class GeminiChatPageState extends State<GeminiChatPage> {
 
     if (!isValidBudget(budget)) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("Budget must be at least \$100"),
+        SnackBar(
+          content: Text(LocaleData.invalidBudget.getString(context)),
         ),
       );
       return;
@@ -368,8 +371,8 @@ class GeminiChatPageState extends State<GeminiChatPage> {
 
     if (!isValidDestination(destination)) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("Please enter a valid destination"),
+        SnackBar(
+          content: Text(LocaleData.invalidDestination.getString(context)),
         ),
       );
       return;
@@ -377,8 +380,8 @@ class GeminiChatPageState extends State<GeminiChatPage> {
 
     if (!isValidDuration(duration)) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("Your duration of stay should be between 1 to 30 days"),
+        SnackBar(
+          content: Text(LocaleData.invalidDuration.getString(context)),
         ),
       );
       return;
