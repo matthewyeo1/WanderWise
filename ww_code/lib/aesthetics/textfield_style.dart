@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+// Standardization of textfields
 class TextFieldConfig {
   static InputDecoration buildInputDecoration({
     required String hintText,

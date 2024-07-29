@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+
+// Standardization of UI theme across all app pages for both light and dark modes
 class CustomColors {
   final Color circularProgressIndicatorLight;
   final Color circularProgressIndicatorDark;

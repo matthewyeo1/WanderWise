@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
 
+// Splashscreen which appears upon app start-up and logout
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
 

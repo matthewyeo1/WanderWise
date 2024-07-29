@@ -144,12 +144,14 @@ mixin LocaleData {
       '3. Tap on a marker/pin to see more information about that location.';
   static const String info4 =
       '4. Use the search bar at the bottom left corner of the screen to quickly find a specific location.';
-  static const String info5 = '5. Find a route to your destination by long-pressing on the screen: the first is for the origin marker and the second for the destination marker.';
+  static const String info5 =
+      '5. Find a route to your destination by long-pressing on the screen: the first is for the origin marker and the second for the destination marker.';
 
   static const String friendsPageTitle = 'Find Other Wanderers';
   static const String hintTextSearchUsers = 'Search user';
   static const String noUsersFound = 'No users found with that name';
-  static const String backgroundText6 = 'Find other Wanderers and add them as friends!';
+  static const String backgroundText6 =
+      'Find other Wanderers and add them as friends!';
   static const String userIndicator = " (you)";
 
   static const String rejectRequest = 'Friend request rejected';
@@ -286,11 +288,13 @@ mixin LocaleData {
         '3. Tap on a marker/pin to see more information about that location.',
     '4. Use the search bar at the bottom left corner of the screen to quickly find a specific location.':
         '4. Use the search bar at the bottom left corner of the screen to quickly find a specific location.',
-        '5. Find a route to your destination by long-pressing on the screen: the first is for the origin marker and the second for the destination marker.': '5. Find a route to your destination by long-pressing on the screen: the first is for the origin marker and the second for the destination marker.',
-        "Find Other Wanderers": "Find Other Wanderers",
+    '5. Find a route to your destination by long-pressing on the screen: the first is for the origin marker and the second for the destination marker.':
+        '5. Find a route to your destination by long-pressing on the screen: the first is for the origin marker and the second for the destination marker.',
+    "Find Other Wanderers": "Find Other Wanderers",
     'Search user': 'Search user',
     'No users found with that name': 'No users found with that name',
-    'Find other Wanderers and add them as friends!': 'Find other Wanderers and add them as friends!',
+    'Find other Wanderers and add them as friends!':
+        'Find other Wanderers and add them as friends!',
     " (you)": " (you)",
     'Friend request rejected': 'Friend request rejected',
     '%a sent you a friend request': '%a sent you a friend request',
@@ -417,19 +421,20 @@ mixin LocaleData {
         '2. 要移动地图，只需用一个手指拖动。',
     '3. Tap on a marker/pin to see more information about that location.':
         '3. 点击标记/针脚以查看该位置的更多信息。',
-        
-              '4. Use the search bar at the bottom left corner of the screen to quickly find a specific location.': '4. 使用屏幕左下角的搜索栏快速查找特定位置。',
-              '5. Find a route to your destination by long-pressing on the screen: the first is for the origin marker and the second for the destination marker.': '5. 通过长按屏幕找到到达目的地的路线：第一次长按用于设置起点标记，第二次长按用于设置目的地标记。',
-              'Find Other Wanderers': '查找其他用户',
-              'Search user': '查找用户',
-              'No users found with that name': '未找到该名称的用户',
-              'Find other Wanderers and add them as friends!': '寻找其他用户并将他们添加为朋友！',
-              " (you)": "（你）",
-              'Friend request rejected': '好友请求被拒绝',
-              '%a sent you a friend request': '%a 向您发送了好友请求',
-              'Friend request accepted!': '好友请求已接受！',
-              'Pending Invites': '待处理的邀请',
-              'No pending invites': '没有待处理的邀请',
+    '4. Use the search bar at the bottom left corner of the screen to quickly find a specific location.':
+        '4. 使用屏幕左下角的搜索栏快速查找特定位置。',
+    '5. Find a route to your destination by long-pressing on the screen: the first is for the origin marker and the second for the destination marker.':
+        '5. 通过长按屏幕找到到达目的地的路线：第一次长按用于设置起点标记，第二次长按用于设置目的地标记。',
+    'Find Other Wanderers': '查找其他用户',
+    'Search user': '查找用户',
+    'No users found with that name': '未找到该名称的用户',
+    'Find other Wanderers and add them as friends!': '寻找其他用户并将他们添加为朋友！',
+    " (you)": "（你）",
+    'Friend request rejected': '好友请求被拒绝',
+    '%a sent you a friend request': '%a 向您发送了好友请求',
+    'Friend request accepted!': '好友请求已接受！',
+    'Pending Invites': '待处理的邀请',
+    'No pending invites': '没有待处理的邀请',
   };
 
   static const Map<String, dynamic> ES = {
@@ -560,19 +565,22 @@ mixin LocaleData {
         '2. Para moverte por el mapa, simplemente arrastra con un dedo.',
     '3. Tap on a marker/pin to see more information about that location.':
         '3. Toca un marcador/clavija para ver más información sobre esa ubicación.',
-        
-              '4. Use the search bar at the bottom left corner of the screen to quickly find a specific location.': '4. Utiliza la barra de búsqueda en la esquina inferior izquierda de la pantalla para encontrar rápidamente una ubicación específica.',
-              '5. Find a route to your destination by long-pressing on the screen: the first is for the origin marker and the second for the destination marker.': '5. Encuentra una ruta hacia tu destino manteniendo presionado en la pantalla: el primer toque es para el marcador de origen y el segundo para el marcador de destino.',
-              'Find Other Wanderers': 'Buscar otros usuarios',
-              'Search user': 'Buscar usuario',
-              'No users found with that name': 'No se encontraron usuarios con ese nombre',
-              'Find other Wanderers and add them as friends!': '¡Encuentra otros usuarios y agrégales como amigos!',
-              " (you)": " (tú)",
-              'Friend request rejected': 'Solicitud de amistad rechazada',
-              '%a sent you a friend request': '%a te envió una solicitud de amistad',
-              'Friend request accepted!': '¡Solicitud de amistad aceptada!',
-              'Pending Invites': 'Invitaciones pendientes',
-              'No pending invites': 'No hay invitaciones pendientes',
+    '4. Use the search bar at the bottom left corner of the screen to quickly find a specific location.':
+        '4. Utiliza la barra de búsqueda en la esquina inferior izquierda de la pantalla para encontrar rápidamente una ubicación específica.',
+    '5. Find a route to your destination by long-pressing on the screen: the first is for the origin marker and the second for the destination marker.':
+        '5. Encuentra una ruta hacia tu destino manteniendo presionado en la pantalla: el primer toque es para el marcador de origen y el segundo para el marcador de destino.',
+    'Find Other Wanderers': 'Buscar otros usuarios',
+    'Search user': 'Buscar usuario',
+    'No users found with that name':
+        'No se encontraron usuarios con ese nombre',
+    'Find other Wanderers and add them as friends!':
+        '¡Encuentra otros usuarios y agrégales como amigos!',
+    " (you)": " (tú)",
+    'Friend request rejected': 'Solicitud de amistad rechazada',
+    '%a sent you a friend request': '%a te envió una solicitud de amistad',
+    'Friend request accepted!': '¡Solicitud de amistad aceptada!',
+    'Pending Invites': 'Invitaciones pendientes',
+    'No pending invites': 'No hay invitaciones pendientes',
   };
 
   static const Map<String, dynamic> DE = {
